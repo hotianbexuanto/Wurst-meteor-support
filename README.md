@@ -12,7 +12,7 @@ It also bypasses updates, but this only modifies the version in the file, so no 
 Self Build
 
 ## Internal version
-# 7.29
+# 7.30
 
 
 ## Originator
@@ -29,7 +29,7 @@ https://github.com/whitedevil-tmp/Wurst-With-Meteor-Support Substitute Article
 自分でビルドしとけ
 
 ## 内部バージョン
-# 7.29
+# 7.30
 
 
 ## 偉大なる元作者様

@@ -9,7 +9,7 @@ Self Build
 
 
 
-Japanese
+# Japanese
 
 このクライアント「fork」はコマンドのPrefixを変更し、Meteor をサポートします
 また、更新をBypassしていますがこれはファイル内のバージョンをいじっているだけなので更新はされていません

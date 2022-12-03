@@ -6,10 +6,11 @@
 
 This client "fork" changes the command prefix and supports Meteor
 It also bypasses updates, but this only modifies the version in the file, so no updates are made.
+I will give an update if I am aware of it.
 
 ## Downloads
 
-Self Build
+Build it yourself.
 
 ## Internal version
 # 7.30
@@ -23,6 +24,7 @@ https://github.com/whitedevil-tmp/Wurst-With-Meteor-Support Substitute Article
 
 このクライアント「fork」はコマンドのPrefixを変更し、Meteor をサポートします
 また、更新をBypassしていますがこれはファイル内のバージョンをいじっているだけなので更新はされていません
+私が気付いていれば更新をします
 
 ## Downloads
 

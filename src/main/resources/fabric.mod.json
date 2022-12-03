@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "wurst-meteor",
+  "version": "${version}",
+
+  "name": "Wurst Client",
+  "description": "Wurst Wurst Wurst!",
+  "authors": [
+    "Alexander01998"
+  ],
+  "contact": {
+    "homepage": "https://www.wurstclient.net/",
+    "sources": "https://www.wurstclient.net/github/"
+  },
+
+  "license": "GPL-3.0-or-later",
+  "icon": "assets/wurst/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "net.wurstclient.WurstInitializer"
+    ]
+  },
+  "mixins": [
+    "wurst.mixins.json"
+  ],
+  "accessWidener" : "wurst.accesswidener",
+
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "fabric-api": ">=0.59.0",
+    "minecraft": "~1.19.2",
+    "java": ">=17"
+  },
+  "suggests": {
+    "mo_glass": "*"
+  },
+  "breaks": {
+    "wi_zoom": "*",
+    "wi-zoom": "*"
+  }
+}

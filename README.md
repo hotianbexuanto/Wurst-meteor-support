@@ -1,4 +1,5 @@
 # Wurst Client 1.19 With Meteor Support Prefix Change Edition
+# Please contact us if you want other prefixes
 
 ## ⚠ It's not perfect. ⚠
 
@@ -6,13 +7,14 @@
 
 This client "fork" changes the command prefix and supports Meteor
 It also bypasses updates, but this only modifies the version in the file, so no updates are made.
+I will give an update if I am aware of it.
 
 ## Downloads
 
-Self Build
+Build it yourself.
 
 ## Internal version
-# 7.29
+# 7.30
 
 
 ## Originator
@@ -23,13 +25,14 @@ https://github.com/whitedevil-tmp/Wurst-With-Meteor-Support Substitute Article
 
 このクライアント「fork」はコマンドのPrefixを変更し、Meteor をサポートします
 また、更新をBypassしていますがこれはファイル内のバージョンをいじっているだけなので更新はされていません
+私が気付いていれば更新をします
 
 ## Downloads
 
 自分でビルドしとけ
 
 ## 内部バージョン
-# 7.29
+# 7.30
 
 
 ## 偉大なる元作者様

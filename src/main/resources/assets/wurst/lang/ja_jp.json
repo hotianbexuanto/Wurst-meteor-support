@@ -181,5 +181,9 @@
   "button.wurst.nochatreports.signatures_status": "署名: ",
   "description.wurst.nochatreports.message_is_reportable": "このメッセージには有効な署名があるため、不正なチャット レポートに対して脆弱です。",
   "gui.wurst.generic.allcaps_blocked": "ブロックされました",
-  "gui.wurst.generic.allcaps_allowed": "許可された"
+  "gui.wurst.generic.allcaps_allowed": "許可された",
+  "description.wurst.hack.antiblind": "Prevents blindness and darkness effects.\nIncompatible with OptiFine.",
+  "description.wurst.hack.cameradistance": "Allows you to change the camera distance in 3rd person.",
+  "description.wurst.hack.newchunks": "Highlights newly generated chunks around you.",
+  "description.wurst.hack.nolevitation": "Disables the levitation effect when you get hit by a Shulker.\n\n§c§lWARNING:§r You will fall if you activate this while the levitation effect is already active!"
 }

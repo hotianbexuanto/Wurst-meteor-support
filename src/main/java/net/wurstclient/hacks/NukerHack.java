@@ -262,8 +262,8 @@ public final class NukerHack extends Hack
 			matrixStack.scale(p, p, p);
 			matrixStack.translate(-0.5, -0.5, -0.5);
 		}
-		
-		RenderSystem.setShader(GameRenderer::getPositionShader);
+
+		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
 		RenderSystem.setShaderColor(red, green, 0, 0.25F);
 		RenderUtils.drawSolidBox(box, matrixStack);

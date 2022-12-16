@@ -49,9 +49,9 @@ public final class EnterProfileNameScreen extends Screen
 		addSelectableChild(valueField);
 		setInitialFocus(valueField);
 		valueField.setTextFieldFocused(true);
-		
-		doneButton = new ButtonWidget(x1, y2, 200, 20, Text.literal("Done"),
-			b -> done());
+
+		doneButton = ButtonWidget.builder(Text.literal("Done"), b -> done())
+				.dimensions(x1, y2, 200, 20).build();
 		addDrawableChild(doneButton);
 	}
 	

@@ -14,7 +14,7 @@ I will give an update if I am aware of it.
 Build it yourself.
 
 ## Internal version
-# 7.30
+# 7.31
 
 
 ## Originator
@@ -32,7 +32,7 @@ https://github.com/whitedevil-tmp/Wurst-With-Meteor-Support Substitute Article
 自分でビルドしとけ
 
 ## 内部バージョン
-# 7.30
+# 7.31
 
 
 ## 偉大なる元作者様

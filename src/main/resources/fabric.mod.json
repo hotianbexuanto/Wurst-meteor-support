@@ -9,8 +9,9 @@
     "Alexander01998"
   ],
   "contact": {
-    "homepage": "https://www.wurstclient.net/",
-    "sources": "https://www.wurstclient.net/github/"
+    "homepage": "https://www.wurstclient.net/?utm_source=Wurst+Client&utm_medium=ModMenu&utm_content=Website",
+    "issues": "https://www.wurstclient.net/wurst7issues/",
+    "sources": "https://www.wurstclient.net/wurst7sources/"
   },
 
   "license": "GPL-3.0-or-later",

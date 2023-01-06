@@ -21,6 +21,7 @@ import net.wurstclient.SearchTags;
 import net.wurstclient.events.UpdateListener;
 import net.wurstclient.hack.Hack;
 import net.wurstclient.settings.AttackSpeedSliderSetting;
+import net.wurstclient.settings.CheckboxSetting;
 import net.wurstclient.settings.SliderSetting;
 import net.wurstclient.settings.SliderSetting.ValueDisplay;
 import net.wurstclient.settings.filterlists.EntityFilterList;
@@ -34,7 +35,10 @@ public final class TriggerBotHack extends Hack implements UpdateListener
 	
 	private final AttackSpeedSliderSetting speed =
 		new AttackSpeedSliderSetting();
-	
+
+	private final CheckboxSetting attackWhileBlocking =
+			new CheckboxSetting("Attack while blocking", "Whether to attack while blocking with a shield / using items.", false);
+
 	private final EntityFilterList entityFilters =
 		EntityFilterList.genericCombat();
 	
@@ -45,7 +49,8 @@ public final class TriggerBotHack extends Hack implements UpdateListener
 		
 		addSetting(range);
 		addSetting(speed);
-		
+		addSetting(attackWhileBlocking);
+
 		entityFilters.forEach(this::addSetting);
 	}
 	
@@ -84,7 +89,7 @@ public final class TriggerBotHack extends Hack implements UpdateListener
 			return;
 		
 		ClientPlayerEntity player = MC.player;
-		if(player.isUsingItem())
+		if(player.isUsingItem() && !attackWhileBlocking.isChecked())
 			return;
 		
 		if(MC.crosshairTarget == null

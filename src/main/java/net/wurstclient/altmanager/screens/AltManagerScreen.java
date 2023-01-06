@@ -44,6 +44,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.wurstclient.WurstClient;
 import net.wurstclient.altmanager.*;
@@ -574,6 +575,8 @@ public final class AltManagerScreen extends Screen
 	{
 		private final List<Alt> list;
 		private int selected = -1;
+		private AltManagerScreen prevScreen;
+		private long lastTime;
 		
 		public ListGui(MinecraftClient minecraft, AltManagerScreen prevScreen,
 			List<Alt> list)
@@ -616,9 +619,12 @@ public final class AltManagerScreen extends Screen
 		protected boolean selectItem(int index, int button, double mouseX,
 			double mouseY)
 		{
+			if(index == selected && Util.getMeasuringTimeMs() - lastTime < 250)
+				prevScreen.pressLogin();
+
 			if(index >= 0 && index < list.size())
 				selected = index;
-			
+			lastTime = Util.getMeasuringTimeMs();
 			return true;
 		}
 		

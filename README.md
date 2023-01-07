@@ -1,6 +1,6 @@
 # Wurst Client 1.19 With Meteor Support Prefix Change Edition
 
-[EN](README.md) | [JP](README_JP.md)
+[EN](README.md) [JP](README_JP.md)
 
 ## ⚠ It's not perfect. ⚠
 

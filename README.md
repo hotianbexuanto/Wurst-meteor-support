@@ -1,6 +1,8 @@
 # Wurst Client 1.19 With Meteor Support Prefix Change Edition
 # Please contact us if you want other prefixes
 
+[EN](README.md) | [JP](README_JP.md)
+
 ## ⚠ It's not perfect. ⚠
 
 This client "fork" changes the command prefix and supports Meteor

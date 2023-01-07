@@ -1,5 +1,9 @@
 # Wurst Client 1.19 With Meteor Support Prefix Change Edition
 
+[EN](README.md) [JP](README_JP.md)
+
+## ⚠ これは完璧ではありません ⚠
+
 このクライアント「fork」はコマンドのPrefixを変更し、Meteor をサポートします
 また、更新をBypassしていますがこれはファイル内のバージョンをいじっているだけなので更新はされていません
 私が気付いていれば更新をします

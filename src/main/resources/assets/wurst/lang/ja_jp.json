@@ -133,6 +133,7 @@
   "description.wurst.hack.rainbowui": "§cす§aべ§9て§cを§aカ§9ラ§cフ§aル§9に§cす§aる§9。",
   "description.wurst.hack.reach": "より遠くに手が届くようになる。",
   "description.wurst.hack.remoteview": "他人の視点でワールドを見ることができるようになる。\n.rv で特定のエンティティを対象として指定可能。",
+  "description.wurst.hack.restock": "インベントリから選択したアイテムを自動的に補充する。 FastPlace との連携が向上します。,
   "description.wurst.hack.safewalk": "ブロックの端からの落下を防ぐ。",
   "description.wurst.hack.scaffoldwalk": "足元に自動でブロックを設置する。",
   "description.wurst.hack.search": "特定のブロックを虹色でハイライト表示し、探しやすくする。",

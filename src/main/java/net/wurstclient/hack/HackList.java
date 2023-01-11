@@ -134,6 +134,7 @@ public final class HackList implements UpdateListener
 	public final NoPumpkinHack noPumpkinHack = new NoPumpkinHack();
 	public final NoWeatherHack noWeatherHack = new NoWeatherHack();
 	public final NoWebHack noWebHack = new NoWebHack();
+	public final NoteBotHack noteBotHack = new NoteBotHack();
 	public final NukerHack nukerHack = new NukerHack();
 	public final NukerLegitHack nukerLegitHack = new NukerLegitHack();
 	public final OpenWaterEspHack openWaterEspHack = new OpenWaterEspHack();

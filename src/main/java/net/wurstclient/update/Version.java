@@ -115,9 +115,9 @@ public final class Version implements Comparable<Version>
 	{
 		if(isInvalid())
 			return "(invalid version)";
-		
+
 		String s = major + "." + minor;
-		
+
 		if(patch > 0)
 			s += "." + patch;
 		
@@ -139,8 +139,10 @@ public final class Version implements Comparable<Version>
 	
 	public String getChangelogLink()
 	{
-		String version = major + "-" + minor + "-" + patch;
-		
+		String version = major + "-" + minor;
+		if(patch > 0)
+			version += "-" + patch;
+
 		if(isPreRelease())
 			version += "pre" + preRelease;
 		

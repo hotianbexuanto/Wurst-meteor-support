@@ -11,6 +11,8 @@ I will give an update if I am aware of it.
 ## Downloads
 
 Build it yourself.
+or
+Download from Releases
 
 ## Internal version
 # 7.31

@@ -85,8 +85,8 @@ public final class ProblematicResourcePackDetector implements UpdateListener
 			
 			return lines.stream()
 				.anyMatch(line -> line.contains("TwinklingStars"));
-			
-		}catch(IOException e)
+
+		}catch(IOException | IllegalArgumentException e)
 		{
 			return false;
 		}

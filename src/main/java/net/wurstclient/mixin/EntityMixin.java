@@ -23,16 +23,18 @@ import net.wurstclient.events.VelocityFromFluidListener.VelocityFromFluidEvent;
 public abstract class EntityMixin implements Nameable, CommandOutput
 {
 	@Redirect(at = @At(value = "INVOKE",
-		target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V",
-		opcode = Opcodes.INVOKEVIRTUAL,
-		ordinal = 0),
-		method = "updateMovementInFluid(Lnet/minecraft/registry/tag/TagKey;D)Z")
+			target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V",
+			opcode = Opcodes.INVOKEVIRTUAL,
+			ordinal = 0),
+			method = "updateMovementInFluid(Lnet/minecraft/registry/tag/TagKey;D)Z")
 	private void setVelocityFromFluid(Entity entity, Vec3d velocity)
 	{
-		VelocityFromFluidEvent event = new VelocityFromFluidEvent();
+		VelocityFromFluidEvent event =
+				new VelocityFromFluidEvent((Entity)(Object)this);
 		EventManager.fire(event);
-		
+
 		if(!event.isCancelled())
 			entity.setVelocity(velocity);
 	}
+
 }

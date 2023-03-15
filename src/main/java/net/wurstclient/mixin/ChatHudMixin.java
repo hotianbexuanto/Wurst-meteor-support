@@ -34,36 +34,44 @@ public class ChatHudMixin extends DrawableHelper
 	private List<ChatHudLine.Visible> visibleMessages;
 	@Shadow
 	private MinecraftClient client;
-	
+
 	@Inject(at = @At("HEAD"),
-		method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V",
-		cancellable = true)
+			method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V",
+			cancellable = true)
 	private void onAddMessage(Text message,
-		@Nullable MessageSignatureData signature,
-		@Nullable MessageIndicator indicator, CallbackInfo ci)
+							  @Nullable MessageSignatureData signature,
+							  @Nullable MessageIndicator indicator, CallbackInfo ci)
 	{
 		ChatInputEvent event = new ChatInputEvent(message, visibleMessages);
-		
+
 		EventManager.fire(event);
 		if(event.isCancelled())
 		{
 			ci.cancel();
 			return;
 		}
-		
+
 		message = event.getComponent();
 		indicator = WurstClient.INSTANCE.getOtfs().noChatReportsOtf
-			.modifyIndicator(message, signature, indicator);
+				.modifyIndicator(message, signature, indicator);
+		shadow$logChatMessage(message, indicator);
 		shadow$addMessage(message, signature, client.inGameHud.getTicks(),
-			indicator, false);
+				indicator, false);
 		ci.cancel();
 	}
-	
+
+	@Shadow
+	private void shadow$logChatMessage(Text message,
+									   @Nullable MessageIndicator indicator)
+	{
+
+	}
+
 	@Shadow
 	private void shadow$addMessage(Text message,
-		@Nullable MessageSignatureData signature, int ticks,
-		@Nullable MessageIndicator indicator, boolean refresh)
+								   @Nullable MessageSignatureData signature, int ticks,
+								   @Nullable MessageIndicator indicator, boolean refresh)
 	{
-		
+
 	}
 }

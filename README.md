@@ -1,10 +1,3 @@
-**This repository has been deactivated.**
-**I took a closer look at Wurst's Issues, because there was a way to fix it!**
-
-<<<<<<< HEAD
-**このリポジトリはアクティブを無効にしました**
-**理由は、既にMeteorをサポートする方法が公式のIssuesにあったからです**
-=======
 [EN](README.md) [JP](README_JP.md)
 
 ## Announce

@@ -19,7 +19,3 @@ Download from Releases
 
 ## Internal version
 # 7.31
->>>>>>> 9cd88ee9 ([BOT] Commit Apply)
-
-
-いつか会う日を楽しみにしています。

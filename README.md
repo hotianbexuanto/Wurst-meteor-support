@@ -1,9 +1,7 @@
 [EN](README.md) [JP](README_JP.md)
 
 ## Announce
-**This project will not be updated to 1.19.4**
-
-**Update will be stopped at 1.19.3**
+**This project will continue!!**
 
 ## ⚠ It's not perfect. ⚠
 
@@ -18,4 +16,9 @@ or
 Download from Releases
 
 ## Internal version
-# 7.33
+# 7.35.2  1.20.1
+
+## Originator
+https://github.com/white-devil42/Wurst7-with-meteor-support Deleted
+
+https://github.com/whitedevil-tmp/Wurst-With-Meteor-Support Substitute Article

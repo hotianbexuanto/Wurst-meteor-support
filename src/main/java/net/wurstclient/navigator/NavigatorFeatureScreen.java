@@ -21,6 +21,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -91,7 +92,7 @@ public final class NavigatorFeatureScreen extends NavigatorScreen
 		if(hasPrimaryAction)
 		{
 			primaryButton =
-					ButtonWidget.builder(Text.literal(primaryAction), b -> {
+				ButtonWidget.builder(Text.literal(primaryAction), b -> {
 					TooManyHaxHack tooManyHax =
 						WurstClient.INSTANCE.getHax().tooManyHaxHack;
 					if(tooManyHax.isEnabled() && tooManyHax.isBlocked(feature))
@@ -107,8 +108,8 @@ public final class NavigatorFeatureScreen extends NavigatorScreen
 						.setMessage(Text.literal(feature.getPrimaryAction()));
 					WurstClient.INSTANCE.getNavigator()
 						.addPreference(feature.getName());
-					}).dimensions(width / 2 - 151, height - 65, hasHelp ? 149 : 302,
-							18).build();
+				}).dimensions(width / 2 - 151, height - 65, hasHelp ? 149 : 302,
+					18).build();
 			addDrawableChild(primaryButton);
 		}
 		
@@ -318,15 +319,16 @@ public final class NavigatorFeatureScreen extends NavigatorScreen
 	}
 	
 	@Override
-	protected void onRender(MatrixStack matrixStack, int mouseX, int mouseY,
+	protected void onRender(DrawContext context, int mouseX, int mouseY,
 		float partialTicks)
 	{
+		MatrixStack matrixStack = context.getMatrices();
 		ClickGui gui = WurstClient.INSTANCE.getGui();
 		int txtColor = gui.getTxtColor();
 		
 		// title bar
-		drawCenteredText(matrixStack, client.textRenderer, feature.getName(),
-			middleX, 32, txtColor);
+		context.drawCenteredTextWithShadow(client.textRenderer,
+			feature.getName(), middleX, 32, txtColor);
 		GL11.glEnable(GL11.GL_BLEND);
 		
 		// background
@@ -431,8 +433,8 @@ public final class NavigatorFeatureScreen extends NavigatorScreen
 		}
 		
 		for(int i = 0; i < window.countChildren(); i++)
-			window.getChild(i).render(matrixStack, mouseX - bgx1,
-				mouseY - windowY, partialTicks);
+			window.getChild(i).render(context, mouseX - bgx1, mouseY - windowY,
+				partialTicks);
 		matrixStack.pop();
 		
 		// buttons
@@ -463,7 +465,7 @@ public final class NavigatorFeatureScreen extends NavigatorScreen
 			drawBox(matrixStack, x1, y1, x2, y2);
 			
 			// text
-			drawCenteredText(matrixStack, client.textRenderer,
+			context.drawCenteredTextWithShadow(client.textRenderer,
 				buttonData.buttonText, (x1 + x2) / 2,
 				y1 + (buttonData.height - 10) / 2 + 1,
 				buttonData.isLocked() ? 0xaaaaaa : buttonData.textColor);
@@ -471,11 +473,12 @@ public final class NavigatorFeatureScreen extends NavigatorScreen
 		}
 		
 		// text
+		RenderSystem.setShaderColor(1, 1, 1, 1);
 		int textY = bgy1 + scroll + 2;
 		for(String line : text.split("\n"))
 		{
-			client.textRenderer.draw(matrixStack, line, bgx1 + 2, textY,
-				txtColor);
+			context.drawText(client.textRenderer, line, bgx1 + 2, textY,
+				txtColor, false);
 			textY += client.textRenderer.fontHeight;
 		}
 		GL11.glEnable(GL11.GL_BLEND);
@@ -517,15 +520,15 @@ public final class NavigatorFeatureScreen extends NavigatorScreen
 			
 			// text
 			String buttonText = button.getMessage().getString();
-			client.textRenderer.draw(matrixStack, buttonText,
+			context.drawText(client.textRenderer, buttonText,
 				(x1 + x2 - client.textRenderer.getWidth(buttonText)) / 2,
-				y1 + 5, txtColor);
+				y1 + 5, txtColor, false);
 			GL11.glEnable(GL11.GL_BLEND);
 		}
 		
 		// popups & tooltip
-		gui.renderPopups(matrixStack, mouseX, mouseY);
-		gui.renderTooltip(matrixStack, mouseX, mouseY);
+		gui.renderPopups(context, mouseX, mouseY);
+		gui.renderTooltip(context, mouseX, mouseY);
 		
 		// GL resets
 		GL11.glEnable(GL11.GL_CULL_FACE);

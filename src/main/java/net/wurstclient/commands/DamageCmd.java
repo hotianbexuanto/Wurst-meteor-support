@@ -20,8 +20,8 @@ public final class DamageCmd extends Command
 	public DamageCmd()
 	{
 		super("damage", "Applies the given amount of damage.",
-			"&damage <amount>", "Note: The amount is in half-hearts.",
-			"Example: &damage 7 (applies 3.5 hearts)",
+			".damage <amount>", "Note: The amount is in half-hearts.",
+			"Example: .damage 7 (applies 3.5 hearts)",
 			"To apply more damage, run the command multiple times.");
 	}
 	

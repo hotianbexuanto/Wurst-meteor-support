@@ -17,14 +17,14 @@ public final class GetPosCmd extends Command
 {
 	public GetPosCmd()
 	{
-		super("getpos", "Shows your current position.", "&getpos",
-			"Copy to clipboard: &getpos copy");
+		super("getpos", "Shows your current position.", ".getpos",
+			"Copy to clipboard: .getpos copy");
 	}
 	
 	@Override
 	public void call(String[] args) throws CmdException
 	{
-		BlockPos pos = new BlockPos(MC.player.getPos());
+		BlockPos pos = BlockPos.ofFloored(MC.player.getPos());
 		String posString = pos.getX() + " " + pos.getY() + " " + pos.getZ();
 		
 		switch(String.join(" ", args).toLowerCase())

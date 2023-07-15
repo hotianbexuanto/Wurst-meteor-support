@@ -30,23 +30,24 @@ public final class FastBreakHack extends Hack
 	implements UpdateListener, BlockBreakingProgressListener
 {
 	private final SliderSetting activationChance = new SliderSetting(
-			"Activation chance",
-			"Only FastBreaks some of the blocks you break with the given chance,"
-					+ " which makes it harder for anti-cheat plugins to detect.\n\n"
-					+ "This setting does nothing if Legit mode is enabled.",
-			1, 0, 1, 0.01, ValueDisplay.PERCENTAGE);
+		"Activation chance",
+		"Only FastBreaks some of the blocks you break with the given chance,"
+			+ " which makes it harder for anti-cheat plugins to detect.\n\n"
+			+ "This setting does nothing if Legit mode is enabled.",
+		1, 0, 1, 0.01, ValueDisplay.PERCENTAGE);
+	
 	private final CheckboxSetting legitMode = new CheckboxSetting("Legit mode",
-			"Only removes the delay between breaking blocks, without speeding up"
-					+ " the breaking process itself.\n\n"
-					+ "This is much slower, but great at bypassing anti-cheat plugins."
-					+ " Use this if regular FastBreak is not working and the Activation"
-					+ " chance slider doesn't help.",
-			false);
-
+		"Only removes the delay between breaking blocks, without speeding up"
+			+ " the breaking process itself.\n\n"
+			+ "This is much slower, but great at bypassing anti-cheat plugins."
+			+ " Use this if regular FastBreak is not working and the Activation"
+			+ " chance slider doesn't help.",
+		false);
+	
 	private final Random random = new Random();
 	private BlockPos lastBlockPos;
 	private boolean fastBreakBlock;
-
+	
 	public FastBreakHack()
 	{
 		super("FastBreak");
@@ -101,10 +102,10 @@ public final class FastBreakHack extends Hack
 			lastBlockPos = blockPos;
 			fastBreakBlock = random.nextDouble() <= activationChance.getValue();
 		}
-
+		
 		if(!fastBreakBlock)
 			return;
-
+		
 		Action action = PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK;
 		Direction direction = event.getDirection();
 		im.sendPlayerActionC2SPacket(action, blockPos, direction);

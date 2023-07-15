@@ -34,6 +34,7 @@ public final class ChangelogOtf extends OtherFeature
 	public void doPrimaryAction()
 	{
 		String link = new Version(WurstClient.VERSION).getChangelogLink()
-				+ "?utm_source=Wurst+Client&utm_medium=ChangelogOtf&utm_content=View+Changelog";
+			+ "?utm_source=Wurst+Client&utm_medium=ChangelogOtf&utm_content=View+Changelog";
+		Util.getOperatingSystem().open(link);
 	}
 }

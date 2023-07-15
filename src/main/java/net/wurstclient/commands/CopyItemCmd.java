@@ -23,7 +23,7 @@ public final class CopyItemCmd extends Command
 		super("copyitem",
 			"Allows you to copy items that other people are holding\n"
 				+ "or wearing. Requires creative mode.",
-			"&copyitem <player> <slot>",
+			".copyitem <player> <slot>",
 			"Valid slots: hand, head, chest, legs, feet");
 	}
 	

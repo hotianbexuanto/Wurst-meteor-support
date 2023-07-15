@@ -14,8 +14,8 @@ public final class BindCmd extends Command
 {
 	public BindCmd()
 	{
-		super("bind", "Shortcut for '&binds add'.", "&bind <key> <hacks>",
-			"&bind <key> <commands>",
+		super("bind", "Shortcut for '.binds add'.", ".bind <key> <hacks>",
+			".bind <key> <commands>",
 			"Multiple hacks/commands must be separated by ';'.",
 			"Use .binds for more options.");
 	}

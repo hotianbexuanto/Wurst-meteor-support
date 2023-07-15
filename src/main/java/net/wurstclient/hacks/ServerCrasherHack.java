@@ -41,7 +41,7 @@ public final class ServerCrasherHack extends Hack
 			setEnabled(false);
 			return;
 		}
-
+		
 		Item item = Registries.ITEM.get(new Identifier("creeper_spawn_egg"));
 		ItemStack stack = new ItemStack(item, 1);
 		stack.setNbt(createNBT());

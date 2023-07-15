@@ -27,8 +27,8 @@ public final class SetColorCmd extends Command
 		super("setcolor",
 			"Changes a color setting of a feature. Allows you\n"
 				+ "to set RGB values through keybinds.",
-			"&setcolor <feature> <setting> <RGB>",
-			"Example: &setcolor ClickGUI AC #FF0000");
+			".setcolor <feature> <setting> <RGB>",
+			"Example: .setcolor ClickGUI AC #FF0000");
 	}
 	
 	@Override

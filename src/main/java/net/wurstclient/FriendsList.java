@@ -72,12 +72,12 @@ public class FriendsList
 	{
 		return friends.contains(name);
 	}
-
+	
 	public boolean isFriend(Entity entity)
 	{
 		return entity != null && contains(entity.getEntityName());
 	}
-
+	
 	public ArrayList<String> toList()
 	{
 		return new ArrayList<>(friends);

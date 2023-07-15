@@ -24,7 +24,7 @@ public final class HelpCmd extends Command
 	public HelpCmd()
 	{
 		super("help", "Shows help for a command or a list of commands.",
-			"&help <command>", "List commands: &help [<page>]");
+			".help <command>", "List commands: .help [<page>]");
 	}
 	
 	@Override

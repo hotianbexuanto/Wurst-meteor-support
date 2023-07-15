@@ -60,6 +60,7 @@ public final class ProtectHack extends Hack
 			FilterPetsSetting.genericCombat(false),
 			FilterTradersSetting.genericCombat(false),
 			FilterGolemsSetting.genericCombat(false),
+			FilterAllaysSetting.genericCombat(false),
 			FilterInvisibleSetting.genericCombat(false),
 			FilterNamedSetting.genericCombat(false),
 			FilterArmorStandsSetting.genericCombat(false),
@@ -177,8 +178,8 @@ public final class ProtectHack extends Hack
 		
 		// set enemy
 		Stream<Entity> stream = EntityUtils.getAttackableEntities()
-				.filter(e -> MC.player.squaredDistanceTo(e) <= 36)
-				.filter(e -> e != friend);
+			.filter(e -> MC.player.squaredDistanceTo(e) <= 36)
+			.filter(e -> e != friend);
 		
 		stream = entityFilters.applyTo(stream);
 		
@@ -296,7 +297,7 @@ public final class ProtectHack extends Hack
 		
 		public EntityPathFinder(Entity entity, double distance)
 		{
-			super(new BlockPos(entity.getPos()));
+			super(BlockPos.ofFloored(entity.getPos()));
 			this.entity = entity;
 			distanceSq = distance * distance;
 			setThinkTime(1);

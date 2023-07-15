@@ -63,10 +63,10 @@ public abstract class TitleScreenMixin extends Screen
 		
 		// add AltManager button
 		addDrawableChild(altsButton = ButtonWidget
-				.builder(Text.literal("Alt Manager"),
-						b -> client.setScreen(new AltManagerScreen(this,
-								WurstClient.INSTANCE.getAltManager())))
-				.dimensions(width / 2 + 2, realmsButton.getY(), 98, 20).build());
+			.builder(Text.literal("Alt Manager"),
+				b -> client.setScreen(new AltManagerScreen(this,
+					WurstClient.INSTANCE.getAltManager())))
+			.dimensions(width / 2 + 2, realmsButton.getY(), 98, 20).build());
 	}
 	
 	@Inject(at = {@At("RETURN")}, method = {"tick()V"})

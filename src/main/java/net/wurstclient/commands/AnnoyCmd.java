@@ -32,7 +32,7 @@ public final class AnnoyCmd extends Command implements ChatInputListener
 	public AnnoyCmd()
 	{
 		super("annoy", "Annoys a player by repeating everything they say.",
-			"&annoy <player>", "Turn off: .annoy");
+			".annoy <player>", "Turn off: .annoy");
 		addSetting(rcMode);
 	}
 	
@@ -49,7 +49,7 @@ public final class AnnoyCmd extends Command implements ChatInputListener
 		}else
 		{
 			if(!enabled)
-				throw new CmdError("&annoy is already turned off.");
+				throw new CmdError(".annoy is already turned off.");
 			
 			disable();
 		}
@@ -61,7 +61,7 @@ public final class AnnoyCmd extends Command implements ChatInputListener
 			throw new CmdSyntaxError();
 		
 		target = String.join(" ", args);
-		ChatUtils.message("Now annoying " + target + "&");
+		ChatUtils.message("Now annoying " + target + ".");
 		
 		ClientPlayerEntity player = MC.player;
 		if(player != null && target.equals(player.getName().getString()))

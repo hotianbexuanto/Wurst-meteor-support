@@ -22,8 +22,8 @@ public final class ViewNbtCmd extends Command
 {
 	public ViewNbtCmd()
 	{
-		super("viewnbt", "Shows you the NBT data of an item.", "&viewnbt",
-			"Copy to clipboard: &viewnbt copy");
+		super("viewnbt", "Shows you the NBT data of an item.", ".viewnbt",
+			"Copy to clipboard: .viewnbt copy");
 	}
 	
 	@Override

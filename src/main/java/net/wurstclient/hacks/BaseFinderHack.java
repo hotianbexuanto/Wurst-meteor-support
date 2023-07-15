@@ -208,7 +208,7 @@ public final class BaseFinderHack extends Hack
 			if(vertexBuffer != null)
 				vertexBuffer.close();
 			
-			vertexBuffer = new VertexBuffer();
+			vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 			
 			Tessellator tessellator = RenderSystem.renderThreadTesselator();
 			BufferBuilder bufferBuilder = tessellator.getBuffer();
@@ -239,7 +239,7 @@ public final class BaseFinderHack extends Hack
 		int endY = startY - stepSize;
 		
 		BlockPos playerPos =
-			new BlockPos(MC.player.getX(), 0, MC.player.getZ());
+			BlockPos.ofFloored(MC.player.getX(), 0, MC.player.getZ());
 		
 		// search matching blocks
 		loop: for(int y = startY; y > endY; y--)

@@ -57,7 +57,7 @@ public final class KaboomHack extends Hack implements UpdateListener
 		
 		// do explosion particles
 		new Explosion(MC.world, MC.player, MC.player.getX(), MC.player.getY(),
-				MC.player.getZ(), 6F, false, Explosion.DestructionType.KEEP)
+			MC.player.getZ(), 6F, false, Explosion.DestructionType.KEEP)
 				.affectWorld(true);
 		
 		// get valid blocks
@@ -77,7 +77,7 @@ public final class KaboomHack extends Hack implements UpdateListener
 		double rangeSq = Math.pow(range + 0.5, 2);
 		int rangeI = (int)Math.ceil(range);
 		
-		BlockPos center = new BlockPos(RotationUtils.getEyesPos());
+		BlockPos center = BlockPos.ofFloored(RotationUtils.getEyesPos());
 		BlockPos min = center.add(-rangeI, -rangeI, -rangeI);
 		BlockPos max = center.add(rangeI, rangeI, rangeI);
 		

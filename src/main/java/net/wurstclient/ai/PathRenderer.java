@@ -20,11 +20,10 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 
-
 public final class PathRenderer
 {
 	public static void renderArrow(MatrixStack matrixStack, BlockPos start,
-		BlockPos end)
+		BlockPos end, int regionX, int regionZ)
 	{
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
@@ -32,13 +31,13 @@ public final class PathRenderer
 		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES,
 			VertexFormats.POSITION);
 		
-		int startX = start.getX();
+		int startX = start.getX() - regionX;
 		int startY = start.getY();
-		int startZ = start.getZ();
+		int startZ = start.getZ() - regionZ;
 		
-		int endX = end.getX();
+		int endX = end.getX() - regionX;
 		int endY = end.getY();
-		int endZ = end.getZ();
+		int endZ = end.getZ() - regionZ;
 		
 		matrixStack.push();
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
@@ -99,17 +98,19 @@ public final class PathRenderer
 		tessellator.draw();
 	}
 	
-	public static void renderNode(MatrixStack matrixStack, BlockPos pos)
+	public static void renderNode(MatrixStack matrixStack, BlockPos pos,
+		int regionX, int regionZ)
 	{
 		matrixStack.push();
 		
-		matrixStack.translate(pos.getX(), pos.getY(), pos.getZ());
+		matrixStack.translate(pos.getX() - regionX, pos.getY(),
+			pos.getZ() - regionZ);
 		matrixStack.scale(0.1F, 0.1F, 0.1F);
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
-
+		
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES,
 			VertexFormats.POSITION);

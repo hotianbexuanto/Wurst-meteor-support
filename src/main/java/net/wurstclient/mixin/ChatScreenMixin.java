@@ -27,7 +27,6 @@ public class ChatScreenMixin extends Screen
 {
 	@Shadow
 	protected TextFieldWidget chatField;
-
 	
 	private ChatScreenMixin(WurstClient wurst, Text text)
 	{
@@ -68,7 +67,7 @@ public class ChatScreenMixin extends Screen
 		
 		if(newMessage.startsWith("/"))
 			client.player.networkHandler
-					.sendChatCommand(newMessage.substring(1));
+				.sendChatCommand(newMessage.substring(1));
 		else
 			client.player.networkHandler.sendChatMessage(newMessage);
 		

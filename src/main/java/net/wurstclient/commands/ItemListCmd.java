@@ -33,11 +33,11 @@ public final class ItemListCmd extends Command
 		super("itemlist",
 			"Changes a ItemList setting of a feature. Allows you\n"
 				+ "to change these settings through keybinds.",
-			"&itemlist <feature> <setting> add <item>",
-			"&itemlist <feature> <setting> remove <item>",
-			"&itemlist <feature> <setting> list [<page>]",
-			"&itemlist <feature> <setting> reset",
-			"Example: &itemlist AutoDrop Items add dirt");
+			".itemlist <feature> <setting> add <item>",
+			".itemlist <feature> <setting> remove <item>",
+			".itemlist <feature> <setting> list [<page>]",
+			".itemlist <feature> <setting> reset",
+			"Example: .itemlist AutoDrop Items add dirt");
 	}
 	
 	@Override

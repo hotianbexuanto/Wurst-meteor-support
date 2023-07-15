@@ -12,10 +12,10 @@ import java.util.function.Consumer;
 import org.lwjgl.glfw.GLFW;
 
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 public final class EnterProfileNameScreen extends Screen
@@ -47,11 +47,11 @@ public final class EnterProfileNameScreen extends Screen
 		valueField.setSelectionStart(0);
 		
 		addSelectableChild(valueField);
-		setInitialFocus(valueField);
-		valueField.setTextFieldFocused(true);
-
+		setFocused(valueField);
+		valueField.setFocused(true);
+		
 		doneButton = ButtonWidget.builder(Text.literal("Done"), b -> done())
-				.dimensions(x1, y2, 200, 20).build();
+			.dimensions(x1, y2, 200, 20).build();
 		addDrawableChild(doneButton);
 	}
 	
@@ -88,15 +88,15 @@ public final class EnterProfileNameScreen extends Screen
 	}
 	
 	@Override
-	public void render(MatrixStack matrixStack, int mouseX, int mouseY,
+	public void render(DrawContext context, int mouseX, int mouseY,
 		float partialTicks)
 	{
-		renderBackground(matrixStack);
-		drawCenteredText(matrixStack, client.textRenderer,
+		renderBackground(context);
+		context.drawCenteredTextWithShadow(client.textRenderer,
 			"Name your new profile", width / 2, 20, 0xFFFFFF);
 		
-		valueField.render(matrixStack, mouseX, mouseY, partialTicks);
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
+		valueField.render(context, mouseX, mouseY, partialTicks);
+		super.render(context, mouseX, mouseY, partialTicks);
 	}
 	
 	@Override

@@ -19,7 +19,7 @@ public final class ExcavateCmd extends Command
 	{
 		super("excavate",
 			"Automatically destroys all blocks in the selected area.",
-			"&excavate <x1> <y1> <z1> <x2> <y2> <z2>");
+			".excavate <x1> <y1> <z1> <x2> <y2> <z2>");
 	}
 	
 	@Override
@@ -35,7 +35,7 @@ public final class ExcavateCmd extends Command
 	
 	private BlockPos argsToXyzPos(String... xyz) throws CmdSyntaxError
 	{
-		BlockPos playerPos = new BlockPos(MC.player.getPos());
+		BlockPos playerPos = BlockPos.ofFloored(MC.player.getPos());
 		int[] player = {playerPos.getX(), playerPos.getY(), playerPos.getZ()};
 		int[] pos = new int[3];
 		

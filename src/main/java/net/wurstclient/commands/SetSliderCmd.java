@@ -26,8 +26,8 @@ public final class SetSliderCmd extends Command
 		super("setslider",
 			"Changes a slider setting of a feature. Allows you to\n"
 				+ "move sliders through keybinds.",
-			"&setslider <feature> <setting> <value>",
-			"&setslider <feature> <setting> (more|less)");
+			".setslider <feature> <setting> <value>",
+			".setslider <feature> <setting> (more|less)");
 	}
 	
 	@Override

@@ -28,13 +28,13 @@ public abstract class KeyBindingMixin implements IKeyBinding
 		int code = boundKey.getCode();
 		return InputUtil.isKeyPressed(handle, code);
 	}
-
+	
 	@Override
 	public void resetPressedState()
 	{
 		setPressed(isActallyPressed());
 	}
-
+	
 	@Shadow
 	public abstract void setPressed(boolean pressed);
 }

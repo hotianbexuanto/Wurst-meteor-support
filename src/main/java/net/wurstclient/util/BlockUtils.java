@@ -136,13 +136,13 @@ public enum BlockUtils
 				
 		return blocks;
 	}
-
+	
 	public static ArrayList<BlockPos> getAllInBox(BlockPos center, int range)
 	{
 		return getAllInBox(center.add(-range, -range, -range),
-				center.add(range, range, range));
+			center.add(range, range, range));
 	}
-
+	
 	public static Stream<BlockPos> getAllInBoxStream(BlockPos from, BlockPos to)
 	{
 		BlockPos min = new BlockPos(Math.min(from.getX(), to.getX()),
@@ -181,10 +181,10 @@ public enum BlockUtils
 		
 		return stream.limit(limit);
 	}
-
+	
 	public static Stream<BlockPos> getAllInBoxStream(BlockPos center, int range)
 	{
 		return getAllInBoxStream(center.add(-range, -range, -range),
-				center.add(range, range, range));
+			center.add(range, range, range));
 	}
 }

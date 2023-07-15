@@ -15,7 +15,7 @@ public final class ClearCmd extends Command
 {
 	public ClearCmd()
 	{
-		super("clear", "Clears the chat completely.", "&clear");
+		super("clear", "Clears the chat completely.", ".clear");
 	}
 	
 	@Override

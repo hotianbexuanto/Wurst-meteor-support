@@ -34,7 +34,7 @@ public final class GiveCmd extends Command
 		super("give",
 			"Gives you an item with custom NBT data.\n"
 				+ "Requires creative mode.",
-			"&give <item> [<amount>] [<nbt>]", "&give <id> [<amount>] [<nbt>]");
+			".give <item> [<amount>] [<nbt>]", ".give <id> [<amount>] [<nbt>]");
 	}
 	
 	@Override

@@ -24,7 +24,7 @@ import net.wurstclient.WurstClient;
 import net.wurstclient.hacks.AutoStealHack;
 
 @Mixin(GenericContainerScreen.class)
-public abstract class ContainerScreen54Mixin
+public abstract class GenericContainerScreenMixin
 	extends HandledScreen<GenericContainerScreenHandler>
 	implements ScreenHandlerProvider<GenericContainerScreenHandler>
 {
@@ -36,7 +36,7 @@ public abstract class ContainerScreen54Mixin
 		WurstClient.INSTANCE.getHax().autoStealHack;
 	private int mode;
 	
-	public ContainerScreen54Mixin(WurstClient wurst,
+	public GenericContainerScreenMixin(WurstClient wurst,
 		GenericContainerScreenHandler container,
 		PlayerInventory playerInventory, Text name)
 	{
@@ -54,12 +54,12 @@ public abstract class ContainerScreen54Mixin
 		if(autoSteal.areButtonsVisible())
 		{
 			addDrawableChild(ButtonWidget
-					.builder(Text.literal("Steal"), b -> steal())
-					.dimensions(x + backgroundWidth - 108, y + 4, 50, 12).build());
-
+				.builder(Text.literal("Steal"), b -> steal())
+				.dimensions(x + backgroundWidth - 108, y + 4, 50, 12).build());
+			
 			addDrawableChild(ButtonWidget
-					.builder(Text.literal("Store"), b -> store())
-					.dimensions(x + backgroundWidth - 56, y + 4, 50, 12).build());
+				.builder(Text.literal("Store"), b -> store())
+				.dimensions(x + backgroundWidth - 56, y + 4, 50, 12).build());
 		}
 		
 		if(autoSteal.isEnabled())

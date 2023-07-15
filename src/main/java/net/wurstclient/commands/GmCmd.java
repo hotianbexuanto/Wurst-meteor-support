@@ -15,7 +15,7 @@ public final class GmCmd extends Command
 {
 	public GmCmd()
 	{
-		super("gm", "Shortcut for /gamemode.", "&gm <gamemode>");
+		super("gm", "Shortcut for /gamemode.", ".gm <gamemode>");
 	}
 	
 	@Override

@@ -31,7 +31,7 @@ public final class LsdHack extends Hack
 			setEnabled(false);
 			return;
 		}
-
+		
 		if(MC.gameRenderer.getPostProcessor() != null)
 			MC.gameRenderer.disablePostProcessor();
 		

@@ -36,10 +36,10 @@ public final class BlockListCmd extends Command
 		super("blocklist",
 			"Changes a BlockList setting of a feature. Allows you\n"
 				+ "to change these settings through keybinds.",
-			"&blocklist <feature> <setting> add <block>",
-			"&blocklist <feature> <setting> remove <block>",
-			"&blocklist <feature> <setting> list [<page>]",
-			"&blocklist <feature> <setting> reset",
+			".blocklist <feature> <setting> add <block>",
+			".blocklist <feature> <setting> remove <block>",
+			".blocklist <feature> <setting> list [<page>]",
+			".blocklist <feature> <setting> reset",
 			"Example: .blocklist Nuker MultiID_List add gravel");
 	}
 	

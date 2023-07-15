@@ -29,47 +29,47 @@ public class SliderSetting extends Setting implements SliderLock
 	private final double maximum;
 	private final double increment;
 	private final ValueDisplay display;
-
+	
 	private SliderLock lock;
 	private boolean disabled;
 	private double usableMin;
 	private double usableMax;
-
+	
 	public SliderSetting(String name, String description, double value,
 		double minimum, double maximum, double increment, ValueDisplay display)
 	{
 		super(name, description);
 		this.value = value;
 		defaultValue = value;
-
+		
 		this.minimum = minimum;
 		this.maximum = maximum;
-
+		
 		usableMin = minimum;
 		usableMax = maximum;
-
+		
 		this.increment = increment;
 		this.display = display;
 	}
-
+	
 	public SliderSetting(String name, double value, double minimum,
 		double maximum, double increment, ValueDisplay display)
 	{
 		this(name, "", value, minimum, maximum, increment, display);
 	}
-
+	
 	@Override
 	public final double getValue()
 	{
 		double value = isLocked() ? lock.getValue() : this.value;
 		return MathUtils.clamp(value, usableMin, usableMax);
 	}
-
+	
 	public final double getValueSq()
 	{
 		return MathHelper.square(getValue());
 	}
-
+	
 	public final float getValueF()
 	{
 		return (float)getValue();
@@ -79,12 +79,12 @@ public class SliderSetting extends Setting implements SliderLock
 	{
 		return (int)getValue();
 	}
-
+	
 	public final int getValueCeil()
 	{
 		return MathHelper.ceil(getValue());
 	}
-
+	
 	public final double getDefaultValue()
 	{
 		return defaultValue;

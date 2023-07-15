@@ -19,9 +19,9 @@ public final class DropCmd extends Command implements UpdateListener
 	
 	public DropCmd()
 	{
-		super("drop", "Drops all your items on the ground.", "&drop",
-			"Slow mode: &drop slow",
-			"If regular &drop kicks you from the server,",
+		super("drop", "Drops all your items on the ground.", ".drop",
+			"Slow mode: .drop slow",
+			"If regular .drop kicks you from the server,",
 			"use slow mode instead.");
 	}
 	

@@ -14,8 +14,8 @@ public final class UnbindCmd extends Command
 {
 	public UnbindCmd()
 	{
-		super("unbind", "Shortcut for '&binds remove'.", "&unbind <key>",
-			"Use &binds for more options.");
+		super("unbind", "Shortcut for '.binds remove'.", ".unbind <key>",
+			"Use .binds for more options.");
 	}
 	
 	@Override

@@ -21,7 +21,7 @@ public final class RepairCmd extends Command
 	public RepairCmd()
 	{
 		super("repair", "Repairs the held item. Requires creative mode.",
-			"&repair");
+			".repair");
 	}
 	
 	@Override

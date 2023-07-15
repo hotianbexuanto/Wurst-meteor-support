@@ -12,10 +12,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.client.font.MultilineText;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
@@ -33,9 +32,9 @@ public final class ForcedChatReportsScreen extends Screen
 			"multiplayer.disconnect.unsigned_chat");
 	
 	private static final List<String> LITERAL_DISCONNECT_REASONS =
-			Arrays.asList("An internal error occurred in your connection.",
-					"A secure profile is required to join this server.",
-					"Secure profile expired.", "Secure profile invalid.");
+		Arrays.asList("An internal error occurred in your connection.",
+			"A secure profile is required to join this server.",
+			"Secure profile expired.", "Secure profile invalid.");
 	
 	private final Screen prevScreen;
 	private final Text reason;
@@ -79,20 +78,20 @@ public final class ForcedChatReportsScreen extends Screen
 		int signaturesY = Math.min(belowReasonY, height - 68);
 		int reconnectY = signaturesY + 24;
 		int backButtonY = reconnectY + 24;
-
+		
 		addDrawableChild(signatureButton = ButtonWidget
-				.builder(Text.literal(sigButtonMsg.get()), b -> toggleSignatures())
-				.dimensions(buttonX, signaturesY, 200, 20).build());
-
+			.builder(Text.literal(sigButtonMsg.get()), b -> toggleSignatures())
+			.dimensions(buttonX, signaturesY, 200, 20).build());
+		
 		addDrawableChild(ButtonWidget
-				.builder(Text.literal("Reconnect"),
-						b -> LastServerRememberer.reconnect(prevScreen))
-				.dimensions(buttonX, reconnectY, 200, 20).build());
-
+			.builder(Text.literal("Reconnect"),
+				b -> LastServerRememberer.reconnect(prevScreen))
+			.dimensions(buttonX, reconnectY, 200, 20).build());
+		
 		addDrawableChild(ButtonWidget
-				.builder(Text.translatable("gui.toMenu"),
-						b -> client.setScreen(prevScreen))
-				.dimensions(buttonX, backButtonY, 200, 20).build());
+			.builder(Text.translatable("gui.toMenu"),
+				b -> client.setScreen(prevScreen))
+			.dimensions(buttonX, backButtonY, 200, 20).build());
 	}
 	
 	private void toggleSignatures()
@@ -102,20 +101,19 @@ public final class ForcedChatReportsScreen extends Screen
 	}
 	
 	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY,
-		float delta)
+	public void render(DrawContext context, int mouseX, int mouseY, float delta)
 	{
-		renderBackground(matrices);
+		renderBackground(context);
 		
 		int centerX = width / 2;
 		int reasonY = (height - 68) / 2 - reasonHeight / 2;
 		int titleY = reasonY - textRenderer.fontHeight * 2;
 		
-		DrawableHelper.drawCenteredText(matrices, textRenderer, title, centerX,
-			titleY, 0xAAAAAA);
-		reasonFormatted.drawCenterWithShadow(matrices, centerX, reasonY);
+		context.drawCenteredTextWithShadow(textRenderer, title, centerX, titleY,
+			0xAAAAAA);
+		reasonFormatted.drawCenterWithShadow(context, centerX, reasonY);
 		
-		super.render(matrices, mouseX, mouseY, delta);
+		super.render(context, mouseX, mouseY, delta);
 	}
 	
 	@Override

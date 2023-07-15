@@ -152,34 +152,34 @@ public abstract class MinecraftClientMixin
 	{
 		if(WurstClient.INSTANCE.getOtfs().noChatReportsOtf.isActive())
 			cir.setReturnValue(ProfileKeys.MISSING);
-
+		
 		if(wurstProfileKeys == null)
 			return;
 		
 		cir.setReturnValue(wurstProfileKeys);
 	}
-
+	
 	@Inject(at = @At("HEAD"),
-			method = "isTelemetryEnabledByApi()Z",
-			cancellable = true)
+		method = "isTelemetryEnabledByApi()Z",
+		cancellable = true)
 	private void onIsTelemetryEnabledByApi(CallbackInfoReturnable<Boolean> cir)
 	{
 		NoTelemetryOtf noTelemetryOtf =
-				WurstClient.INSTANCE.getOtfs().noTelemetryOtf;
+			WurstClient.INSTANCE.getOtfs().noTelemetryOtf;
 		cir.setReturnValue(!noTelemetryOtf.isEnabled());
 	}
-
+	
 	@Inject(at = @At("HEAD"),
-			method = "isOptionalTelemetryEnabledByApi()Z",
-			cancellable = true)
+		method = "isOptionalTelemetryEnabledByApi()Z",
+		cancellable = true)
 	private void onIsOptionalTelemetryEnabledByApi(
-			CallbackInfoReturnable<Boolean> cir)
+		CallbackInfoReturnable<Boolean> cir)
 	{
 		NoTelemetryOtf noTelemetryOtf =
-				WurstClient.INSTANCE.getOtfs().noTelemetryOtf;
+			WurstClient.INSTANCE.getOtfs().noTelemetryOtf;
 		cir.setReturnValue(!noTelemetryOtf.isEnabled());
 	}
-
+	
 	@Override
 	public void rightClick()
 	{
@@ -231,7 +231,7 @@ public abstract class MinecraftClientMixin
 			wurst_createUserApiService(session.getAccessToken());
 		UUID uuid = wurstSession.getProfile().getId();
 		wurstProfileKeys =
-				new ProfileKeysImpl(userApiService, uuid, runDirectory.toPath());
+			new ProfileKeysImpl(userApiService, uuid, runDirectory.toPath());
 	}
 	
 	private UserApiService wurst_createUserApiService(String accessToken)

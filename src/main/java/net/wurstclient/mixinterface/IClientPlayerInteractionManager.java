@@ -25,14 +25,14 @@ public interface IClientPlayerInteractionManager
 	public void windowClick_QUICK_MOVE(int slot);
 	
 	public void windowClick_THROW(int slot);
-
+	
 	public void windowClick_SWAP(int from, int to);
-
+	
 	public void rightClickItem();
-
+	
 	public void rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec,
-								Hand hand);
-
+		Hand hand);
+	
 	public void rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec);
 	
 	public void sendPlayerActionC2SPacket(PlayerActionC2SPacket.Action action,

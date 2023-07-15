@@ -22,7 +22,7 @@ public final class EnchantCmd extends Command
 	public EnchantCmd()
 	{
 		super("enchant", "Enchants an item with everything,\n"
-			+ "except for silk touch and curses.", "&enchant");
+			+ "except for silk touch and curses.", ".enchant");
 	}
 	
 	@Override

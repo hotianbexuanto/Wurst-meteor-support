@@ -25,8 +25,8 @@ public final class SetModeCmd extends Command
 		super("setmode",
 			"Changes a mode setting of a feature. Allows you to\n"
 				+ "switch modes through keybinds.",
-			"&setmode <feature> <setting> <mode>",
-			"&setmode <feature> <setting> (prev|next)");
+			".setmode <feature> <setting> <mode>",
+			".setmode <feature> <setting> (prev|next)");
 	}
 	
 	@Override

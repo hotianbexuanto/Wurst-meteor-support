@@ -34,11 +34,11 @@ public final class TooManyHaxCmd extends Command
 		super("toomanyhax",
 			"Allows to manage which hacks should be blocked\n"
 				+ "when TooManyHax is enabled.",
-			"&toomanyhax block <feature>", "&toomanyhax unblock <feature>",
-			"&toomanyhax block-all", "&toomanyhax unblock-all",
-			"&toomanyhax list [<page>]", "&toomanyhax load-profile <file>",
-			"&toomanyhax save-profile <file>",
-			"&toomanyhax list-profiles [<page>]",
+			".toomanyhax block <feature>", ".toomanyhax unblock <feature>",
+			".toomanyhax block-all", ".toomanyhax unblock-all",
+			".toomanyhax list [<page>]", ".toomanyhax load-profile <file>",
+			".toomanyhax save-profile <file>",
+			".toomanyhax list-profiles [<page>]",
 			"Profiles are saved in '.minecraft/wurst/toomanyhax'.");
 	}
 	

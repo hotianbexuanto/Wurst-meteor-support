@@ -21,7 +21,7 @@ public final class AuthorCmd extends Command
 	public AuthorCmd()
 	{
 		super("author", "Changes the author of a written book.\n"
-			+ "Requires creative mode.", "&author <author>");
+			+ "Requires creative mode.", ".author <author>");
 	}
 	
 	@Override

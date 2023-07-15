@@ -32,6 +32,7 @@ import net.wurstclient.settings.ColorSetting;
 import net.wurstclient.settings.SliderSetting;
 import net.wurstclient.settings.SliderSetting.ValueDisplay;
 import net.wurstclient.util.BlockUtils;
+import net.wurstclient.util.ChunkUtils;
 import net.wurstclient.util.RenderUtils;
 
 public final class NewChunksHack extends Hack
@@ -138,10 +139,9 @@ public final class NewChunksHack extends Hack
 	public void onUpdate()
 	{
 		renderer.closeBuffers();
-
+		
 		Show showSetting = show.getSelected();
 		int dd = drawDistance.getValueI();
-		
 		NewChunksChunkRenderer chunkRenderer =
 			style.getSelected().getChunkRenderer();
 		
@@ -150,10 +150,8 @@ public final class NewChunksHack extends Hack
 			renderer.updateBuffer(0, chunkRenderer.buildBuffer(newChunks, dd));
 			
 			if(showReasons.isChecked())
-			{
 				renderer.updateBuffer(1,
-				reasonsRenderer.buildBuffer(newChunkReasons));
-			}
+					reasonsRenderer.buildBuffer(newChunkReasons));
 		}
 		
 		if(showSetting.includesOld())
@@ -162,10 +160,10 @@ public final class NewChunksHack extends Hack
 			
 			if(showReasons.isChecked())
 				renderer.updateBuffer(3,
-						reasonsRenderer.buildBuffer(oldChunkReasons));
+					reasonsRenderer.buildBuffer(oldChunkReasons));
 		}
 	}
-
+	
 	public void afterLoadChunk(int x, int z)
 	{
 		if(!isEnabled())
@@ -187,7 +185,7 @@ public final class NewChunksHack extends Hack
 		int minY = chunk.getBottomY();
 		int minZ = chunkPos.getStartZ();
 		int maxX = chunkPos.getEndX();
-		int maxY = chunk.getHighestNonEmptySectionYOffset() + 16;
+		int maxY = ChunkUtils.getHighestNonEmptySectionYOffset(chunk) + 16;
 		int maxZ = chunkPos.getEndZ();
 		
 		for(int x = minX; x <= maxX; x++)

@@ -54,27 +54,27 @@ public final class RotationFaker
 		
 		fakeRotation = true;
 		serverYaw =
-				RotationUtils.limitAngleChange(player.getYaw(), needed.getYaw());
+			RotationUtils.limitAngleChange(player.getYaw(), needed.getYaw());
 		serverPitch = needed.getPitch();
 	}
 	
 	public void faceVectorClient(Vec3d vec)
 	{
 		RotationUtils.Rotation needed = RotationUtils.getNeededRotations(vec);
-
+		
 		ClientPlayerEntity player = WurstClient.MC.player;
 		player.setYaw(
-				RotationUtils.limitAngleChange(player.getYaw(), needed.getYaw()));
+			RotationUtils.limitAngleChange(player.getYaw(), needed.getYaw()));
 		player.setPitch(needed.getPitch());
 	}
 	
 	public void faceVectorClientIgnorePitch(Vec3d vec)
 	{
 		RotationUtils.Rotation needed = RotationUtils.getNeededRotations(vec);
-
+		
 		ClientPlayerEntity player = WurstClient.MC.player;
 		WurstClient.MC.player.setYaw(
-				RotationUtils.limitAngleChange(player.getYaw(), needed.getYaw()));
+			RotationUtils.limitAngleChange(player.getYaw(), needed.getYaw()));
 		WurstClient.MC.player.setPitch(0);
 	}
 	

@@ -91,7 +91,7 @@ public final class MassTpaHack extends Hack
 			setEnabled(false);
 			return;
 		}
-
+		
 		MC.getNetworkHandler().sendChatCommand("tpa " + players.get(index));
 		index++;
 		timer = 20;

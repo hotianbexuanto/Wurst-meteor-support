@@ -16,6 +16,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.VertexBuffer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferBuilder.BuiltBuffer;
 import net.minecraft.client.render.Camera;
@@ -71,6 +72,16 @@ public enum RenderUtils
 		int regionX = (blockPos.getX() >> 9) * 512;
 		int regionZ = (blockPos.getZ() >> 9) * 512;
 		
+		matrixStack.translate(regionX - camPos.x, -camPos.y,
+			regionZ - camPos.z);
+	}
+	
+	public static void applyRegionalRenderOffset(MatrixStack matrixStack,
+		int regionX, int regionZ)
+	{
+		applyCameraRotationOnly();
+		
+		Vec3d camPos = getCameraPos();
 		matrixStack.translate(regionX - camPos.x, -camPos.y,
 			regionZ - camPos.z);
 	}
@@ -817,7 +828,7 @@ public enum RenderUtils
 			.vertex(matrix, (float)startX, (float)startY, (float)startZ).next();
 		bufferBuilder.vertex(matrix, (float)endX, (float)endY, (float)endZ)
 			.next();
-
+		
 		matrix.translate((float)endX, (float)endY, (float)endZ);
 		matrix.scale(0.1F, 0.1F, 0.1F);
 		
@@ -862,43 +873,43 @@ public enum RenderUtils
 		bufferBuilder.vertex(matrix, 0, 0, 0).next();
 		bufferBuilder.vertex(matrix, 0, 2, 1).next();
 	}
-
-	public static void drawItem(MatrixStack matrixStack, ItemStack stack, int x,
-								int y, boolean large)
+	
+	public static void drawItem(DrawContext context, ItemStack stack, int x,
+		int y, boolean large)
 	{
-		MatrixStack modelViewStack = RenderSystem.getModelViewStack();
-
-		modelViewStack.push();
-		modelViewStack.translate(x, y, 0);
+		MatrixStack matrixStack = context.getMatrices();
+		
+		matrixStack.push();
+		matrixStack.translate(x, y, 0);
 		if(large)
-			modelViewStack.scale(1.5F, 1.5F, 1.5F);
+			matrixStack.scale(1.5F, 1.5F, 1.5F);
 		else
-			modelViewStack.scale(0.75F, 0.75F, 0.75F);
-
-		ItemStack renderStack =
-				stack.isEmpty() ? new ItemStack(Blocks.GRASS_BLOCK) : stack;
-
+			matrixStack.scale(0.75F, 0.75F, 0.75F);
+		
+		ItemStack renderStack = stack.isEmpty() || stack.getItem() == null
+			? new ItemStack(Blocks.GRASS_BLOCK) : stack;
+		
 		DiffuseLighting.enableGuiDepthLighting();
-		WurstClient.MC.getItemRenderer().renderInGuiWithOverrides(renderStack,
-				0, 0);
+		context.drawItem(renderStack, 0, 0);
 		DiffuseLighting.disableGuiDepthLighting();
-
-		modelViewStack.pop();
-		RenderSystem.applyModelViewMatrix();
-
+		
+		matrixStack.pop();
+		
 		if(stack.isEmpty())
 		{
 			matrixStack.push();
 			matrixStack.translate(x, y, 0);
 			if(large)
 				matrixStack.scale(2, 2, 2);
-
+			
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
-			TextRenderer fr = WurstClient.MC.textRenderer;
-			fr.drawWithShadow(matrixStack, "?", 3, 2, 0xf0f0f0);
+			TextRenderer tr = WurstClient.MC.textRenderer;
+			context.drawText(tr, "?", 3, 2, 0xf0f0f0, false);
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
-
+			
 			matrixStack.pop();
 		}
+		
+		RenderSystem.setShaderColor(1, 1, 1, 1);
 	}
 }

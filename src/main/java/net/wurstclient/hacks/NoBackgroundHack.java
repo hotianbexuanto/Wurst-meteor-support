@@ -15,32 +15,32 @@ import net.wurstclient.hack.Hack;
 import net.wurstclient.settings.CheckboxSetting;
 
 @SearchTags({"no background", "NoGuiBackground", "no gui background",
-		"NoGradient", "no gradient"})
+	"NoGradient", "no gradient"})
 public final class NoBackgroundHack extends Hack
 {
 	public final CheckboxSetting allGuis = new CheckboxSetting("All GUIs",
-			"Removes the background for all GUIs, not just inventories.", false);
-
+		"Removes the background for all GUIs, not just inventories.", false);
+	
 	public NoBackgroundHack()
 	{
 		super("NoBackground");
 		setCategory(Category.RENDER);
 		addSetting(allGuis);
 	}
-
+	
 	public boolean shouldCancelBackground(Screen screen)
 	{
 		if(!isEnabled())
 			return false;
-
+		
 		if(MC.world == null)
 			return false;
-
+		
 		if(!allGuis.isChecked() && !(screen instanceof HandledScreen))
 			return false;
-
+		
 		return true;
 	}
-
+	
 	// See ScreenMixin.onRenderBackground()
 }

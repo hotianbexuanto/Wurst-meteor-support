@@ -56,7 +56,7 @@ public final class AntiAfkHack extends Hack
 	@Override
 	public void onEnable()
 	{
-		start = new BlockPos(MC.player.getPos());
+		start = BlockPos.ofFloored(MC.player.getPos());
 		nextBlock = null;
 		pathFinder = new RandomPathFinder(start);
 		creativeFlying = MC.player.getAbilities().flying;
@@ -70,7 +70,7 @@ public final class AntiAfkHack extends Hack
 	{
 		EVENTS.remove(UpdateListener.class, this);
 		EVENTS.remove(RenderListener.class, this);
-
+		
 		((IKeyBinding)MC.options.forwardKey).resetPressedState();
 		((IKeyBinding)MC.options.jumpKey).resetPressedState();
 		

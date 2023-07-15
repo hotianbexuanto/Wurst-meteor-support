@@ -22,22 +22,22 @@ import net.wurstclient.WurstClient;
 
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativeInventoryScreenMixin
-        extends AbstractInventoryScreen<CreativeScreenHandler>
+	extends AbstractInventoryScreen<CreativeScreenHandler>
 {
-    private CreativeInventoryScreenMixin(WurstClient wurst,
-                                         CreativeScreenHandler screenHandler, PlayerInventory playerInventory,
-                                         Text text)
-    {
-        super(screenHandler, playerInventory, text);
-    }
-
-    @Inject(at = @At("HEAD"),
-            method = "shouldShowOperatorTab(Lnet/minecraft/entity/player/PlayerEntity;)Z",
-            cancellable = true)
-    private void onShouldShowOperatorTab(PlayerEntity player,
-                                         CallbackInfoReturnable<Boolean> cir)
-    {
-        if(WurstClient.INSTANCE.isEnabled())
-            cir.setReturnValue(true);
-    }
+	private CreativeInventoryScreenMixin(WurstClient wurst,
+		CreativeScreenHandler screenHandler, PlayerInventory playerInventory,
+		Text text)
+	{
+		super(screenHandler, playerInventory, text);
+	}
+	
+	@Inject(at = @At("HEAD"),
+		method = "shouldShowOperatorTab(Lnet/minecraft/entity/player/PlayerEntity;)Z",
+		cancellable = true)
+	private void onShouldShowOperatorTab(PlayerEntity player,
+		CallbackInfoReturnable<Boolean> cir)
+	{
+		if(WurstClient.INSTANCE.isEnabled())
+			cir.setReturnValue(true);
+	}
 }

@@ -17,8 +17,8 @@ public final class BlinkCmd extends Command
 {
 	public BlinkCmd()
 	{
-		super("blink", "Enables, disables or cancels Blink.", "&blink [on|off]",
-			"&blink cancel");
+		super("blink", "Enables, disables or cancels Blink.", ".blink [on|off]",
+			".blink cancel");
 	}
 	
 	@Override

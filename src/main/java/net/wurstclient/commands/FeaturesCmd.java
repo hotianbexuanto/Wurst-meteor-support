@@ -21,7 +21,7 @@ public final class FeaturesCmd extends Command
 	{
 		super("features",
 			"Shows the number of features and some other\n" + "statistics.",
-			"&features");
+			".features");
 	}
 	
 	@Override

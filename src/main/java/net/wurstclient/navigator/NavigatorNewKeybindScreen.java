@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -71,7 +72,7 @@ public class NavigatorNewKeybindScreen extends NavigatorScreen
 					choosingKey = true;
 					okButton.active = false;
 				}
-			},Supplier::get)
+			}, Supplier::get)
 		{
 			@Override
 			public boolean keyPressed(int keyCode, int scanCode, int modifiers)
@@ -85,9 +86,9 @@ public class NavigatorNewKeybindScreen extends NavigatorScreen
 		
 		// cancel button
 		addDrawableChild(ButtonWidget
-				.builder(Text.literal("Cancel"),
-						b -> WurstClient.MC.setScreen(parent))
-				.dimensions(width / 2 + 2, height - 65, 149, 18).build());
+			.builder(Text.literal("Cancel"),
+				b -> WurstClient.MC.setScreen(parent))
+			.dimensions(width / 2 + 2, height - 65, 149, 18).build());
 	}
 	
 	@Override
@@ -156,14 +157,15 @@ public class NavigatorNewKeybindScreen extends NavigatorScreen
 	}
 	
 	@Override
-	protected void onRender(MatrixStack matrixStack, int mouseX, int mouseY,
+	protected void onRender(DrawContext context, int mouseX, int mouseY,
 		float partialTicks)
 	{
+		MatrixStack matrixStack = context.getMatrices();
 		ClickGui gui = WurstClient.INSTANCE.getGui();
 		int txtColor = gui.getTxtColor();
 		
 		// title bar
-		drawCenteredText(matrixStack, client.textRenderer, "New Keybind",
+		context.drawCenteredTextWithShadow(client.textRenderer, "New Keybind",
 			middleX, 32, txtColor);
 		GL11.glEnable(GL11.GL_BLEND);
 		
@@ -212,9 +214,9 @@ public class NavigatorNewKeybindScreen extends NavigatorScreen
 				drawBox(matrixStack, x1, y1, x2, y2);
 				
 				// text
-				drawStringWithShadow(matrixStack, client.textRenderer,
+				context.drawTextWithShadow(client.textRenderer,
 					pkb.getDescription(), x1 + 1, y1 + 1, txtColor);
-				drawStringWithShadow(matrixStack, client.textRenderer,
+				context.drawTextWithShadow(client.textRenderer,
 					pkb.getCommand(), x1 + 1,
 					y1 + 1 + client.textRenderer.fontHeight, txtColor);
 				GL11.glEnable(GL11.GL_BLEND);
@@ -225,8 +227,8 @@ public class NavigatorNewKeybindScreen extends NavigatorScreen
 		int textY = bgy1 + scroll + 2;
 		for(String line : text.split("\n"))
 		{
-			drawStringWithShadow(matrixStack, client.textRenderer, line,
-				bgx1 + 2, textY, txtColor);
+			context.drawTextWithShadow(client.textRenderer, line, bgx1 + 2,
+				textY, txtColor);
 			textY += client.textRenderer.fontHeight;
 		}
 		GL11.glEnable(GL11.GL_BLEND);
@@ -261,7 +263,7 @@ public class NavigatorNewKeybindScreen extends NavigatorScreen
 			drawBox(matrixStack, x1, y1, x2, y2);
 			
 			// text
-			drawCenteredText(matrixStack, client.textRenderer,
+			context.drawCenteredTextWithShadow(client.textRenderer,
 				button.getMessage().getString(), (x1 + x2) / 2, y1 + 5,
 				txtColor);
 			GL11.glEnable(GL11.GL_BLEND);

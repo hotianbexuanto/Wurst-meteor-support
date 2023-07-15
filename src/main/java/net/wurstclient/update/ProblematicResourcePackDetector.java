@@ -76,16 +76,19 @@ public final class ProblematicResourcePackDetector implements UpdateListener
 	{
 		try
 		{
+			// some implementations of ResourcePack.openRoot() throw an
+			// IllegalArgumentException when the pack doesn't contain the
+			// specified file
 			InputSupplier<InputStream> supplier =
-					pack.openRoot("Selected Packs.txt");
+				pack.openRoot("Selected Packs.txt");
 			if(supplier == null)
 				return false;
-
+			
 			ArrayList<String> lines = StreamUtils.readAllLines(supplier.get());
 			
 			return lines.stream()
 				.anyMatch(line -> line.contains("TwinklingStars"));
-
+			
 		}catch(IOException | IllegalArgumentException e)
 		{
 			return false;

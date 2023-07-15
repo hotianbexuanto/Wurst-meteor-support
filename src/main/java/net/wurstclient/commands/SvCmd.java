@@ -20,7 +20,7 @@ public final class SvCmd extends Command
 	public SvCmd()
 	{
 		super("sv", "Shows the version of the server\n"
-			+ "you are currently connected to.", "&sv");
+			+ "you are currently connected to.", ".sv");
 	}
 	
 	@Override

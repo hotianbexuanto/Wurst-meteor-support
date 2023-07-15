@@ -39,7 +39,7 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;
@@ -182,7 +182,7 @@ public final class CaveFinderHack extends Hack
 	public void onUpdate()
 	{
 		Block currentBlock = BlockUtils.getBlockFromName("minecraft:cave_air");
-		BlockPos eyesPos = new BlockPos(RotationUtils.getEyesPos());
+		BlockPos eyesPos = BlockPos.ofFloored(RotationUtils.getEyesPos());
 		
 		ChunkPos center = getPlayerChunkPos(eyesPos);
 		int range = area.getSelected().chunkRange;
@@ -220,7 +220,6 @@ public final class CaveFinderHack extends Hack
 		// GL settings
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
@@ -254,7 +253,6 @@ public final class CaveFinderHack extends Hack
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 	}
 	
 	private ChunkPos getPlayerChunkPos(BlockPos eyesPos)
@@ -450,7 +448,7 @@ public final class CaveFinderHack extends Hack
 		int regionZ = (camPos.getZ() >> 9) * 512;
 		
 		Callable<ArrayList<int[]>> task =
-				() -> BlockVertexCompiler.compile(matchingBlocks, regionX, regionZ);
+			() -> BlockVertexCompiler.compile(matchingBlocks, regionX, regionZ);
 		
 		compileVerticesTask = pool2.submit(task);
 	}
@@ -462,7 +460,7 @@ public final class CaveFinderHack extends Hack
 		if(vertexBuffer != null)
 			vertexBuffer.close();
 		
-		vertexBuffer = new VertexBuffer();
+		vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 		
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();

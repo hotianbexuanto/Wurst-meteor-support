@@ -20,13 +20,13 @@ import net.wurstclient.WurstClient;
 public class TelemetryManagerMixin
 {
 	@Inject(at = @At("HEAD"),
-			method = "getSender()Lnet/minecraft/client/util/telemetry/TelemetrySender;",
-			cancellable = true)
+		method = "getSender()Lnet/minecraft/client/util/telemetry/TelemetrySender;",
+		cancellable = true)
 	private void onGetSender(CallbackInfoReturnable<TelemetrySender> cir)
 	{
 		if(!WurstClient.INSTANCE.getOtfs().noTelemetryOtf.isEnabled())
 			return;
-
+		
 		// Return a dummy that can't actually send anything. :)
 		cir.setReturnValue(TelemetrySender.NOOP);
 	}

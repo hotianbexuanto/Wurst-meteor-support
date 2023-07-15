@@ -24,7 +24,7 @@ public final class ProtectCmd extends Command
 	public ProtectCmd()
 	{
 		super("protect", "Protects the given entity from other entities.",
-			"&protect <entity>");
+			".protect <entity>");
 	}
 	
 	@Override

@@ -21,7 +21,7 @@ public final class IpCmd extends Command
 		super("ip",
 			"Shows the IP of the server you are currently\n"
 				+ "connected to or copies it to the clipboard.",
-			"&ip", "Copy to clipboard: &ip copy");
+			".ip", "Copy to clipboard: .ip copy");
 	}
 	
 	@Override

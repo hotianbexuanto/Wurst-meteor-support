@@ -108,7 +108,6 @@ public final class TpAuraHack extends Hack implements UpdateListener
 		Stream<Entity> stream = EntityUtils.getAttackableEntities();
 		double rangeSq = Math.pow(range.getValue(), 2);
 		stream = stream.filter(e -> MC.player.squaredDistanceTo(e) <= rangeSq);
-
 		
 		stream = entityFilters.applyTo(stream);
 		

@@ -13,33 +13,40 @@ import net.minecraft.entity.Entity;
 import net.wurstclient.event.CancellableEvent;
 import net.wurstclient.event.Listener;
 
-public interface VelocityFromFluidListener extends Listener {
+public interface VelocityFromFluidListener extends Listener
+{
 	public void onVelocityFromFluid(VelocityFromFluidEvent event);
-
+	
 	public static class VelocityFromFluidEvent
-			extends CancellableEvent<VelocityFromFluidListener> {
+		extends CancellableEvent<VelocityFromFluidListener>
+	{
 		private final Entity entity;
-
-		public VelocityFromFluidEvent(Entity entity) {
+		
+		public VelocityFromFluidEvent(Entity entity)
+		{
 			this.entity = entity;
 		}
-
-		public Entity getEntity() {
+		
+		public Entity getEntity()
+		{
 			return entity;
 		}
-
+		
 		@Override
-		public void fire(ArrayList<VelocityFromFluidListener> listeners) {
-			for (VelocityFromFluidListener listener : listeners) {
+		public void fire(ArrayList<VelocityFromFluidListener> listeners)
+		{
+			for(VelocityFromFluidListener listener : listeners)
+			{
 				listener.onVelocityFromFluid(this);
-
-				if (isCancelled())
+				
+				if(isCancelled())
 					break;
 			}
 		}
-
+		
 		@Override
-		public Class<VelocityFromFluidListener> getListenerType() {
+		public Class<VelocityFromFluidListener> getListenerType()
+		{
 			return VelocityFromFluidListener.class;
 		}
 	}

@@ -359,7 +359,7 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 		int rangeI = (int)Math.ceil(rangeD);
 		double rangeSq = Math.pow(rangeD + 0.5, 2);
 		
-		BlockPos center = new BlockPos(RotationUtils.getEyesPos());
+		BlockPos center = BlockPos.ofFloored(RotationUtils.getEyesPos());
 		BlockPos min = center.add(-rangeI, -rangeI, -rangeI);
 		BlockPos max = center.add(rangeI, rangeI, rangeI);
 		
@@ -427,7 +427,7 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 	
 	private boolean isReplaceable(BlockPos pos)
 	{
-		return BlockUtils.getState(pos).getMaterial().isReplaceable();
+		return BlockUtils.getState(pos).isReplaceable();
 	}
 	
 	private boolean hasClickableNeighbor(BlockPos pos)
@@ -442,7 +442,7 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 	private boolean isClickableNeighbor(BlockPos pos)
 	{
 		return BlockUtils.canBeClicked(pos)
-			&& !BlockUtils.getState(pos).getMaterial().isReplaceable();
+			&& !BlockUtils.getState(pos).isReplaceable();
 	}
 	
 	private boolean isChargedAnchor(BlockPos pos)

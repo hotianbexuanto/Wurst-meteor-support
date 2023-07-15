@@ -12,10 +12,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.client.font.MultilineText;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringHelper;
 import net.wurstclient.WurstClient;
@@ -85,24 +84,24 @@ public final class NcrModRequiredScreen extends Screen
 		int signaturesY = Math.min(belowReasonY, height - 68);
 		int reconnectY = signaturesY + 24;
 		int backButtonY = reconnectY + 24;
-
+		
 		addDrawableChild(signatureButton = ButtonWidget
-				.builder(Text.literal(sigButtonMsg.get()), b -> toggleSignatures())
-				.dimensions(buttonX - 48, signaturesY, 148, 20).build());
-
+			.builder(Text.literal(sigButtonMsg.get()), b -> toggleSignatures())
+			.dimensions(buttonX - 48, signaturesY, 148, 20).build());
+		
 		addDrawableChild(vsButton = ButtonWidget
-				.builder(Text.literal(vsButtonMsg.get()), b -> toggleVanillaSpoof())
-				.dimensions(buttonX + 102, signaturesY, 148, 20).build());
-
+			.builder(Text.literal(vsButtonMsg.get()), b -> toggleVanillaSpoof())
+			.dimensions(buttonX + 102, signaturesY, 148, 20).build());
+		
 		addDrawableChild(ButtonWidget
-				.builder(Text.literal("Reconnect"),
-						b -> LastServerRememberer.reconnect(prevScreen))
-				.dimensions(buttonX, reconnectY, 200, 20).build());
-
+			.builder(Text.literal("Reconnect"),
+				b -> LastServerRememberer.reconnect(prevScreen))
+			.dimensions(buttonX, reconnectY, 200, 20).build());
+		
 		addDrawableChild(ButtonWidget
-				.builder(Text.translatable("gui.toMenu"),
-						b -> client.setScreen(prevScreen))
-				.dimensions(buttonX, backButtonY, 200, 20).build());
+			.builder(Text.translatable("gui.toMenu"),
+				b -> client.setScreen(prevScreen))
+			.dimensions(buttonX, backButtonY, 200, 20).build());
 	}
 	
 	private void toggleSignatures()
@@ -118,20 +117,19 @@ public final class NcrModRequiredScreen extends Screen
 	}
 	
 	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY,
-		float delta)
+	public void render(DrawContext context, int mouseX, int mouseY, float delta)
 	{
-		renderBackground(matrices);
+		renderBackground(context);
 		
 		int centerX = width / 2;
 		int reasonY = (height - 68) / 2 - reasonHeight / 2;
 		int titleY = reasonY - textRenderer.fontHeight * 2;
 		
-		DrawableHelper.drawCenteredText(matrices, textRenderer, title, centerX,
-			titleY, 0xAAAAAA);
-		reasonFormatted.drawCenterWithShadow(matrices, centerX, reasonY);
+		context.drawCenteredTextWithShadow(textRenderer, title, centerX, titleY,
+			0xAAAAAA);
+		reasonFormatted.drawCenterWithShadow(context, centerX, reasonY);
 		
-		super.render(matrices, mouseX, mouseY, delta);
+		super.render(context, mouseX, mouseY, delta);
 	}
 	
 	@Override

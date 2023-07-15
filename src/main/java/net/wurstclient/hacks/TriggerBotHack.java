@@ -33,10 +33,12 @@ public final class TriggerBotHack extends Hack implements UpdateListener
 	
 	private final AttackSpeedSliderSetting speed =
 		new AttackSpeedSliderSetting();
-
-	private final CheckboxSetting attackWhileBlocking =
-			new CheckboxSetting("Attack while blocking", "Whether to attack while blocking with a shield / using items.", false);
-
+	
+	private final CheckboxSetting attackWhileBlocking = new CheckboxSetting(
+		"Attack while blocking",
+		"Whether or not to attack while blocking with a shield / using items.",
+		false);
+	
 	private final EntityFilterList entityFilters =
 		EntityFilterList.genericCombat();
 	
@@ -48,7 +50,7 @@ public final class TriggerBotHack extends Hack implements UpdateListener
 		addSetting(range);
 		addSetting(speed);
 		addSetting(attackWhileBlocking);
-
+		
 		entityFilters.forEach(this::addSetting);
 	}
 	
@@ -110,10 +112,9 @@ public final class TriggerBotHack extends Hack implements UpdateListener
 	{
 		Stream<Entity> stream = Stream.of(entity);
 		stream = stream.filter(EntityUtils.IS_ATTACKABLE);
-
+		
 		double rangeSq = Math.pow(range.getValue(), 2);
 		stream = stream.filter(e -> MC.player.squaredDistanceTo(e) <= rangeSq);
-
 		
 		stream = entityFilters.applyTo(stream);
 		

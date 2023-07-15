@@ -16,7 +16,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.block.Material;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -57,21 +56,22 @@ public final class SpeedNukerHack extends Hack
 			+ "air = won't break anything", "minecraft:air", true);
 	
 	private final CheckboxSetting lockId = new CheckboxSetting("Lock ID",
-			"Prevents changing the ID by clicking on blocks or restarting SpeedNuker.",
+		"Prevents changing the ID by clicking on blocks or restarting SpeedNuker.",
 		false);
 	
 	private final BlockListSetting multiIdList = new BlockListSetting(
-			"minecraft:ancient_debris", "minecraft:bone_block",
-			"minecraft:coal_ore", "minecraft:copper_ore",
-			"minecraft:deepslate_coal_ore", "minecraft:deepslate_copper_ore",
-			"minecraft:deepslate_diamond_ore", "minecraft:deepslate_emerald_ore",
-			"minecraft:deepslate_gold_ore", "minecraft:deepslate_iron_ore",
-			"minecraft:deepslate_lapis_ore", "minecraft:deepslate_redstone_ore",
-			"minecraft:diamond_ore", "minecraft:emerald_ore", "minecraft:glowstone",
-			"minecraft:gold_ore", "minecraft:iron_ore", "minecraft:lapis_ore",
-			"minecraft:nether_gold_ore", "minecraft:nether_quartz_ore",
-			"minecraft:raw_copper_block", "minecraft:raw_gold_block",
-			"minecraft:raw_iron_block", "minecraft:redstone_ore");
+		"MultiID List", "The types of blocks to break in MultiID mode.",
+		"minecraft:ancient_debris", "minecraft:bone_block",
+		"minecraft:coal_ore", "minecraft:copper_ore",
+		"minecraft:deepslate_coal_ore", "minecraft:deepslate_copper_ore",
+		"minecraft:deepslate_diamond_ore", "minecraft:deepslate_emerald_ore",
+		"minecraft:deepslate_gold_ore", "minecraft:deepslate_iron_ore",
+		"minecraft:deepslate_lapis_ore", "minecraft:deepslate_redstone_ore",
+		"minecraft:diamond_ore", "minecraft:emerald_ore", "minecraft:glowstone",
+		"minecraft:gold_ore", "minecraft:iron_ore", "minecraft:lapis_ore",
+		"minecraft:nether_gold_ore", "minecraft:nether_quartz_ore",
+		"minecraft:raw_copper_block", "minecraft:raw_gold_block",
+		"minecraft:raw_iron_block", "minecraft:redstone_ore");
 	
 	public SpeedNukerHack()
 	{
@@ -144,7 +144,7 @@ public final class SpeedNukerHack extends Hack
 		double rangeSq = Math.pow(range + 0.5, 2);
 		int rangeI = (int)Math.ceil(range);
 		
-		BlockPos center = new BlockPos(RotationUtils.getEyesPos());
+		BlockPos center = BlockPos.ofFloored(RotationUtils.getEyesPos());
 		BlockPos min = center.add(-rangeI, -rangeI, -rangeI);
 		BlockPos max = center.add(rangeI, rangeI, rangeI);
 		
@@ -173,8 +173,7 @@ public final class SpeedNukerHack extends Hack
 		
 		// check pos
 		BlockPos pos = ((BlockHitResult)MC.crosshairTarget).getBlockPos();
-		if(pos == null
-			|| BlockUtils.getState(pos).getMaterial() == Material.AIR)
+		if(pos == null || BlockUtils.getBlock(pos) == Blocks.AIR)
 			return;
 		
 		// set id

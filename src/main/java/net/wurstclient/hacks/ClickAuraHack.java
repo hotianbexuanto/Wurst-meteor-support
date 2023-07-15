@@ -116,10 +116,9 @@ public final class ClickAuraHack extends Hack
 		// set entity
 		ClientPlayerEntity player = MC.player;
 		Stream<Entity> stream = EntityUtils.getAttackableEntities();
-
+		
 		double rangeSq = Math.pow(range.getValue(), 2);
 		stream = stream.filter(e -> player.squaredDistanceTo(e) <= rangeSq);
-
 		
 		if(fov.getValue() < 360.0)
 			stream = stream.filter(e -> RotationUtils.getAngleToLookVec(

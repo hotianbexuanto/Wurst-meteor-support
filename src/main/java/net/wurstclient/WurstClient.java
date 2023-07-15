@@ -52,12 +52,12 @@ import net.wurstclient.util.json.JsonException;
 public enum WurstClient
 {
 	INSTANCE;
-
+	
 	public static MinecraftClient MC;
 	public static IMinecraftClient IMC;
 	
-	public static final String VERSION = "7.33";
-	public static final String MC_VERSION = "1.19.4";
+	public static final String VERSION = "7.35.2";
+	public static final String MC_VERSION = "1.20.1";
 	
 	private WurstAnalytics analytics;
 	private EventManager eventManager;
@@ -86,7 +86,7 @@ public enum WurstClient
 	public void initialize()
 	{
 		System.out.println("Starting Wurst Client...");
-
+		
 		MC = MinecraftClient.getInstance();
 		IMC = (IMinecraftClient)MC;
 		wurstFolder = createWurstFolder();
@@ -180,6 +180,12 @@ public enum WurstClient
 	{
 		if(otfs.translationsOtf.getForceEnglish().isChecked())
 			return IMC.getLanguageManager().getEnglish().get(key);
+			
+		// This extra check is necessary because I18n.translate() doesn't
+		// always return the key when the translation is missing. If the key
+		// contains a '%', it will return "Format Error: key" instead.
+		if(!I18n.hasTranslation(key))
+			return key;
 		
 		return I18n.translate(key);
 	}

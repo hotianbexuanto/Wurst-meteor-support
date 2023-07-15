@@ -127,28 +127,28 @@ public abstract class ClientPlayerInteractionManagerMixin
 	{
 		clickSlot(0, slot, 1, SlotActionType.THROW, client.player);
 	}
-
+	
 	@Override
 	public void windowClick_SWAP(int from, int to)
 	{
 		clickSlot(0, from, to, SlotActionType.SWAP, client.player);
 	}
+	
 	@Override
 	public void rightClickItem()
 	{
 		interactItem(client.player, Hand.MAIN_HAND);
 	}
-
+	
 	@Override
 	public void rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec,
-								Hand hand)
+		Hand hand)
 	{
 		BlockHitResult hitResult = new BlockHitResult(hitVec, side, pos, false);
 		interactBlock(client.player, hand, hitResult);
 		interactItem(client.player, hand);
 	}
-
-
+	
 	@Override
 	public void rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec)
 	{

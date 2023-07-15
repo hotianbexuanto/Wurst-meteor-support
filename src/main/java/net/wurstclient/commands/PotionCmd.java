@@ -31,9 +31,9 @@ public final class PotionCmd extends Command
 	public PotionCmd()
 	{
 		super("potion", "Changes the effects of the held potion.",
-			"&potion add (<effect> <amplifier> <duration>)...",
-			"&potion set (<effect> <amplifier> <duration>)...",
-			"&potion remove <effect>");
+			".potion add (<effect> <amplifier> <duration>)...",
+			".potion set (<effect> <amplifier> <duration>)...",
+			".potion remove <effect>");
 	}
 	
 	@Override

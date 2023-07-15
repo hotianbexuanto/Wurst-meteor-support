@@ -22,7 +22,7 @@ public final class NoTelemetryOtf extends OtherFeature
 	public NoTelemetryOtf()
 	{
 		super("NoTelemetry",
-				"Disables the \"required\" telemetry that Mojang introduced in 22w46a. Turns out it's not so required after all.");
+			"Disables the \"required\" telemetry that Mojang introduced in 22w46a. Turns out it's not so required after all.");
 		addSetting(disableTelemetry);
 	}
 	

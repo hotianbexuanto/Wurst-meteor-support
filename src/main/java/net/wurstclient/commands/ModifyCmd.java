@@ -27,10 +27,10 @@ public final class ModifyCmd extends Command
 	public ModifyCmd()
 	{
 		super("modify", "Allows you to modify NBT data of items.",
-			"&modify add <nbt_data>", ".modify set <nbt_data>",
-			"&modify remove <nbt_path>", "Use $ for colors, use $$ for $.", "",
+			".modify add <nbt_data>", ".modify set <nbt_data>",
+			".modify remove <nbt_path>", "Use $ for colors, use $$ for $.", "",
 			"Example:",
-			"&modify add {display:{Name:'{\"text\":\"$cRed Name\"}'}}",
+			".modify add {display:{Name:'{\"text\":\"$cRed Name\"}'}}",
 			"(changes the item's name to \u00a7cRed Name\u00a7r)");
 	}
 	

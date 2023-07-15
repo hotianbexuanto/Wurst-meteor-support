@@ -55,20 +55,21 @@ public final class FeedAuraHack extends Hack
 		"Determines how far FeedAura will reach to feed animals.\n"
 			+ "Anything that is further away than the specified value will not be fed.",
 		5, 1, 10, 0.05, ValueDisplay.DECIMAL);
-
-
+	
 	private final FilterBabiesSetting filterBabies =
-			new FilterBabiesSetting("Won't feed baby animals.\n"
-					+ "Saves food, but doesn't speed up baby growth.", true);
-
+		new FilterBabiesSetting("Won't feed baby animals.\n"
+			+ "Saves food, but doesn't speed up baby growth.", true);
+	
 	private final CheckboxSetting filterUntamed =
-			new CheckboxSetting("Filter untamed",
-					"Won't feed tameable animals that haven't been tamed yet.", false);
+		new CheckboxSetting("Filter untamed",
+			"Won't feed tameable animals that haven't been tamed yet.", false);
+	
 	private final CheckboxSetting filterHorses = new CheckboxSetting(
-			"Filter horse-like animals",
-			"Won't feed horses, llamas, donkeys, etc.\n"
-					+ "Recommended due to Minecraft bug MC-233276, which causes these animals to consume items indefinitely.",
-			true);
+		"Filter horse-like animals",
+		"Won't feed horses, llamas, donkeys, etc.\n"
+			+ "Recommended due to Minecraft bug MC-233276, which causes these animals to consume items indefinitely.",
+		true);
+	
 	private final Random random = new Random();
 	private AnimalEntity target;
 	private AnimalEntity renderTarget;
@@ -116,7 +117,7 @@ public final class FeedAuraHack extends Hack
 	{
 		ClientPlayerEntity player = MC.player;
 		ItemStack heldStack = player.getInventory().getMainHandStack();
-
+		
 		double rangeSq = range.getValueSq();
 		Stream<AnimalEntity> stream = EntityUtils.getValidAnimals()
 			.filter(e -> player.squaredDistanceTo(e) <= rangeSq)
@@ -125,14 +126,21 @@ public final class FeedAuraHack extends Hack
 		
 		if(filterBabies.isChecked())
 			stream = stream.filter(filterBabies);
-
+		
+		if(filterUntamed.isChecked())
+			stream = stream.filter(e -> !isUntamed(e));
+		
+		if(filterHorses.isChecked())
+			stream = stream.filter(e -> !(e instanceof AbstractHorseEntity));
+		
 		// convert targets to list
 		ArrayList<AnimalEntity> targets =
-				stream.collect(Collectors.toCollection(ArrayList::new));
-
+			stream.collect(Collectors.toCollection(ArrayList::new));
+		
 		// pick a target at random
 		target = targets.isEmpty() ? null
-				: targets.get(random.nextInt(targets.size()));
+			: targets.get(random.nextInt(targets.size()));
+		
 		renderTarget = target;
 		if(target == null)
 			return;
@@ -150,13 +158,14 @@ public final class FeedAuraHack extends Hack
 		ClientPlayerInteractionManager im = MC.interactionManager;
 		ClientPlayerEntity player = MC.player;
 		Hand hand = Hand.MAIN_HAND;
-
+		
 		// create realistic hit result
 		Box box = target.getBoundingBox();
 		Vec3d start = RotationUtils.getEyesPos();
 		Vec3d end = box.getCenter();
 		Vec3d hitVec = box.raycast(start, end).orElse(start);
 		EntityHitResult hitResult = new EntityHitResult(target, hitVec);
+		
 		ActionResult actionResult =
 			im.interactEntityAtLocation(player, target, hitResult, hand);
 		
@@ -178,12 +187,15 @@ public final class FeedAuraHack extends Hack
 		// GL settings
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-		RenderUtils.applyRenderOffset(matrixStack);
+		
+		BlockPos camPos = RenderUtils.getCameraBlockPos();
+		int regionX = (camPos.getX() >> 9) * 512;
+		int regionZ = (camPos.getZ() >> 9) * 512;
+		RenderUtils.applyRegionalRenderOffset(matrixStack, regionX, regionZ);
 		
 		Box box = new Box(BlockPos.ORIGIN);
 		float p = 1;
@@ -193,23 +205,24 @@ public final class FeedAuraHack extends Hack
 		float red = 2 - green;
 		
 		matrixStack.translate(
-				MathHelper.lerp(partialTicks, renderTarget.prevX,
-						renderTarget.getX()),
-				MathHelper.lerp(partialTicks, renderTarget.prevY,
-						renderTarget.getY()),
-				MathHelper.lerp(partialTicks, renderTarget.prevZ,
-						renderTarget.getZ()));
+			MathHelper.lerp(partialTicks, renderTarget.prevX,
+				renderTarget.getX()) - regionX,
+			MathHelper.lerp(partialTicks, renderTarget.prevY,
+				renderTarget.getY()),
+			MathHelper.lerp(partialTicks, renderTarget.prevZ,
+				renderTarget.getZ()) - regionZ);
+		
 		matrixStack.translate(0, 0.05, 0);
 		matrixStack.scale(renderTarget.getWidth(), renderTarget.getHeight(),
 			renderTarget.getWidth());
 		matrixStack.translate(-0.5, 0, -0.5);
-
+		
 		matrixStack.translate(0.5, 0.5, 0.5);
 		matrixStack.scale(p, p, p);
 		matrixStack.translate(-0.5, -0.5, -0.5);
 		
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
-
+		
 		RenderSystem.setShaderColor(red, green, 0, 0.25F);
 		RenderUtils.drawSolidBox(box, matrixStack);
 		
@@ -222,6 +235,16 @@ public final class FeedAuraHack extends Hack
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+	}
+	
+	private boolean isUntamed(AnimalEntity e)
+	{
+		if(e instanceof AbstractHorseEntity horse && !horse.isTame())
+			return true;
+		
+		if(e instanceof TameableEntity tame && !tame.isTamed())
+			return true;
+		
+		return false;
 	}
 }

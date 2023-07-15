@@ -21,7 +21,7 @@ public final class DigCmd extends Command
 		super("dig",
 			"Automatically digs out the selected area,\n"
 				+ "starting in the front-left-top corner.",
-			"&dig <length> <width> <height>", "&dig stop");
+			".dig <length> <width> <height>", ".dig stop");
 	}
 	
 	@Override
@@ -45,7 +45,7 @@ public final class DigCmd extends Command
 		ClientPlayerEntity player = MC.player;
 		Direction direction = player.getHorizontalFacing();
 		
-		BlockPos pos1 = new BlockPos(
+		BlockPos pos1 = BlockPos.ofFloored(
 			player.getPos().add(0, player.getEyeHeight(player.getPose()), 0));
 		
 		if(height < 0)

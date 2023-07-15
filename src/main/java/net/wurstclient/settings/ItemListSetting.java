@@ -95,9 +95,9 @@ public final class ItemListSetting extends Setting
 			wson.getAllStrings().parallelStream()
 				.map(s -> Registries.ITEM.get(new Identifier(s)))
 				.filter(Objects::nonNull)
-				.map(i -> Registries.ITEM.getId(i).toString()).distinct().sorted()
-					.sorted().forEachOrdered(s -> itemNames.add(s));
-
+				.map(i -> Registries.ITEM.getId(i).toString()).distinct()
+				.sorted().forEachOrdered(s -> itemNames.add(s));
+			
 		}catch(JsonException e)
 		{
 			e.printStackTrace();

@@ -88,20 +88,21 @@ public final class WurstUpdater implements UpdateListener
 			String text = "An error occurred while checking for updates."
 				+ " Click \u00a7nhere\u00a7r to check manually.";
 			String url =
-					"https://www.wurstclient.net/download/?utm_source=Wurst+Client&utm_medium=WurstUpdater+chat+message&utm_content=An+error+occurred+while+checking+for+updates.";			showLink(text, url);
+				"https://www.wurstclient.net/download/?utm_source=Wurst+Client&utm_medium=WurstUpdater+chat+message&utm_content=An+error+occurred+while+checking+for+updates.";
+			showLink(text, url);
 			return;
 		}
 		
 		if(!outdated)
 			return;
-
+		
 		String textPart1 = "Wurst " + latestVersion + " MC"
-				+ WurstClient.MC_VERSION + " is now available.";
+			+ WurstClient.MC_VERSION + " is now available.";
 		String text =
-				textPart1 + " Click \u00a7nhere\u00a7r to download the update.";
+			textPart1 + " Click \u00a7nhere\u00a7r to download the update.";
 		String url =
-				"https://www.wurstclient.net/download/?utm_source=Wurst+Client&utm_medium=WurstUpdater+chat+message&utm_content="
-						+ URLEncoder.encode(textPart1, StandardCharsets.UTF_8);
+			"https://www.wurstclient.net/download/?utm_source=Wurst+Client&utm_medium=WurstUpdater+chat+message&utm_content="
+				+ URLEncoder.encode(textPart1, StandardCharsets.UTF_8);
 		showLink(text, url);
 	}
 	

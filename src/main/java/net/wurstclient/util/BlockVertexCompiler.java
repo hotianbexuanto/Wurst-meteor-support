@@ -25,15 +25,15 @@ import net.wurstclient.hacks.SearchHack;
 public enum BlockVertexCompiler
 {
 	;
-
+	
 	public static ArrayList<int[]> compile(HashSet<BlockPos> blocks)
 	{
 		return blocks.parallelStream().flatMap(pos -> getVertices(pos, blocks))
 			.collect(Collectors.toCollection(ArrayList::new));
 	}
-
+	
 	public static ArrayList<int[]> compile(HashSet<BlockPos> blocks,
-										   int regionX, int regionZ)
+		int regionX, int regionZ)
 	{
 		return blocks.parallelStream().flatMap(pos -> getVertices(pos, blocks))
 			.map(v -> applyRegionOffset(v, regionX, regionZ))

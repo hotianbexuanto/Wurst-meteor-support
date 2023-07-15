@@ -37,15 +37,15 @@ public final class ClickGuiHack extends Hack
 	
 	private final SliderSetting ttOpacity = new SliderSetting("Tooltip opacity",
 		0.75, 0.15, 1, 0.01, ValueDisplay.PERCENTAGE);
-
+	
 	private final SliderSetting maxHeight = new SliderSetting("Max height",
-			"Maximum window height\n" + "0 = no limit", 200, 0, 1000, 50,
-			ValueDisplay.INTEGER);
-
+		"Maximum window height\n" + "0 = no limit", 200, 0, 1000, 50,
+		ValueDisplay.INTEGER);
+	
 	private final SliderSetting maxSettingsHeight =
-			new SliderSetting("Max settings height",
-					"Maximum height for settings windows\n" + "0 = no limit", 200, 0,
-					1000, 50, ValueDisplay.INTEGER);
+		new SliderSetting("Max settings height",
+			"Maximum height for settings windows\n" + "0 = no limit", 200, 0,
+			1000, 50, ValueDisplay.INTEGER);
 	
 	public ClickGuiHack()
 	{
@@ -90,11 +90,12 @@ public final class ClickGuiHack extends Hack
 	{
 		return ttOpacity.getValueF();
 	}
-
+	
 	public int getMaxHeight()
 	{
 		return maxHeight.getValueI();
 	}
+	
 	public int getMaxSettingsHeight()
 	{
 		return maxSettingsHeight.getValueI();

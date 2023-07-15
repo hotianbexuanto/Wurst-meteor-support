@@ -49,22 +49,22 @@ public final class KillauraLegitHack extends Hack
 	
 	private final AttackSpeedSliderSetting speed =
 		new AttackSpeedSliderSetting();
-
+	
 	private final SliderSetting rotationSpeed =
-			new SliderSetting("Rotation Speed", 600, 10, 3600, 10,
-					ValueDisplay.DEGREES.withSuffix("/s"));
-
+		new SliderSetting("Rotation Speed", 600, 10, 3600, 10,
+			ValueDisplay.DEGREES.withSuffix("/s"));
+	
 	private final EnumSetting<Priority> priority = new EnumSetting<>("Priority",
 		"Determines which entity will be attacked first.\n"
 			+ "\u00a7lDistance\u00a7r - Attacks the closest entity.\n"
 			+ "\u00a7lAngle\u00a7r - Attacks the entity that requires the least head movement.\n"
 			+ "\u00a7lHealth\u00a7r - Attacks the weakest entity.",
 		Priority.values(), Priority.ANGLE);
-
+	
 	private final SliderSetting fov = new SliderSetting("FOV",
-			"Field Of View - how far away from your crosshair an entity can be before it's ignored.\n"
-					+ "360\u00b0 = entities can be attacked all around you.",
-			360, 30, 360, 10, ValueDisplay.DEGREES);
+		"Field Of View - how far away from your crosshair an entity can be before it's ignored.\n"
+			+ "360\u00b0 = entities can be attacked all around you.",
+		360, 30, 360, 10, ValueDisplay.DEGREES);
 	
 	private final CheckboxSetting damageIndicator = new CheckboxSetting(
 		"Damage indicator",
@@ -84,6 +84,7 @@ public final class KillauraLegitHack extends Hack
 			FilterPetsSetting.genericCombat(false),
 			FilterTradersSetting.genericCombat(false),
 			FilterGolemsSetting.genericCombat(false),
+			FilterAllaysSetting.genericCombat(false),
 			FilterInvisibleSetting.genericCombat(true),
 			FilterNamedSetting.genericCombat(false),
 			FilterArmorStandsSetting.genericCombat(false),
@@ -147,11 +148,10 @@ public final class KillauraLegitHack extends Hack
 			return;
 		
 		ClientPlayerEntity player = MC.player;
-
+		
 		Stream<Entity> stream = EntityUtils.getAttackableEntities();
 		double rangeSq = Math.pow(range.getValue(), 2);
 		stream = stream.filter(e -> MC.player.squaredDistanceTo(e) <= rangeSq);
-
 		
 		if(fov.getValue() < 360.0)
 			stream = stream.filter(e -> RotationUtils.getAngleToLookVec(
@@ -176,21 +176,22 @@ public final class KillauraLegitHack extends Hack
 		speed.resetTimer();
 	}
 	
-	private boolean faceEntityClient(Entity entity) {
+	private boolean faceEntityClient(Entity entity)
+	{
 		// get needed rotation
 		Box box = entity.getBoundingBox();
 		Rotation needed = RotationUtils.getNeededRotations(box.getCenter());
-
+		
 		// turn towards center of boundingBox
 		Rotation next = RotationUtils.slowlyTurnTowards(needed,
-				rotationSpeed.getValueI() / 20F);
+			rotationSpeed.getValueI() / 20F);
 		nextYaw = next.getYaw();
 		nextPitch = next.getPitch();
-
+		
 		// check if facing center
-		if (RotationUtils.isAlreadyFacing(needed))
+		if(RotationUtils.isAlreadyFacing(needed))
 			return true;
-
+		
 		// if not facing center, check if facing anything in boundingBox
 		return RotationUtils.isFacingBox(box, range.getValue());
 	}
@@ -200,28 +201,27 @@ public final class KillauraLegitHack extends Hack
 	{
 		if(target == null)
 			return;
-
+		
 		float oldYaw = MC.player.prevYaw;
 		float oldPitch = MC.player.prevPitch;
 		MC.player.setYaw(MathHelper.lerp(partialTicks, oldYaw, nextYaw));
 		MC.player.setPitch(MathHelper.lerp(partialTicks, oldPitch, nextPitch));
-
+		
 		if(!damageIndicator.isChecked())
 			return;
 		
 		// GL settings
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-		RenderUtils.applyRegionalRenderOffset(matrixStack);
 		
 		BlockPos camPos = RenderUtils.getCameraBlockPos();
 		int regionX = (camPos.getX() >> 9) * 512;
 		int regionZ = (camPos.getZ() >> 9) * 512;
+		RenderUtils.applyRegionalRenderOffset(matrixStack, regionX, regionZ);
 		
 		Box box = new Box(BlockPos.ORIGIN);
 		float p = 1;
@@ -229,13 +229,14 @@ public final class KillauraLegitHack extends Hack
 			p = (le.getMaxHealth() - le.getHealth()) / le.getMaxHealth();
 		float red = p * 2F;
 		float green = 2 - red;
-		
+
 		matrixStack.translate(
-			target.prevX + (target.getX() - target.prevX) * partialTicks
-				- regionX,
-			target.prevY + (target.getY() - target.prevY) * partialTicks,
-			target.prevZ + (target.getZ() - target.prevZ) * partialTicks
-				- regionZ);
+				target.prevX + (target.getX() - target.prevX) * partialTicks
+						- regionX,
+				target.prevY + (target.getY() - target.prevY) * partialTicks,
+				target.prevZ + (target.getZ() - target.prevZ) * partialTicks
+						- regionZ);
+		
 		matrixStack.translate(0, 0.05, 0);
 		matrixStack.scale(target.getWidth(), target.getHeight(),
 			target.getWidth());
@@ -262,7 +263,6 @@ public final class KillauraLegitHack extends Hack
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 	}
 	
 	private enum Priority

@@ -19,8 +19,8 @@ public final class RenameCmd extends Command
 {
 	public RenameCmd()
 	{
-		super("rename", "Renames the item in your hand.", "&rename <new_name>",
-			"Use $ for colors, use $$ for $.", "Example:", "&rename $cRed Name",
+		super("rename", "Renames the item in your hand.", ".rename <new_name>",
+			"Use $ for colors, use $$ for $.", "Example:", ".rename $cRed Name",
 			"(changes the item's name to \u00a7cRed Name\u00a7r)");
 	}
 	

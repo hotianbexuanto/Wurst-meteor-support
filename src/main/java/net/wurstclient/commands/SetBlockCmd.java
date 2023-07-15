@@ -31,9 +31,9 @@ public final class SetBlockCmd extends Command
 		super("setblock",
 			"Changes a block setting of a feature. Allows you\n"
 				+ "to change these settings through keybinds.",
-			"&setblock <feature> <setting> <block>",
-			"&setblock <feature> <setting> reset",
-			"Example: &setblock Nuker ID dirt");
+			".setblock <feature> <setting> <block>",
+			".setblock <feature> <setting> reset",
+			"Example: .setblock Nuker ID dirt");
 	}
 	
 	@Override

@@ -19,7 +19,7 @@ public final class SayCmd extends Command
 	{
 		super("say",
 			"Sends the given chat message, even if it starts with a\n" + "dot.",
-			"&say <message>");
+			".say <message>");
 	}
 	
 	@Override

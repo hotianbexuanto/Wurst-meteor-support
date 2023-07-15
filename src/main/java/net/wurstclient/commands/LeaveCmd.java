@@ -15,7 +15,7 @@ public final class LeaveCmd extends Command
 {
 	public LeaveCmd()
 	{
-		super("leave", "Instantly disconnects from the server.", "&leave");
+		super("leave", "Instantly disconnects from the server.", ".leave");
 	}
 	
 	@Override

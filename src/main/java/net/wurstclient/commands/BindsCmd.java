@@ -32,11 +32,11 @@ public final class BindsCmd extends Command
 	public BindsCmd()
 	{
 		super("binds", "Allows you to manage keybinds through the chat.",
-			"&binds add <key> <hacks>", "&binds add <key> <commands>",
-			"&binds remove <key>", "&binds list [<page>]",
-			"&binds load-profile <file>", "&binds save-profile <file>",
-			"&binds list-profiles [<page>]", "&binds remove-all",
-			"&binds reset", "Multiple hacks/commands must be separated by ';'.",
+			".binds add <key> <hacks>", ".binds add <key> <commands>",
+			".binds remove <key>", ".binds list [<page>]",
+			".binds load-profile <file>", ".binds save-profile <file>",
+			".binds list-profiles [<page>]", ".binds remove-all",
+			".binds reset", "Multiple hacks/commands must be separated by ';'.",
 			"Profiles are saved in '.minecraft/wurst/keybinds'.");
 	}
 	

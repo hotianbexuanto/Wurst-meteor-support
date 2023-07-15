@@ -35,11 +35,11 @@ public final class AutoToolHack extends Hack
 	private final CheckboxSetting useHands = new CheckboxSetting("Use hands",
 		"Uses an empty hand or a non-damageable item when no applicable tool is found.",
 		true);
-
+	
 	private final SliderSetting repairMode = new SliderSetting("Repair mode",
-			"Prevents tools from being used when their durability reaches the given threshold, so you can repair them before they break.\n"
-					+ "Can be adjusted from 0 (off) to 100.",
-			0, 0, 100, 1, ValueDisplay.INTEGER.withLabel(0, "off"));
+		"Prevents tools from being used when their durability reaches the given threshold, so you can repair them before they break.\n"
+			+ "Can be adjusted from 0 (off) to 100.",
+		0, 0, 100, 1, ValueDisplay.INTEGER.withLabel(0, "off"));
 	
 	private final CheckboxSetting switchBack = new CheckboxSetting(
 		"Switch back",
@@ -85,7 +85,7 @@ public final class AutoToolHack extends Hack
 			prevSelectedSlot = MC.player.getInventory().selectedSlot;
 		
 		equipBestTool(pos, useSwords.isChecked(), useHands.isChecked(),
-				repairMode.getValueI());
+			repairMode.getValueI());
 	}
 	
 	@Override
@@ -106,11 +106,11 @@ public final class AutoToolHack extends Hack
 			return;
 		
 		equipBestTool(pos, useSwords.isChecked(), useHands.isChecked(),
-				repairMode.getValueI());
+			repairMode.getValueI());
 	}
 	
 	public void equipBestTool(BlockPos pos, boolean useSwords, boolean useHands,
-							  int repairMode)
+		int repairMode)
 	{
 		ClientPlayerEntity player = MC.player;
 		if(player.getAbilities().creativeMode)
@@ -122,7 +122,7 @@ public final class AutoToolHack extends Hack
 			ItemStack heldItem = player.getMainHandStack();
 			if(!isDamageable(heldItem))
 				return;
-
+			
 			if(isTooDamaged(heldItem, repairMode))
 			{
 				selectFallbackSlot();
@@ -137,7 +137,7 @@ public final class AutoToolHack extends Hack
 		
 		player.getInventory().selectedSlot = bestSlot;
 	}
-
+	
 	private int getBestSlot(BlockPos pos, boolean useSwords, int repairMode)
 	{
 		ClientPlayerEntity player = MC.player;
@@ -147,7 +147,7 @@ public final class AutoToolHack extends Hack
 		BlockState state = BlockUtils.getState(pos);
 		float bestSpeed = getMiningSpeed(heldItem, state);
 		if(isTooDamaged(heldItem, repairMode))
-			    bestSpeed = 1;
+			bestSpeed = 1;
 		int bestSlot = -1;
 		
 		for(int slot = 0; slot < 9; slot++)
@@ -163,7 +163,7 @@ public final class AutoToolHack extends Hack
 			
 			if(!useSwords && stack.getItem() instanceof SwordItem)
 				continue;
-
+			
 			if(isTooDamaged(stack, repairMode))
 				continue;
 			
@@ -193,7 +193,7 @@ public final class AutoToolHack extends Hack
 	{
 		return !stack.isEmpty() && stack.getItem().isDamageable();
 	}
-
+	
 	private boolean isTooDamaged(ItemStack stack, int repairMode)
 	{
 		return stack.getMaxDamage() - stack.getDamage() <= repairMode;

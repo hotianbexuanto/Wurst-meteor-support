@@ -9,8 +9,6 @@ package net.wurstclient.clickgui.components;
 
 import java.util.Objects;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.wurstclient.clickgui.screens.EditBlockListScreen;
 import net.wurstclient.settings.BlockListSetting;
 import net.wurstclient.settings.Setting;
@@ -18,7 +16,7 @@ import net.wurstclient.settings.Setting;
 public final class BlockListEditButton extends AbstractListEditButton
 {
 	private final BlockListSetting setting;
-
+	
 	public BlockListEditButton(BlockListSetting setting)
 	{
 		this.setting = Objects.requireNonNull(setting);

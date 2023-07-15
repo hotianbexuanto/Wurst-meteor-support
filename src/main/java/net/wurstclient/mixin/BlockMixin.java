@@ -40,6 +40,4 @@ public abstract class BlockMixin implements ItemConvertible
 		if(event.isRendered() != null)
 			cir.setReturnValue(event.isRendered());
 	}
-	
-
 }

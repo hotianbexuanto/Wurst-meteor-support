@@ -16,7 +16,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -231,7 +230,7 @@ public final class FightBotHack extends Hack
 		
 		public EntityPathFinder(Entity entity)
 		{
-			super(new BlockPos(entity.getPos()));
+			super(BlockPos.ofFloored(entity.getPos()));
 			this.entity = entity;
 			setThinkTime(1);
 		}

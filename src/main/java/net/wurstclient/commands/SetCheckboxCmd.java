@@ -25,8 +25,8 @@ public final class SetCheckboxCmd extends Command
 		super("setcheckbox",
 			"Changes a checkbox setting of a feature. Allows you\n"
 				+ "to toggle checkboxes through keybinds.",
-			"&setcheckbox <feature> <setting> (on|off)",
-			"&setcheckbox <feature> <setting> toggle");
+			".setcheckbox <feature> <setting> (on|off)",
+			".setcheckbox <feature> <setting> toggle");
 	}
 	
 	@Override

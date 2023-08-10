@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import net.wurstclient.WurstClient;
@@ -112,7 +113,18 @@ public final class ColorSetting extends Setting
 	{
 		return new JsonPrimitive(ColorUtils.toHex(color));
 	}
-	
+
+	@Override
+	public JsonObject exportWikiData()
+	{
+		JsonObject json = new JsonObject();
+		json.addProperty("name", getName());
+		json.addProperty("descriptionKey", getDescriptionKey());
+		json.addProperty("type", "Color");
+		json.addProperty("defaultColor", ColorUtils.toHex(defaultColor));
+		return json;
+	}
+
 	@Override
 	public Set<PossibleKeybind> getPossibleKeybinds(String featureName)
 	{

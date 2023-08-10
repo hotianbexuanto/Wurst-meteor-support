@@ -17,6 +17,7 @@ import java.util.Set;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
@@ -112,7 +113,22 @@ public final class ItemListSetting extends Setting
 		itemNames.forEach(s -> json.add(s));
 		return json;
 	}
-	
+
+	@Override
+	public JsonObject exportWikiData()
+	{
+		JsonObject json = new JsonObject();
+		json.addProperty("name", getName());
+		json.addProperty("descriptionKey", getDescriptionKey());
+		json.addProperty("type", "ItemList");
+
+		JsonArray defaultItems = new JsonArray();
+		Arrays.stream(defaultNames).forEachOrdered(s -> defaultItems.add(s));
+		json.add("defaultItems", defaultItems);
+
+		return json;
+	}
+
 	@Override
 	public Set<PossibleKeybind> getPossibleKeybinds(String featureName)
 	{

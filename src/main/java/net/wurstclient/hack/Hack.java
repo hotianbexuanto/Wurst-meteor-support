@@ -48,7 +48,12 @@ public abstract class Hack extends Feature
 	{
 		return WURST.translate(description);
 	}
-	
+
+	public final String getDescriptionKey()
+	{
+		return description;
+	}
+
 	@Override
 	public final Category getCategory()
 	{

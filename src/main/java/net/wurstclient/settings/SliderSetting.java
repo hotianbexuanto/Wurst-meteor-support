@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.util.LinkedHashSet;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import net.minecraft.util.math.MathHelper;
@@ -256,7 +257,23 @@ public class SliderSetting extends Setting implements SliderLock
 	{
 		return new JsonPrimitive(Math.round(value * 1e6) / 1e6);
 	}
-	
+
+	@Override
+	public JsonObject exportWikiData()
+	{
+		JsonObject json = new JsonObject();
+		json.addProperty("name", getName());
+		json.addProperty("descriptionKey", getDescriptionKey());
+		json.addProperty("type", "Slider");
+
+		json.addProperty("defaultValue", defaultValue);
+		json.addProperty("minimum", minimum);
+		json.addProperty("maximum", maximum);
+		json.addProperty("increment", increment);
+
+		return json;
+	}
+
 	@Override
 	public final LinkedHashSet<PossibleKeybind> getPossibleKeybinds(
 		String featureName)

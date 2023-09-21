@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -195,15 +196,9 @@ public final class KillauraHack extends Hack
 		float red = p * 2F;
 		float green = 2 - red;
 
-		matrixStack.translate(
-				renderTarget.prevX
-						+ (renderTarget.getX() - renderTarget.prevX) * partialTicks
-						- regionX,
-				renderTarget.prevY
-						+ (renderTarget.getY() - renderTarget.prevY) * partialTicks,
-				renderTarget.prevZ
-						+ (renderTarget.getZ() - renderTarget.prevZ) * partialTicks
-						- regionZ);
+		Vec3d lerpedPos = EntityUtils.getLerpedPos(renderTarget, partialTicks)
+				.subtract(regionX, 0, regionZ);
+		matrixStack.translate(lerpedPos.x, lerpedPos.y, lerpedPos.z);
 		
 		matrixStack.translate(0, 0.05, 0);
 		matrixStack.scale(renderTarget.getWidth(), renderTarget.getHeight(),

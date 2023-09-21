@@ -26,18 +26,30 @@ import net.wurstclient.hack.HackList;
 @Mixin(Block.class)
 public abstract class BlockMixin implements ItemConvertible
 {
-	@Inject(at = {@At("HEAD")},
-		method = {
-			"shouldDrawSide(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;)Z"},
-		cancellable = true)
+	@Inject(at = @At("HEAD"),
+			method = "shouldDrawSide(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;)Z",
+			cancellable = true)
 	private static void onShouldDrawSide(BlockState state, BlockView world,
-		BlockPos pos, Direction direction, BlockPos blockPos,
-		CallbackInfoReturnable<Boolean> cir)
+										 BlockPos pos, Direction direction, BlockPos blockPos,
+										 CallbackInfoReturnable<Boolean> cir)
 	{
-		ShouldDrawSideEvent event = new ShouldDrawSideEvent(state);
+		ShouldDrawSideEvent event = new ShouldDrawSideEvent(state, pos);
 		EventManager.fire(event);
-		
+
 		if(event.isRendered() != null)
 			cir.setReturnValue(event.isRendered());
+	}
+
+	@Inject(at = @At("HEAD"),
+			method = "getVelocityMultiplier()F",
+			cancellable = true)
+	private void onGetVelocityMultiplier(CallbackInfoReturnable<Float> cir)
+	{
+		HackList hax = WurstClient.INSTANCE.getHax();
+		if(hax == null || !hax.noSlowdownHack.isEnabled())
+			return;
+
+		if(cir.getReturnValueF() < 1)
+			cir.setReturnValue(1F);
 	}
 }

@@ -34,6 +34,8 @@ import net.wurstclient.events.UpdateListener;
 import net.wurstclient.hack.Hack;
 import net.wurstclient.settings.ColorSetting;
 import net.wurstclient.settings.EnumSetting;
+import net.wurstclient.settings.EspStyleSetting;
+import net.wurstclient.util.EntityUtils;
 import net.wurstclient.util.RenderUtils;
 import net.wurstclient.util.RotationUtils;
 
@@ -41,8 +43,7 @@ import net.wurstclient.util.RotationUtils;
 public final class ItemEspHack extends Hack implements UpdateListener,
 	CameraTransformViewBobbingListener, RenderListener
 {
-	private final EnumSetting<Style> style =
-		new EnumSetting<>("Style", Style.values(), Style.BOXES);
+	private final EspStyleSetting style = new EspStyleSetting();
 	
 	private final EnumSetting<BoxSize> boxSize = new EnumSetting<>("Box size",
 		"\u00a7lAccurate\u00a7r mode shows the exact hitbox of each item.\n"
@@ -93,7 +94,7 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 	public void onCameraTransformViewBobbing(
 		CameraTransformViewBobbingEvent event)
 	{
-		if(style.getSelected().lines)
+		if(style.getSelected().hasLines())
 			event.cancel();
 	}
 	
@@ -111,8 +112,8 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 		RenderUtils.applyRegionalRenderOffset(matrixStack, regionX, regionZ);
 		
 		renderBoxes(matrixStack, partialTicks, regionX, regionZ);
-		
-		if(style.getSelected().lines)
+
+		if(style.getSelected().hasLines())
 			renderTracers(matrixStack, partialTicks, regionX, regionZ);
 		
 		matrixStack.pop();
@@ -122,8 +123,8 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-	
-	private void renderBoxes(MatrixStack matrixStack, double partialTicks,
+
+	private void renderBoxes(MatrixStack matrixStack, float partialTicks,
 		int regionX, int regionZ)
 	{
 		float extraSize = boxSize.getSelected().extraSize;
@@ -131,13 +132,12 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 		for(ItemEntity e : items)
 		{
 			matrixStack.push();
-			
-			matrixStack.translate(
-				e.prevX + (e.getX() - e.prevX) * partialTicks - regionX,
-				e.prevY + (e.getY() - e.prevY) * partialTicks,
-				e.prevZ + (e.getZ() - e.prevZ) * partialTicks - regionZ);
-			
-			if(style.getSelected().boxes)
+
+			Vec3d lerpedPos = EntityUtils.getLerpedPos(e, partialTicks)
+					.subtract(regionX, 0, regionZ);
+			matrixStack.translate(lerpedPos.x, lerpedPos.y, lerpedPos.z);
+
+			if(style.getSelected().hasBoxes())
 			{
 				matrixStack.push();
 				matrixStack.scale(e.getWidth() + extraSize,
@@ -157,8 +157,8 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 			matrixStack.pop();
 		}
 	}
-	
-	private void renderTracers(MatrixStack matrixStack, double partialTicks,
+
+	private void renderTracers(MatrixStack matrixStack, float partialTicks,
 		int regionX, int regionZ)
 	{
 		GL11.glEnable(GL11.GL_BLEND);
@@ -178,10 +178,7 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 			VertexFormats.POSITION);
 		for(ItemEntity e : items)
 		{
-			Vec3d end = e.getBoundingBox().getCenter()
-				.subtract(new Vec3d(e.getX(), e.getY(), e.getZ())
-					.subtract(e.prevX, e.prevY, e.prevZ)
-					.multiply(1 - partialTicks))
+			Vec3d end = EntityUtils.getLerpedBox(e, partialTicks).getCenter()
 				.subtract(regionX, 0, regionZ);
 			
 			bufferBuilder
@@ -192,30 +189,6 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 				.next();
 		}
 		tessellator.draw();
-	}
-	
-	private enum Style
-	{
-		BOXES("Boxes only", true, false),
-		LINES("Lines only", false, true),
-		LINES_AND_BOXES("Lines and boxes", true, true);
-		
-		private final String name;
-		private final boolean boxes;
-		private final boolean lines;
-		
-		private Style(String name, boolean boxes, boolean lines)
-		{
-			this.name = name;
-			this.boxes = boxes;
-			this.lines = lines;
-		}
-		
-		@Override
-		public String toString()
-		{
-			return name;
-		}
 	}
 	
 	private enum BoxSize

@@ -119,7 +119,12 @@ public enum BlockUtils
 	{
 		return getOutlineShape(pos) != VoxelShapes.empty();
 	}
-	
+
+	public static boolean isOpaqueFullCube(BlockPos pos)
+	{
+		return getState(pos).isOpaqueFullCube(MC.world, pos);
+	}
+
 	public static ArrayList<BlockPos> getAllInBox(BlockPos from, BlockPos to)
 	{
 		ArrayList<BlockPos> blocks = new ArrayList<>();

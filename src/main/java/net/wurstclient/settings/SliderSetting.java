@@ -85,7 +85,17 @@ public class SliderSetting extends Setting implements SliderLock
 	{
 		return MathHelper.ceil(getValue());
 	}
-	
+
+	/**
+	 * Returns the actual value of a logarithmic slider,<br>
+	 * calculated as <code>10 ^ {@link #getValueI()}</code>.
+	 */
+	public final int getValueLog()
+	{
+		return (int)Math.pow(10, getValueI());
+	}
+
+
 	public final double getDefaultValue()
 	{
 		return defaultValue;

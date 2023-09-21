@@ -10,7 +10,6 @@ package net.wurstclient;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,6 +22,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 import net.wurstclient.altmanager.AltManager;
+import net.wurstclient.altmanager.Encryption;
 import net.wurstclient.analytics.WurstAnalytics;
 import net.wurstclient.clickgui.ClickGui;
 import net.wurstclient.command.CmdList;
@@ -56,7 +56,7 @@ public enum WurstClient
 	public static MinecraftClient MC;
 	public static IMinecraftClient IMC;
 	
-	public static final String VERSION = "7.36";
+	public static final String VERSION = "7.37";
 	public static final String MC_VERSION = "1.20.1";
 	
 	private WurstAnalytics analytics;
@@ -83,71 +83,70 @@ public enum WurstClient
 	
 	private KeyBinding zoomKey;
 	
-	public void initialize()
-	{
+	public void initialize() {
 		System.out.println("Starting Wurst Client...");
-		
+
 		MC = MinecraftClient.getInstance();
-		IMC = (IMinecraftClient)MC;
+		IMC = (IMinecraftClient) MC;
 		wurstFolder = createWurstFolder();
-		
+
 		String trackingID = "UA-52838431-5";
 		String hostname = "client.wurstclient.net";
 		Path analyticsFile = wurstFolder.resolve("analytics.json");
 		analytics = new WurstAnalytics(trackingID, hostname, analyticsFile);
-		
+
 		eventManager = new EventManager(this);
-		
+
 		Path enabledHacksFile = wurstFolder.resolve("enabled-hacks.json");
 		hax = new HackList(enabledHacksFile);
-		
+
 		cmds = new CmdList();
-		
+
 		otfs = new OtfList();
-		
+
 		Path settingsFile = wurstFolder.resolve("settings.json");
 		settingsProfileFolder = wurstFolder.resolve("settings");
 		this.settingsFile = new SettingsFile(settingsFile, hax, cmds, otfs);
 		this.settingsFile.load();
 		hax.tooManyHaxHack.loadBlockedHacksFile();
-		
+
 		Path keybindsFile = wurstFolder.resolve("keybinds.json");
 		keybinds = new KeybindList(keybindsFile);
-		
+
 		Path guiFile = wurstFolder.resolve("windows.json");
 		gui = new ClickGui(guiFile);
-		
+
 		Path preferencesFile = wurstFolder.resolve("preferences.json");
 		navigator = new Navigator(preferencesFile, hax, cmds, otfs);
-		
+
 		Path friendsFile = wurstFolder.resolve("friends.json");
 		friends = new FriendsList(friendsFile);
 		friends.load();
-		
+
 		cmdProcessor = new CmdProcessor(cmds);
 		eventManager.add(ChatOutputListener.class, cmdProcessor);
-		
+
 		KeybindProcessor keybindProcessor =
-			new KeybindProcessor(hax, keybinds, cmdProcessor);
+				new KeybindProcessor(hax, keybinds, cmdProcessor);
 		eventManager.add(KeyPressListener.class, keybindProcessor);
-		
+
 		hud = new IngameHUD();
 		eventManager.add(GUIRenderListener.class, hud);
-		
+
 		rotationFaker = new RotationFaker();
 		eventManager.add(PreMotionListener.class, rotationFaker);
 		eventManager.add(PostMotionListener.class, rotationFaker);
-		
+
 		updater = new WurstUpdater();
 		eventManager.add(UpdateListener.class, updater);
-		
+
 		problematicPackDetector = new ProblematicResourcePackDetector();
 		problematicPackDetector.start();
-		
+
 		Path altsFile = wurstFolder.resolve("alts.encrypted_json");
-		Path encFolder =
-			Paths.get(System.getProperty("user.home"), ".Wurst encryption")
-				.normalize();
+
+		Path encFolder = Encryption.chooseEncryptionFolder();
+
 		altManager = new AltManager(altsFile, encFolder);
 		
 		zoomKey = new KeyBinding("key.wurst.zoom", InputUtil.Type.KEYSYM,

@@ -27,6 +27,7 @@ public interface ShouldDrawSideListener extends Listener
 
 		public ShouldDrawSideEvent(BlockState state, BlockPos pos)
 		{
+			this.state = state;
 			this.pos = pos;
 		}
 		

@@ -63,15 +63,13 @@ public final class OverlayRenderer
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-		
-		BlockPos camPos = RenderUtils.getCameraBlockPos();
-		int regionX = (camPos.getX() >> 9) * 512;
-		int regionZ = (camPos.getZ() >> 9) * 512;
-		RenderUtils.applyRegionalRenderOffset(matrixStack, regionX, regionZ);
+
+		RegionPos region = RenderUtils.getCameraRegion();
+		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
 		
 		// set position
-		matrixStack.translate(pos.getX() - regionX, pos.getY(),
-			pos.getZ() - regionZ);
+		matrixStack.translate(pos.getX() - region.x(), pos.getY(),
+				pos.getZ() - region.z());
 		
 		// get interpolated progress
 		boolean breaksInstantly = MC.player.getAbilities().creativeMode

@@ -53,51 +53,29 @@ public enum RenderUtils
 		int scissorHeight = (int)(height * factor);
 		GL11.glScissor(scissorX, scissorY, scissorWidth, scissorHeight);
 	}
-	
-	public static void applyRenderOffset(MatrixStack matrixStack)
-	{
-		applyCameraRotationOnly();
-		Vec3d camPos = getCameraPos();
-		
-		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
-	}
-	
+
 	public static void applyRegionalRenderOffset(MatrixStack matrixStack)
 	{
-		applyCameraRotationOnly();
-		
-		Vec3d camPos = getCameraPos();
-		BlockPos blockPos = getCameraBlockPos();
-		
-		int regionX = (blockPos.getX() >> 9) * 512;
-		int regionZ = (blockPos.getZ() >> 9) * 512;
-		
-		matrixStack.translate(regionX - camPos.x, -camPos.y,
-			regionZ - camPos.z);
+		applyRegionalRenderOffset(matrixStack, getCameraRegion());
+	}
+
+	public static void applyRegionalRenderOffset(MatrixStack matrixStack,
+												 Chunk chunk)
+	{
+		applyRegionalRenderOffset(matrixStack, RegionPos.of(chunk.getPos()));
 	}
 	
 	public static void applyRegionalRenderOffset(MatrixStack matrixStack,
-		int regionX, int regionZ)
+												 RegionPos region)
 	{
-		applyCameraRotationOnly();
-		
-		Vec3d camPos = getCameraPos();
-		matrixStack.translate(regionX - camPos.x, -camPos.y,
-			regionZ - camPos.z);
+		Vec3d offset = region.toVec3d().subtract(getCameraPos());
+		matrixStack.translate(offset.x, offset.y, offset.z);
 	}
-	
-	public static void applyRegionalRenderOffset(MatrixStack matrixStack,
-		Chunk chunk)
+
+	public static void applyRenderOffset(MatrixStack matrixStack)
 	{
-		applyCameraRotationOnly();
-		
 		Vec3d camPos = getCameraPos();
-		
-		int regionX = (chunk.getPos().getStartX() >> 9) * 512;
-		int regionZ = (chunk.getPos().getStartZ() >> 9) * 512;
-		
-		matrixStack.translate(regionX - camPos.x, -camPos.y,
-			regionZ - camPos.z);
+		matrixStack.translate(-camPos.x, -camPos.y, -camPos.z);
 	}
 	
 	public static void applyCameraRotationOnly()
@@ -128,7 +106,12 @@ public enum RenderUtils
 		
 		return camera.getBlockPos();
 	}
-	
+
+	public static RegionPos getCameraRegion()
+	{
+		return RegionPos.of(getCameraBlockPos());
+	}
+
 	public static float[] getRainbowColor()
 	{
 		float x = System.currentTimeMillis() % 2000 / 1000F;

@@ -26,6 +26,7 @@ public interface TesselateBlockListener extends Listener
 
 		public TesselateBlockEvent(BlockState state, BlockPos pos)
 		{
+			this.state = state;
 			this.pos = pos;
 		}
 		

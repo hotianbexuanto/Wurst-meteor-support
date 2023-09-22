@@ -26,13 +26,13 @@ public abstract class AbstractSignEditScreenMixin extends Screen
 	@Shadow
 	@Final
 	private String[] messages;
-	
-	private AbstractSignEditScreenMixin(WurstClient wurst, Text text_1)
+
+	private AbstractSignEditScreenMixin(WurstClient wurst, Text title)
 	{
-		super(text_1);
+		super(title);
 	}
-	
-	@Inject(at = {@At("HEAD")}, method = {"init()V"})
+
+	@Inject(at = @At("HEAD"), method = "init()V")
 	private void onInit(CallbackInfo ci)
 	{
 		AutoSignHack autoSignHack = WurstClient.INSTANCE.getHax().autoSignHack;
@@ -46,8 +46,8 @@ public abstract class AbstractSignEditScreenMixin extends Screen
 		
 		finishEditing();
 	}
-	
-	@Inject(at = {@At("HEAD")}, method = {"finishEditing()V"})
+
+	@Inject(at = @At("HEAD"), method = "finishEditing()V")
 	private void onFinishEditing(CallbackInfo ci)
 	{
 		WurstClient.INSTANCE.getHax().autoSignHack.setSignText(messages);

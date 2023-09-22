@@ -40,13 +40,13 @@ public abstract class BlockModelRendererMixin
 	{
 		TesselateBlockEvent event = new TesselateBlockEvent(state, pos);
 		EventManager.fire(event);
-		
+
 		if(event.isCancelled())
 		{
 			ci.cancel();
 			return;
 		}
-		
+
 		if(!cull)
 			return;
 
@@ -54,17 +54,14 @@ public abstract class BlockModelRendererMixin
 		EventManager.fire(event2);
 		if(!Boolean.TRUE.equals(event2.isRendered()))
 			return;
-		
+
 		renderSmooth(world, model, state, pos, matrices, vertexConsumer, false,
 			random, seed, overlay);
 	}
-	
+
 	@Shadow
-	public void renderSmooth(BlockRenderView world, BakedModel model,
+	public abstract void renderSmooth(BlockRenderView world, BakedModel model,
 		BlockState state, BlockPos pos, MatrixStack matrices,
 		VertexConsumer vertexConsumer, boolean cull, Random random, long seed,
-		int overlay)
-	{
-		
-	}
+		int overlay);
 }

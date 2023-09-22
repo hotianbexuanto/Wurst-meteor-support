@@ -10,7 +10,6 @@ package net.wurstclient.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.client.gui.screen.ingame.ShulkerBoxScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.player.PlayerInventory;
@@ -24,19 +23,17 @@ import net.wurstclient.hacks.AutoStealHack;
 @Mixin(ShulkerBoxScreen.class)
 public abstract class ShulkerBoxScreenMixin
 	extends HandledScreen<ShulkerBoxScreenHandler>
-	implements ScreenHandlerProvider<ShulkerBoxScreenHandler>
 {
 	private final int rows = 3;
 	
 	private final AutoStealHack autoSteal =
 		WurstClient.INSTANCE.getHax().autoStealHack;
 	private int mode;
-	
-	public ShulkerBoxScreenMixin(WurstClient wurst,
-		ShulkerBoxScreenHandler container, PlayerInventory playerInventory,
-		Text name)
+
+	private ShulkerBoxScreenMixin(WurstClient wurst,
+		ShulkerBoxScreenHandler handler, PlayerInventory inventory, Text title)
 	{
-		super(container, playerInventory, name);
+		super(handler, inventory, title);
 	}
 	
 	@Override

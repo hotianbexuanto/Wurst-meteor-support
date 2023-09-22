@@ -16,7 +16,7 @@
 自分でビルドしとけ またはリリースからダウンロードしろくそが
 
 ## 内部バージョン
-# 7.36  1.20 or 1.20.1
+# 7.37  1.20 or 1.20.1
 
 ## 偉大なる元作者様
 https://github.com/white-devil42/Wurst7-with-meteor-support 現在は削除済み

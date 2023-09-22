@@ -16,7 +16,7 @@ or
 Download from Releases
 
 ## Internal version
-# 7.36  1.20 or 1.20.1
+# 7.37  1.20 or 1.20.1
 
 ## Originator
 https://github.com/white-devil42/Wurst7-with-meteor-support Deleted

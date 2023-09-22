@@ -119,15 +119,15 @@ public abstract class GameRendererMixin
 		EventManager.fire(event);
 	}
 
-	@Redirect(
-			at = @At(value = "INVOKE",
-					target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F",
-					ordinal = 0),
-			method = "renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V")
-	private float wurstNauseaLerp(float delta, float start, float end)
-	{
-		return 0;
-	}
+	//@Redirect(
+	//		at = @At(value = "INVOKE",
+	//				target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F",
+	//				ordinal = 0),
+	//		method = "renderWorld(FJLnet/minecraft/client/util/math/MatrixStack;)V")
+	//private float wurstNauseaLerp(float delta, float start, float end)
+	//{
+	//	return 0;
+	//}
 
 	@Inject(at = @At("HEAD"),
 			method = "getNightVisionStrength(Lnet/minecraft/entity/LivingEntity;F)F",

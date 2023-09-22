@@ -29,14 +29,14 @@ public class SodiumBlockOcclusionCacheMixin
 {
 	@Inject(at = @At("HEAD"),
 			method = "shouldDrawSide",
-		    cancellable = true,
-		    remap = false)
+			cancellable = true,
+			remap = false)
 	public void shouldDrawSide(BlockState state, BlockView world, BlockPos pos,
-		Direction  side, CallbackInfoReturnable<Boolean> cir)
+							   Direction side, CallbackInfoReturnable<Boolean> cir)
 	{
 		ShouldDrawSideEvent event = new ShouldDrawSideEvent(state, pos);
 		EventManager.fire(event);
-		
+
 		if(event.isRendered() != null)
 			cir.setReturnValue(event.isRendered());
 	}

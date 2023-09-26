@@ -5,9 +5,9 @@
 
 ## ⚠ It's not perfect. ⚠
 
-This client "fork" changes the command prefix and supports Meteor
-It also bypasses updates, but this only modifies the version in the file, so no updates are made.
-I will give an update if I am aware of it.
+This has numerous destabilizing factors. Please use caution.
+
+Updates will be made as soon as we become aware of them.
 
 ## Downloads
 

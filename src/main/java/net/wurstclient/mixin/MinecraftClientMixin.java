@@ -10,16 +10,15 @@ package net.wurstclient.mixin;
 import java.io.File;
 import java.util.UUID;
 
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
@@ -29,9 +28,9 @@ import net.minecraft.client.WindowEventHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.resource.language.LanguageManager;
-import net.minecraft.client.util.ProfileKeys;
-import net.minecraft.client.util.ProfileKeysImpl;
-import net.minecraft.client.util.Session;
+import net.minecraft.client.session.ProfileKeys;
+import net.minecraft.client.session.ProfileKeysImpl;
+import net.minecraft.client.session.Session;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -48,8 +47,8 @@ import net.wurstclient.mixinterface.IWorld;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin
-	extends ReentrantThreadExecutor<Runnable>
-	implements WindowEventHandler, IMinecraftClient
+		extends ReentrantThreadExecutor<Runnable>
+		implements WindowEventHandler, IMinecraftClient
 {
 	@Shadow
 	@Final
@@ -71,7 +70,7 @@ public abstract class MinecraftClientMixin
 	@Shadow
 	@Final
 	private YggdrasilAuthenticationService authenticationService;
-	
+
 	private Session wurstSession;
 	private ProfileKeysImpl wurstProfileKeys;
 
@@ -81,28 +80,28 @@ public abstract class MinecraftClientMixin
 	}
 
 	@Inject(at = @At(value = "FIELD",
-		target = "Lnet/minecraft/client/MinecraftClient;crosshairTarget:Lnet/minecraft/util/hit/HitResult;",
-		ordinal = 0), method = "doAttack()Z", cancellable = true)
+			target = "Lnet/minecraft/client/MinecraftClient;crosshairTarget:Lnet/minecraft/util/hit/HitResult;",
+			ordinal = 0), method = "doAttack()Z", cancellable = true)
 	private void onDoAttack(CallbackInfoReturnable<Boolean> cir)
 	{
 		LeftClickEvent event = new LeftClickEvent();
 		EventManager.fire(event);
-		
+
 		if(event.isCancelled())
 			cir.setReturnValue(false);
 	}
 
 	@Inject(
-		at = @At(value = "FIELD",
-				target = "Lnet/minecraft/client/MinecraftClient;itemUseCooldown:I",
-				ordinal = 0),
-		method = "doItemUse()V",
-		cancellable = true)
+			at = @At(value = "FIELD",
+					target = "Lnet/minecraft/client/MinecraftClient;itemUseCooldown:I",
+					ordinal = 0),
+			method = "doItemUse()V",
+			cancellable = true)
 	private void onDoItemUse(CallbackInfo ci)
 	{
 		RightClickEvent event = new RightClickEvent();
 		EventManager.fire(event);
-		
+
 		if(event.isCancelled())
 			ci.cancel();
 	}
@@ -112,136 +111,141 @@ public abstract class MinecraftClientMixin
 	{
 		if(!WurstClient.INSTANCE.isEnabled())
 			return;
-		
+
 		HitResult hitResult = WurstClient.MC.crosshairTarget;
 		if(!(hitResult instanceof EntityHitResult eHitResult))
 			return;
 
 		WurstClient.INSTANCE.getFriends().middleClick(eHitResult.getEntity());
 	}
-	
+
 	@Inject(at = @At("HEAD"),
-		method = "getSession()Lnet/minecraft/client/util/Session;",
-		cancellable = true)
+			method = "getSession()Lnet/minecraft/client/session/Session;",
+			cancellable = true)
 	private void onGetSession(CallbackInfoReturnable<Session> cir)
 	{
 		if(wurstSession != null)
 			cir.setReturnValue(wurstSession);
 	}
-	
-	@Redirect(at = @At(value = "FIELD",
-		target = "Lnet/minecraft/client/MinecraftClient;session:Lnet/minecraft/client/util/Session;",
-		opcode = Opcodes.GETFIELD,
-		ordinal = 0),
-		method = "getSessionProperties()Lcom/mojang/authlib/properties/PropertyMap;")
-	private Session getSessionForSessionProperties(MinecraftClient mc)
+
+	@Inject(at = @At("RETURN"),
+			method = "getGameProfile()Lcom/mojang/authlib/GameProfile;",
+			cancellable = true)
+	public void onGetGameProfile(CallbackInfoReturnable<GameProfile> cir)
 	{
-		return wurstSession != null ? wurstSession : session;
+		if(wurstSession == null)
+			return;
+
+		GameProfile oldProfile = cir.getReturnValue();
+		GameProfile newProfile = new GameProfile(wurstSession.getUuidOrNull(),
+				wurstSession.getUsername());
+		newProfile.getProperties().putAll(oldProfile.getProperties());
+		cir.setReturnValue(newProfile);
 	}
-	
+
 	@Inject(at = @At("HEAD"),
-		method = "getProfileKeys()Lnet/minecraft/client/util/ProfileKeys;",
-		cancellable = true)
+			method = "getProfileKeys()Lnet/minecraft/client/session/ProfileKeys;",
+			cancellable = true)
 	private void onGetProfileKeys(CallbackInfoReturnable<ProfileKeys> cir)
 	{
 		if(WurstClient.INSTANCE.getOtfs().noChatReportsOtf.isActive())
 			cir.setReturnValue(ProfileKeys.MISSING);
-		
+
 		if(wurstProfileKeys == null)
 			return;
-		
+
 		cir.setReturnValue(wurstProfileKeys);
 	}
-	
+
 	@Inject(at = @At("HEAD"),
-		method = "isTelemetryEnabledByApi()Z",
-		cancellable = true)
+			method = "isTelemetryEnabledByApi()Z",
+			cancellable = true)
 	private void onIsTelemetryEnabledByApi(CallbackInfoReturnable<Boolean> cir)
 	{
 		cir.setReturnValue(
 				!WurstClient.INSTANCE.getOtfs().noTelemetryOtf.isEnabled());
 	}
-	
+
 	@Inject(at = @At("HEAD"),
-		method = "isOptionalTelemetryEnabledByApi()Z",
-		cancellable = true)
+			method = "isOptionalTelemetryEnabledByApi()Z",
+			cancellable = true)
 	private void onIsOptionalTelemetryEnabledByApi(
-		CallbackInfoReturnable<Boolean> cir)
+			CallbackInfoReturnable<Boolean> cir)
 	{
 		cir.setReturnValue(
 				!WurstClient.INSTANCE.getOtfs().noTelemetryOtf.isEnabled());
 	}
-	
+
 	@Override
 	public void rightClick()
 	{
 		doItemUse();
 	}
-	
+
 	@Override
 	public int getItemUseCooldown()
 	{
 		return itemUseCooldown;
 	}
-	
+
 	@Override
 	public void setItemUseCooldown(int itemUseCooldown)
 	{
 		this.itemUseCooldown = itemUseCooldown;
 	}
-	
+
 	@Override
 	public IClientPlayerEntity getPlayer()
 	{
 		return (IClientPlayerEntity)player;
 	}
-	
+
 	@Override
 	public IWorld getWorld()
 	{
 		return (IWorld)world;
 	}
-	
+
 	@Override
 	public IClientPlayerInteractionManager getInteractionManager()
 	{
 		return (IClientPlayerInteractionManager)interactionManager;
 	}
-	
+
 	@Override
 	public ILanguageManager getLanguageManager()
 	{
 		return (ILanguageManager)languageManager;
 	}
-	
+
 	@Override
 	public void setSession(Session session)
 	{
 		wurstSession = session;
-		
+
 		UserApiService userApiService =
-			wurst_createUserApiService(session.getAccessToken());
-		UUID uuid = wurstSession.getProfile().getId();
+				wurst_createUserApiService(session.getAccessToken());
+		UUID uuid = wurstSession.getUuidOrNull();
 		wurstProfileKeys =
-			new ProfileKeysImpl(userApiService, uuid, runDirectory.toPath());
+				new ProfileKeysImpl(userApiService, uuid, runDirectory.toPath());
 	}
-	
+
 	private UserApiService wurst_createUserApiService(String accessToken)
 	{
 		try
 		{
 			return authenticationService.createUserApiService(accessToken);
-			
+
 		}catch(AuthenticationException e)
 		{
 			e.printStackTrace();
 			return UserApiService.OFFLINE;
 		}
 	}
-	
+
 	@Shadow
 	private void doItemUse()
 	{
-		
+
 	}
 }

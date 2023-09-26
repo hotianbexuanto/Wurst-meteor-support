@@ -113,12 +113,13 @@ public abstract class NavigatorScreen extends Screen
 	}
 	
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double delta)
+	public boolean mouseScrolled(double mouseX, double mouseY,
+								 double horizontalAmount, double verticalAmount)
 	{
 		// scrollbar
 		if(!scrollbarLocked)
 		{
-			scroll += delta * 4;
+			scroll += verticalAmount * 4;
 			
 			if(scroll > 0)
 				scroll = 0;
@@ -132,8 +133,9 @@ public abstract class NavigatorScreen extends Screen
 					(int)((height - 131) * scroll / (float)maxScroll);
 			scrollKnobPosition += 2;
 		}
-		
-		return super.mouseScrolled(mouseX, mouseY, delta);
+
+		return super.mouseScrolled(mouseX, mouseY, horizontalAmount,
+				verticalAmount);
 	}
 	
 	@Override

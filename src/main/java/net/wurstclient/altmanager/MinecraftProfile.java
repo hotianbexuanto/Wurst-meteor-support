@@ -21,10 +21,10 @@ public final class MinecraftProfile
 		this.name = name;
 		this.mcAccessToken = mcAccessToken;
 	}
-	
-	public String getUUID()
+
+	public UUID getUUID()
 	{
-		return "" + uuid;
+		return uuid;
 	}
 	
 	public String getName()

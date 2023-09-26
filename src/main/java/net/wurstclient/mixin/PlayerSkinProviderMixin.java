@@ -31,73 +31,73 @@ public abstract class PlayerSkinProviderMixin
 {
 	private static JsonObject capes;
 	private MinecraftProfileTexture currentCape;
-
+	
 	@Inject(at = @At("HEAD"),
-			method = "fetchSkinTextures(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/client/texture/PlayerSkinProvider$Textures;)Ljava/util/concurrent/CompletableFuture;")
+		method = "fetchSkinTextures(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/client/texture/PlayerSkinProvider$Textures;)Ljava/util/concurrent/CompletableFuture;")
 	private void onFetchSkinTextures(GameProfile profile, Textures textures,
-									 CallbackInfoReturnable<CompletableFuture<SkinTextures>> cir)
+		CallbackInfoReturnable<CompletableFuture<SkinTextures>> cir)
 	{
 		String name = profile.getName();
 		String uuid = profile.getId().toString();
-
+		
 		try
 		{
 			if(capes == null)
 				setupWurstCapes();
-
+			
 			if(capes.has(name))
 			{
 				String capeURL = capes.get(name).getAsString();
 				currentCape = new MinecraftProfileTexture(capeURL, null);
-
+				
 			}else if(capes.has(uuid))
 			{
 				String capeURL = capes.get(uuid).getAsString();
 				currentCape = new MinecraftProfileTexture(capeURL, null);
-
+				
 			}else
 				currentCape = null;
-
+			
 		}catch(Exception e)
 		{
 			System.err.println("[Wurst] Failed to load cape for '" + name
-					+ "' (" + uuid + ")");
-
+				+ "' (" + uuid + ")");
+			
 			e.printStackTrace();
 		}
 	}
-
+	
 	@ModifyVariable(at = @At("STORE"),
-			method = "fetchSkinTextures(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/client/texture/PlayerSkinProvider$Textures;)Ljava/util/concurrent/CompletableFuture;",
-			ordinal = 1,
-			name = "minecraftProfileTexture2")
+		method = "fetchSkinTextures(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/client/texture/PlayerSkinProvider$Textures;)Ljava/util/concurrent/CompletableFuture;",
+		ordinal = 1,
+		name = "minecraftProfileTexture2")
 	private MinecraftProfileTexture modifyCapeTexture(
-			MinecraftProfileTexture old)
+		MinecraftProfileTexture old)
 	{
 		if(currentCape == null)
 			return old;
-
+		
 		MinecraftProfileTexture result = currentCape;
 		currentCape = null;
 		return result;
 	}
-
+	
 	private void setupWurstCapes()
 	{
 		try
 		{
 			// TODO: download capes to file
 			URL url = new URL("https://www.wurstclient.net/api/v1/capes.json");
-
+			
 			capes =
-					JsonParser.parseReader(new InputStreamReader(url.openStream()))
-							.getAsJsonObject();
-
+				JsonParser.parseReader(new InputStreamReader(url.openStream()))
+					.getAsJsonObject();
+			
 		}catch(Exception e)
 		{
 			System.err
-					.println("[Wurst] Failed to load capes from wurstclient.net!");
-
+				.println("[Wurst] Failed to load capes from wurstclient.net!");
+			
 			e.printStackTrace();
 		}
 	}

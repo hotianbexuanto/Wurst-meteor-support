@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -32,7 +32,7 @@ import net.wurstclient.events.RenderListener;
 import net.wurstclient.events.UpdateListener;
 import net.wurstclient.hack.Hack;
 import net.wurstclient.settings.ColorSetting;
-import net.wurstclient.settings.EnumSetting;
+import net.wurstclient.settings.EspBoxSizeSetting;
 import net.wurstclient.settings.EspStyleSetting;
 import net.wurstclient.util.EntityUtils;
 import net.wurstclient.util.RegionPos;
@@ -45,10 +45,9 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 {
 	private final EspStyleSetting style = new EspStyleSetting();
 	
-	private final EnumSetting<BoxSize> boxSize = new EnumSetting<>("Box size",
+	private final EspBoxSizeSetting boxSize = new EspBoxSizeSetting(
 		"\u00a7lAccurate\u00a7r mode shows the exact hitbox of each item.\n"
-			+ "\u00a7lFancy\u00a7r mode shows larger boxes that look better.",
-		BoxSize.values(), BoxSize.FANCY);
+			+ "\u00a7lFancy\u00a7r mode shows larger boxes that look better.");
 	
 	private final ColorSetting color = new ColorSetting("Color",
 		"Items will be highlighted in this color.", Color.YELLOW);
@@ -94,7 +93,7 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 	public void onCameraTransformViewBobbing(
 		CameraTransformViewBobbingEvent event)
 	{
-		if(style.getSelected().hasLines())
+		if(style.hasLines())
 			event.cancel();
 	}
 	
@@ -105,13 +104,13 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		matrixStack.push();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
-
+		
 		renderBoxes(matrixStack, partialTicks, region);
-
-		if(style.getSelected().hasLines())
+		
+		if(style.hasLines())
 			renderTracers(matrixStack, partialTicks, region);
 		
 		matrixStack.pop();
@@ -121,21 +120,21 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-
+	
 	private void renderBoxes(MatrixStack matrixStack, float partialTicks,
-							 RegionPos region)
+		RegionPos region)
 	{
-		float extraSize = boxSize.getSelected().extraSize;
+		float extraSize = boxSize.getExtraSize();
 		
 		for(ItemEntity e : items)
 		{
 			matrixStack.push();
-
+			
 			Vec3d lerpedPos = EntityUtils.getLerpedPos(e, partialTicks)
-					.subtract(region.toVec3d());
+				.subtract(region.toVec3d());
 			matrixStack.translate(lerpedPos.x, lerpedPos.y, lerpedPos.z);
-
-			if(style.getSelected().hasBoxes())
+			
+			if(style.hasBoxes())
 			{
 				matrixStack.push();
 				matrixStack.scale(e.getWidth() + extraSize,
@@ -155,9 +154,9 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 			matrixStack.pop();
 		}
 	}
-
+	
 	private void renderTracers(MatrixStack matrixStack, float partialTicks,
-							   RegionPos region)
+		RegionPos region)
 	{
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -168,17 +167,17 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 		Tessellator tessellator = RenderSystem.renderThreadTesselator();
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
-
+		
 		Vec3d regionVec = region.toVec3d();
-		Vec3d start = RotationUtils.getClientLookVec()
-				.add(RenderUtils.getCameraPos()).subtract(regionVec);
+		Vec3d start = RotationUtils.getClientLookVec(partialTicks)
+			.add(RenderUtils.getCameraPos()).subtract(regionVec);
 		
 		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES,
 			VertexFormats.POSITION);
 		for(ItemEntity e : items)
 		{
 			Vec3d end = EntityUtils.getLerpedBox(e, partialTicks).getCenter()
-					.subtract(regionVec);
+				.subtract(regionVec);
 			
 			bufferBuilder
 				.vertex(matrix, (float)start.x, (float)start.y, (float)start.z)
@@ -188,26 +187,5 @@ public final class ItemEspHack extends Hack implements UpdateListener,
 				.next();
 		}
 		tessellator.draw();
-	}
-	
-	private enum BoxSize
-	{
-		ACCURATE("Accurate", 0),
-		FANCY("Fancy", 0.1F);
-		
-		private final String name;
-		private final float extraSize;
-		
-		private BoxSize(String name, float extraSize)
-		{
-			this.name = name;
-			this.extraSize = extraSize;
-		}
-		
-		@Override
-		public String toString()
-		{
-			return name;
-		}
 	}
 }

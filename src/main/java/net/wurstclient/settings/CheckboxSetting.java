@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -102,7 +102,7 @@ public class CheckboxSetting extends Setting implements CheckboxLock
 	{
 		return new JsonPrimitive(checked);
 	}
-
+	
 	@Override
 	public JsonObject exportWikiData()
 	{
@@ -113,7 +113,7 @@ public class CheckboxSetting extends Setting implements CheckboxLock
 		json.addProperty("checkedByDefault", checkedByDefault);
 		return json;
 	}
-
+	
 	@Override
 	public final Set<PossibleKeybind> getPossibleKeybinds(String featureName)
 	{

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -35,7 +35,7 @@ public enum EntityUtils
 			.filter(IS_ATTACKABLE);
 	}
 	
-	public static Predicate<Entity> IS_ATTACKABLE = e -> e != null
+	public static final Predicate<Entity> IS_ATTACKABLE = e -> e != null
 		&& !e.isRemoved()
 		&& (e instanceof LivingEntity && ((LivingEntity)e).getHealth() > 0
 			|| e instanceof EndCrystalEntity
@@ -46,13 +46,13 @@ public enum EntityUtils
 	public static Stream<AnimalEntity> getValidAnimals()
 	{
 		return StreamSupport.stream(MC.world.getEntities().spliterator(), true)
-			.filter(e -> e instanceof AnimalEntity).map(e -> (AnimalEntity)e)
+			.filter(AnimalEntity.class::isInstance).map(e -> (AnimalEntity)e)
 			.filter(IS_VALID_ANIMAL);
 	}
 	
-	public static Predicate<AnimalEntity> IS_VALID_ANIMAL =
+	public static final Predicate<AnimalEntity> IS_VALID_ANIMAL =
 		a -> a != null && !a.isRemoved() && a.getHealth() > 0;
-
+	
 	/**
 	 * Interpolates (or "lerps") between the entity's position in the previous
 	 * tick and its position in the current tick to get the exact position where
@@ -63,20 +63,19 @@ public enum EntityUtils
 	 * current tick position directly would cause animations to look choppy
 	 * because that position is only updated 20 times per second.
 	 */
-	
 	public static Vec3d getLerpedPos(Entity e, float partialTicks)
 	{
 		// When an entity is removed, it stops moving and its lastRenderX/Y/Z
 		// values are no longer updated.
 		if(e.isRemoved())
 			return e.getPos();
-
+		
 		double x = MathHelper.lerp(partialTicks, e.lastRenderX, e.getX());
 		double y = MathHelper.lerp(partialTicks, e.lastRenderY, e.getY());
 		double z = MathHelper.lerp(partialTicks, e.lastRenderZ, e.getZ());
 		return new Vec3d(x, y, z);
 	}
-
+	
 	/**
 	 * Interpolates (or "lerps") between the entity's bounding box in the
 	 * previous tick and its bounding box in the current tick to get the exact
@@ -94,7 +93,7 @@ public enum EntityUtils
 		// values are no longer updated.
 		if(e.isRemoved())
 			return e.getBoundingBox();
-
+		
 		Vec3d offset = getLerpedPos(e, partialTicks).subtract(e.getPos());
 		return e.getBoundingBox().offset(offset);
 	}

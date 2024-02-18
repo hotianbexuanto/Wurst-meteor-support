@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -46,7 +46,7 @@ public final class AltRenderer
 			
 			PlayerListEntry entry =
 				new PlayerListEntry(new GameProfile(uuid, name), false);
-
+			
 			loadedSkins.put(name, entry.getSkinTextures().texture());
 		}
 		
@@ -122,10 +122,10 @@ public final class AltRenderer
 		try
 		{
 			bindSkinTexture(name);
-
-			boolean slim =
-					DefaultSkinHelper.getTexture(Uuids.getOfflinePlayerUuid(name))
-							.model() == SkinTextures.Model.SLIM;
+			
+			boolean slim = DefaultSkinHelper
+				.getSkinTextures(Uuids.getOfflinePlayerUuid(name))
+				.model() == SkinTextures.Model.SLIM;
 			
 			GL11.glEnable(GL11.GL_BLEND);
 			RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -254,10 +254,10 @@ public final class AltRenderer
 		try
 		{
 			bindSkinTexture(name);
-
-			boolean slim =
-					DefaultSkinHelper.getTexture(Uuids.getOfflinePlayerUuid(name))
-							.model() == SkinTextures.Model.SLIM;
+			
+			boolean slim = DefaultSkinHelper
+				.getSkinTextures(Uuids.getOfflinePlayerUuid(name))
+				.model() == SkinTextures.Model.SLIM;
 			
 			GL11.glEnable(GL11.GL_BLEND);
 			RenderSystem.setShaderColor(1, 1, 1, 1);

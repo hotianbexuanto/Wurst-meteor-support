@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -123,11 +123,11 @@ public final class KeybindManagerScreen extends Screen
 	
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY,
-								 double horizontalAmount, double verticalAmount)
+		double horizontalAmount, double verticalAmount)
 	{
 		listGui.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 		return super.mouseScrolled(mouseX, mouseY, horizontalAmount,
-				verticalAmount);
+			verticalAmount);
 	}
 	
 	@Override
@@ -175,7 +175,7 @@ public final class KeybindManagerScreen extends Screen
 			width / 2, 8, 0xffffff);
 		context.drawCenteredTextWithShadow(textRenderer,
 			"Keybinds: " + listGui.getItemCount(), width / 2, 20, 0xffffff);
-
+		
 		for(Drawable drawable : drawables)
 			drawable.render(context, mouseX, mouseY, partialTicks);
 	}

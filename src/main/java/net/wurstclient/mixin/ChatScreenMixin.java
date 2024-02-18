@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -27,12 +27,12 @@ public abstract class ChatScreenMixin extends Screen
 {
 	@Shadow
 	protected TextFieldWidget chatField;
-
+	
 	private ChatScreenMixin(WurstClient wurst, Text title)
 	{
 		super(title);
 	}
-
+	
 	@Inject(at = @At("TAIL"), method = "init()V")
 	protected void onInit(CallbackInfo ci)
 	{

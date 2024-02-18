@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.wurstclient.util.EntityUtils;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
@@ -35,15 +34,16 @@ import net.wurstclient.events.CameraTransformViewBobbingListener;
 import net.wurstclient.events.RenderListener;
 import net.wurstclient.events.UpdateListener;
 import net.wurstclient.hack.Hack;
-import net.wurstclient.settings.EnumSetting;
+import net.wurstclient.settings.EspBoxSizeSetting;
 import net.wurstclient.settings.EspStyleSetting;
 import net.wurstclient.settings.EspStyleSetting.EspStyle;
 import net.wurstclient.settings.filterlists.EntityFilterList;
 import net.wurstclient.settings.filters.FilterInvisibleSetting;
 import net.wurstclient.settings.filters.FilterSleepingSetting;
+import net.wurstclient.util.EntityUtils;
 import net.wurstclient.util.FakePlayerEntity;
-import net.wurstclient.util.RenderUtils;
 import net.wurstclient.util.RegionPos;
+import net.wurstclient.util.RenderUtils;
 import net.wurstclient.util.RotationUtils;
 
 @SearchTags({"player esp", "PlayerTracers", "player tracers"})
@@ -51,12 +51,11 @@ public final class PlayerEspHack extends Hack implements UpdateListener,
 	CameraTransformViewBobbingListener, RenderListener
 {
 	private final EspStyleSetting style =
-			new EspStyleSetting(EspStyle.LINES_AND_BOXES);
+		new EspStyleSetting(EspStyle.LINES_AND_BOXES);
 	
-	private final EnumSetting<BoxSize> boxSize = new EnumSetting<>("Box size",
+	private final EspBoxSizeSetting boxSize = new EspBoxSizeSetting(
 		"\u00a7lAccurate\u00a7r mode shows the exact hitbox of each player.\n"
-			+ "\u00a7lFancy\u00a7r mode shows slightly larger boxes that look better.",
-		BoxSize.values(), BoxSize.FANCY);
+			+ "\u00a7lFancy\u00a7r mode shows slightly larger boxes that look better.");
 	
 	private final EntityFilterList entityFilters = new EntityFilterList(
 		new FilterSleepingSetting("Won't show sleeping players.", false),
@@ -112,7 +111,7 @@ public final class PlayerEspHack extends Hack implements UpdateListener,
 	public void onCameraTransformViewBobbing(
 		CameraTransformViewBobbingEvent event)
 	{
-		if(style.getSelected().hasLines())
+		if(style.hasLines())
 			event.cancel();
 	}
 	
@@ -125,15 +124,15 @@ public final class PlayerEspHack extends Hack implements UpdateListener,
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
 		
 		// draw boxes
-		if(style.getSelected().hasBoxes())
+		if(style.hasBoxes())
 			renderBoxes(matrixStack, partialTicks, region);
-
-		if(style.getSelected().hasLines())
+		
+		if(style.hasLines())
 			renderTracers(matrixStack, partialTicks, region);
 		
 		matrixStack.pop();
@@ -143,25 +142,25 @@ public final class PlayerEspHack extends Hack implements UpdateListener,
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-
+	
 	private void renderBoxes(MatrixStack matrixStack, float partialTicks,
-							 RegionPos region)
+		RegionPos region)
 	{
-		float extraSize = boxSize.getSelected().extraSize;
+		float extraSize = boxSize.getExtraSize();
 		
 		for(PlayerEntity e : players)
 		{
 			matrixStack.push();
-
+			
 			Vec3d lerpedPos = EntityUtils.getLerpedPos(e, partialTicks)
-					.subtract(region.toVec3d());
+				.subtract(region.toVec3d());
 			matrixStack.translate(lerpedPos.x, lerpedPos.y, lerpedPos.z);
 			
 			matrixStack.scale(e.getWidth() + extraSize,
 				e.getHeight() + extraSize, e.getWidth() + extraSize);
 			
 			// set color
-			if(WURST.getFriends().contains(e.getEntityName()))
+			if(WURST.getFriends().contains(e.getName().getString()))
 				RenderSystem.setShaderColor(0, 0, 1, 0.5F);
 			else
 			{
@@ -175,9 +174,9 @@ public final class PlayerEspHack extends Hack implements UpdateListener,
 			matrixStack.pop();
 		}
 	}
-
+	
 	private void renderTracers(MatrixStack matrixStack, float partialTicks,
-							   RegionPos region)
+		RegionPos region)
 	{
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -188,19 +187,19 @@ public final class PlayerEspHack extends Hack implements UpdateListener,
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES,
 			VertexFormats.POSITION_COLOR);
-
+		
 		Vec3d regionVec = region.toVec3d();
-		Vec3d start = RotationUtils.getClientLookVec()
-				.add(RenderUtils.getCameraPos()).subtract(regionVec);
+		Vec3d start = RotationUtils.getClientLookVec(partialTicks)
+			.add(RenderUtils.getCameraPos()).subtract(regionVec);
 		
 		for(PlayerEntity e : players)
 		{
 			Vec3d end = EntityUtils.getLerpedBox(e, partialTicks).getCenter()
-					.subtract(regionVec);
+				.subtract(regionVec);
 			
 			float r, g, b;
 			
-			if(WURST.getFriends().contains(e.getEntityName()))
+			if(WURST.getFriends().contains(e.getName().getString()))
 			{
 				r = 0;
 				g = 0;
@@ -224,26 +223,5 @@ public final class PlayerEspHack extends Hack implements UpdateListener,
 		}
 		
 		tessellator.draw();
-	}
-	
-	private enum BoxSize
-	{
-		ACCURATE("Accurate", 0),
-		FANCY("Fancy", 0.1F);
-		
-		private final String name;
-		private final float extraSize;
-		
-		private BoxSize(String name, float extraSize)
-		{
-			this.name = name;
-			this.extraSize = extraSize;
-		}
-		
-		@Override
-		public String toString()
-		{
-			return name;
-		}
 	}
 }

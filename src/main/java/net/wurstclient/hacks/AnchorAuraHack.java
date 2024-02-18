@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -20,13 +20,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
 import net.wurstclient.Category;
 import net.wurstclient.SearchTags;
 import net.wurstclient.events.UpdateListener;
@@ -57,13 +55,13 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 		"When enabled, AnchorAura will automatically place anchors near valid entities.\n"
 			+ "When disabled, AnchorAura will only charge and detonate manually placed anchors.",
 		true);
-
+	
 	private final FacingSetting faceBlocks =
-			FacingSetting.withPacketSpam("Face anchors",
-					"Whether or not AnchorAura should face the correct direction when"
-							+ " placing and right-clicking respawn anchors.\n\n"
-							+ "Slower but can help with anti-cheat plugins.",
-					Facing.OFF);
+		FacingSetting.withPacketSpam("Face anchors",
+			"Whether or not AnchorAura should face the correct direction when"
+				+ " placing and right-clicking respawn anchors.\n\n"
+				+ "Slower but can help with anti-cheat plugins.",
+			Facing.OFF);
 	
 	private final CheckboxSetting checkLOS = new CheckboxSetting(
 		"Check line of sight",
@@ -127,11 +125,11 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 			detonate(chargedAnchors);
 			return;
 		}
-
+		
 		int maxInvSlot = takeItemsFrom.getSelected().maxInvSlot;
-
+		
 		if(!unchargedAnchors.isEmpty()
-				&& InventoryUtils.indexOf(Items.GLOWSTONE, maxInvSlot) >= 0)
+			&& InventoryUtils.indexOf(Items.GLOWSTONE, maxInvSlot) >= 0)
 		{
 			charge(unchargedAnchors);
 			// TODO: option to wait until next tick?
@@ -140,14 +138,14 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 		}
 		
 		if(!autoPlace.isChecked()
-				|| InventoryUtils.indexOf(Items.RESPAWN_ANCHOR, maxInvSlot) == -1)
-		     	return;
+			|| InventoryUtils.indexOf(Items.RESPAWN_ANCHOR, maxInvSlot) == -1)
+			return;
 		
 		ArrayList<Entity> targets = getNearbyTargets();
 		ArrayList<BlockPos> newAnchors = placeAnchorsNear(targets);
-
+		
 		if(!newAnchors.isEmpty()
-				&& InventoryUtils.indexOf(Items.GLOWSTONE, maxInvSlot) >= 0)
+			&& InventoryUtils.indexOf(Items.GLOWSTONE, maxInvSlot) >= 0)
 		{
 			// TODO: option to wait until next tick?
 			charge(newAnchors);
@@ -185,9 +183,9 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 	{
 		if(isSneaking())
 			return;
-
+		
 		InventoryUtils.selectItem(stack -> !stack.isOf(Items.GLOWSTONE),
-				takeItemsFrom.getSelected().maxInvSlot);
+			takeItemsFrom.getSelected().maxInvSlot);
 		if(MC.player.isHolding(Items.GLOWSTONE))
 			return;
 		
@@ -205,9 +203,9 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 	{
 		if(isSneaking())
 			return;
-
+		
 		InventoryUtils.selectItem(Items.GLOWSTONE,
-				takeItemsFrom.getSelected().maxInvSlot);
+			takeItemsFrom.getSelected().maxInvSlot);
 		if(!MC.player.isHolding(Items.GLOWSTONE))
 			return;
 		
@@ -240,11 +238,8 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 			if(distanceSqHitVec >= distanceSqPosVec)
 				continue;
 			
-			if(checkLOS.isChecked() && MC.world
-				.raycast(new RaycastContext(eyesPos, hitVec,
-					RaycastContext.ShapeType.COLLIDER,
-					RaycastContext.FluidHandling.NONE, MC.player))
-				.getType() != HitResult.Type.MISS)
+			if(checkLOS.isChecked()
+				&& !BlockUtils.hasLineOfSight(eyesPos, hitVec))
 				continue;
 			
 			faceBlocks.getSelected().face(hitVec);
@@ -284,15 +279,12 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 			if(distanceSqPosVec > eyesPos.squaredDistanceTo(posVec.add(dirVec)))
 				continue;
 			
-			if(checkLOS.isChecked() && MC.world
-				.raycast(new RaycastContext(eyesPos, hitVec,
-					RaycastContext.ShapeType.COLLIDER,
-					RaycastContext.FluidHandling.NONE, MC.player))
-				.getType() != HitResult.Type.MISS)
+			if(checkLOS.isChecked()
+				&& !BlockUtils.hasLineOfSight(eyesPos, hitVec))
 				continue;
-
+			
 			InventoryUtils.selectItem(Items.RESPAWN_ANCHOR,
-					takeItemsFrom.getSelected().maxInvSlot);
+				takeItemsFrom.getSelected().maxInvSlot);
 			if(!MC.player.isHolding(Items.RESPAWN_ANCHOR))
 				return false;
 			
@@ -311,15 +303,14 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 	private ArrayList<BlockPos> getNearbyAnchors()
 	{
 		Vec3d eyesVec = RotationUtils.getEyesPos().subtract(0.5, 0.5, 0.5);
-		
 		BlockPos center = BlockPos.ofFloored(RotationUtils.getEyesPos());
 		int rangeI = range.getValueCeil();
 		double rangeSq = MathHelper.square(range.getValue() + 0.5);
-
+		
 		Comparator<BlockPos> furthestFromPlayer =
 			Comparator.<BlockPos> comparingDouble(
 				pos -> eyesVec.squaredDistanceTo(Vec3d.of(pos))).reversed();
-
+		
 		return BlockUtils.getAllInBoxStream(center, rangeI)
 			.filter(pos -> eyesVec.squaredDistanceTo(Vec3d.of(pos)) <= rangeSq)
 			.filter(pos -> BlockUtils.getBlock(pos) == Blocks.RESPAWN_ANCHOR)
@@ -342,7 +333,8 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 					&& ((LivingEntity)e).getHealth() > 0)
 				.filter(e -> e != MC.player)
 				.filter(e -> !(e instanceof FakePlayerEntity))
-				.filter(e -> !WURST.getFriends().contains(e.getEntityName()))
+				.filter(
+					e -> !WURST.getFriends().contains(e.getName().getString()))
 				.filter(e -> MC.player.squaredDistanceTo(e) <= rangeSq);
 		
 		stream = entityFilters.applyTo(stream);
@@ -358,7 +350,7 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 		
 		BlockPos center = target.getBlockPos();
 		int rangeI = 2;
-
+		
 		Box targetBB = target.getBoundingBox();
 		Vec3d targetEyesVec =
 			target.getPos().add(0, target.getEyeHeight(target.getPose()), 0);
@@ -366,7 +358,7 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 		Comparator<BlockPos> closestToTarget =
 			Comparator.<BlockPos> comparingDouble(
 				pos -> targetEyesVec.squaredDistanceTo(Vec3d.ofCenter(pos)));
-
+		
 		return BlockUtils.getAllInBoxStream(center, rangeI)
 			.filter(pos -> eyesVec.squaredDistanceTo(Vec3d.of(pos)) <= rangeSq)
 			.filter(this::isReplaceable).filter(this::hasClickableNeighbor)
@@ -398,7 +390,7 @@ public final class AnchorAuraHack extends Hack implements UpdateListener
 	private boolean isChargedAnchor(BlockPos pos)
 	{
 		return BlockUtils.getState(pos).getOrEmpty(RespawnAnchorBlock.CHARGES)
-				.orElse(0) > 0;
+			.orElse(0) > 0;
 	}
 	
 	private boolean isSneaking()

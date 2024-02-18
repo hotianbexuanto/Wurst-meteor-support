@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -46,23 +46,17 @@ public abstract class ClientPlayerInteractionManagerMixin
 	@Shadow
 	@Final
 	private MinecraftClient client;
-	@Shadow
-	private float currentBreakingProgress;
-	@Shadow
-	private boolean breakingBlock;
-	@Shadow
-	private int blockBreakingCooldown;
-
+	
 	@Inject(at = @At(value = "INVOKE",
 		target = "Lnet/minecraft/client/network/ClientPlayerEntity;getId()I",
 		ordinal = 0),
 		method = "updateBlockBreakingProgress(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;)Z")
 	private void onPlayerDamageBlock(BlockPos pos, Direction direction,
-									 CallbackInfoReturnable<Boolean> cir)
+		CallbackInfoReturnable<Boolean> cir)
 	{
 		EventManager.fire(new BlockBreakingProgressEvent(pos, direction));
 	}
-
+	
 	@Inject(at = @At("HEAD"),
 		method = "getReachDistance()F",
 		cancellable = true)
@@ -71,12 +65,12 @@ public abstract class ClientPlayerInteractionManagerMixin
 		HackList hax = WurstClient.INSTANCE.getHax();
 		if(hax == null)
 			return;
-
+		
 		ReachHack reach = hax.reachHack;
 		if(reach.isEnabled())
 			ci.setReturnValue(reach.getReachDistance());
 	}
-
+	
 	@Inject(at = @At("HEAD"),
 		method = "hasExtendedReach()Z",
 		cancellable = true)
@@ -88,24 +82,12 @@ public abstract class ClientPlayerInteractionManagerMixin
 		
 		cir.setReturnValue(true);
 	}
-
+	
 	@Inject(at = @At("HEAD"),
 		method = "stopUsingItem(Lnet/minecraft/entity/player/PlayerEntity;)V")
 	private void onStopUsingItem(PlayerEntity player, CallbackInfo ci)
 	{
 		EventManager.fire(StopUsingItemEvent.INSTANCE);
-	}
-	
-	@Override
-	public float getCurrentBreakingProgress()
-	{
-		return currentBreakingProgress;
-	}
-	
-	@Override
-	public void setBreakingBlock(boolean breakingBlock)
-	{
-		this.breakingBlock = breakingBlock;
 	}
 	
 	@Override
@@ -139,18 +121,12 @@ public abstract class ClientPlayerInteractionManagerMixin
 	}
 	
 	@Override
-	public void rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec,
-		Hand hand)
-	{
-		BlockHitResult hitResult = new BlockHitResult(hitVec, side, pos, false);
-		interactBlock(client.player, hand, hitResult);
-		interactItem(client.player, hand);
-	}
-	
-	@Override
 	public void rightClickBlock(BlockPos pos, Direction side, Vec3d hitVec)
 	{
-		rightClickBlock(pos, side, hitVec, Hand.MAIN_HAND);
+		BlockHitResult hitResult = new BlockHitResult(hitVec, side, pos, false);
+		Hand hand = Hand.MAIN_HAND;
+		interactBlock(client.player, hand, hitResult);
+		interactItem(client.player, hand);
 	}
 	
 	@Override
@@ -167,12 +143,6 @@ public abstract class ClientPlayerInteractionManagerMixin
 	{
 		sendSequencedPacket(client.world,
 			i -> new PlayerInteractBlockC2SPacket(hand, blockHitResult, i));
-	}
-	
-	@Override
-	public void setBlockHitDelay(int delay)
-	{
-		blockBreakingCooldown = delay;
 	}
 	
 	@Shadow

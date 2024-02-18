@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -101,51 +101,51 @@ public final class Encryption
 		
 		return encFolder;
 	}
-
+	
 	public static Path chooseEncryptionFolder()
 	{
 		String userHome = System.getProperty("user.home");
 		String xdgDataHome = System.getenv("XDG_DATA_HOME");
 		String encFolderName = ".Wurst encryption";
-
+		
 		Path homeEncFolder = Paths.get(userHome, encFolderName).normalize();
 		Path encFolder = homeEncFolder;
 		if(xdgDataHome != null && !xdgDataHome.isEmpty())
 		{
 			encFolder = Paths.get(xdgDataHome, encFolderName).normalize();
-
+			
 			if(!Files.exists(encFolder) && Files.isDirectory(homeEncFolder))
 				migrateEncryptionFolder(homeEncFolder, encFolder);
 		}
-
+		
 		return encFolder;
 	}
-
+	
 	public static void migrateEncryptionFolder(Path oldFolder, Path newFolder)
 	{
 		System.out.println("Migrating encryption folder from " + oldFolder
-				+ " to " + newFolder);
-
+			+ " to " + newFolder);
+		
 		try
 		{
 			Files.createDirectories(newFolder);
-
+			
 			File[] oldFiles = oldFolder.toFile().listFiles();
 			for(File oldFile : oldFiles)
 			{
 				Path fileDestination = newFolder.resolve(oldFile.getName());
 				Files.copy(oldFile.toPath(), fileDestination);
 			}
-
+			
 			for(File oldFile : oldFiles)
 				oldFile.delete();
-
+			
 			Files.deleteIfExists(oldFolder);
-
+			
 		}catch(IOException e)
 		{
 			CrashReport report =
-					CrashReport.create(e, "Migrating Wurst encryption folder");
+				CrashReport.create(e, "Migrating Wurst encryption folder");
 			CrashReportSection section = report.addElement("Migration");
 			section.add("Old path", oldFolder);
 			section.add("New path", newFolder);

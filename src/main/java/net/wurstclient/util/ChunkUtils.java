@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -33,12 +33,12 @@ public enum ChunkUtils
 		return getLoadedChunks()
 			.flatMap(chunk -> chunk.getBlockEntities().values().stream());
 	}
-
+	
 	public static int getManhattanDistance(ChunkPos a, ChunkPos b)
 	{
 		return Math.abs(a.x - b.x) + Math.abs(a.z - b.z);
 	}
-
+	
 	/**
 	 * Returns the position of the chunk affected by the given
 	 * {@link BlockUpdateS2CPacket}, {@link ChunkDeltaUpdateS2CPacket}, or
@@ -56,10 +56,10 @@ public enum ChunkUtils
 			return p.sectionPos.toChunkPos();
 		if(packet instanceof ChunkDataS2CPacket p)
 			return new ChunkPos(p.getChunkX(), p.getChunkZ());
-
+		
 		return null;
 	}
-
+	
 	public static Stream<WorldChunk> getLoadedChunks()
 	{
 		int radius = Math.max(2, MC.options.getClampedViewDistance()) + 3;

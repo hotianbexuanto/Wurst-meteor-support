@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -83,20 +83,21 @@ public enum ChatUtils
 		text.accept(visitor);
 		return visitor.toString();
 	}
+	
 	public static final String wrapText(String text, int width)
 	{
 		return wrapText(text, width, Style.EMPTY);
 	}
-
+	
 	public static final String wrapText(String text, int width, Style style)
 	{
 		List<StringVisitable> lines = MC.textRenderer.getTextHandler()
-				.wrapLines(text, width, Style.EMPTY);
-
+			.wrapLines(text, width, Style.EMPTY);
+		
 		StringJoiner joiner = new StringJoiner("\n");
 		lines.stream().map(StringVisitable::getString)
-				.forEach(s -> joiner.add(s));
-
+			.forEach(s -> joiner.add(s));
+		
 		return joiner.toString();
 	}
 }

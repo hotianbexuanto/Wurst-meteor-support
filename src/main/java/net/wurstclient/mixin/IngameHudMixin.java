@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -28,7 +28,7 @@ public class IngameHudMixin
 	@Shadow
 	@Final
 	private DebugHud debugHud;
-
+	
 	@Inject(
 		at = @At(value = "INVOKE",
 			target = "Lcom/mojang/blaze3d/systems/RenderSystem;enableBlend()V",
@@ -39,7 +39,7 @@ public class IngameHudMixin
 	{
 		if(debugHud.shouldShowDebugHud())
 			return;
-
+		
 		EventManager.fire(new GUIRenderEvent(context, tickDelta));
 	}
 	
@@ -50,9 +50,9 @@ public class IngameHudMixin
 		float opacity, CallbackInfo ci)
 	{
 		if(texture == null
-				|| !"textures/misc/pumpkinblur.png".equals(texture.getPath()))
+			|| !"textures/misc/pumpkinblur.png".equals(texture.getPath()))
 			return;
-
+		
 		if(WurstClient.INSTANCE.getHax().noPumpkinHack.isEnabled())
 			ci.cancel();
 	}

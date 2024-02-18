@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -24,8 +24,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.wurstclient.util.RenderUtils;
 import net.wurstclient.util.RegionPos;
+import net.wurstclient.util.RenderUtils;
 import net.wurstclient.util.RotationUtils;
 
 public final class ChestEspRenderer
@@ -37,12 +37,12 @@ public final class ChestEspRenderer
 	private final RegionPos region;
 	private final Vec3d start;
 	
-	public ChestEspRenderer(MatrixStack matrixStack)
+	public ChestEspRenderer(MatrixStack matrixStack, float partialTicks)
 	{
 		this.matrixStack = matrixStack;
 		region = RenderUtils.getCameraRegion();
-		start = RotationUtils.getClientLookVec().add(RenderUtils.getCameraPos())
-				.subtract(region.toVec3d());
+		start = RotationUtils.getClientLookVec(partialTicks)
+			.add(RenderUtils.getCameraPos()).subtract(region.toVec3d());
 	}
 	
 	public void renderBoxes(ChestEspGroup group)
@@ -52,9 +52,9 @@ public final class ChestEspRenderer
 		for(Box box : group.getBoxes())
 		{
 			matrixStack.push();
-
+			
 			matrixStack.translate(box.minX - region.x(), box.minY,
-					box.minZ - region.z());
+				box.minZ - region.z());
 			
 			matrixStack.scale((float)(box.maxX - box.minX),
 				(float)(box.maxY - box.minY), (float)(box.maxZ - box.minZ));

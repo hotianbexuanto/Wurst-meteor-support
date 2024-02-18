@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -198,7 +198,7 @@ public final class BookOffersSetting extends Setting
 		
 		return json;
 	}
-
+	
 	@Override
 	public JsonObject exportWikiData()
 	{
@@ -206,7 +206,7 @@ public final class BookOffersSetting extends Setting
 		json.addProperty("name", getName());
 		json.addProperty("descriptionKey", getDescriptionKey());
 		json.addProperty("type", "BookOffers");
-
+		
 		JsonArray jsonDefaultOffers = new JsonArray();
 		for(BookOffer offer : defaultOffers)
 		{
@@ -215,14 +215,14 @@ public final class BookOffersSetting extends Setting
 			jsonOffer.addProperty("level", offer.level());
 			if(offer.price() < 64)
 				jsonOffer.addProperty("max_price", offer.price());
-
+			
 			jsonDefaultOffers.add(jsonOffer);
 		}
 		json.add("defaultOffers", jsonDefaultOffers);
-
+		
 		return json;
 	}
-
+	
 	@Override
 	public Set<PossibleKeybind> getPossibleKeybinds(String featureName)
 	{

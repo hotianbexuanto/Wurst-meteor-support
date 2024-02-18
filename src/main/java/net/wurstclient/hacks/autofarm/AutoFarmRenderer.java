@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -52,7 +52,7 @@ public final class AutoFarmRenderer
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-
+		
 		RenderUtils.applyRegionalRenderOffset(matrixStack);
 		
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
@@ -97,7 +97,7 @@ public final class AutoFarmRenderer
 	{
 		BufferBuilder bufferBuilder =
 			RenderSystem.renderThreadTesselator().getBuffer();
-
+		
 		Vec3d regionOffset = RenderUtils.getCameraRegion().negate().toVec3d();
 		
 		double boxMin = 1 / 16.0;

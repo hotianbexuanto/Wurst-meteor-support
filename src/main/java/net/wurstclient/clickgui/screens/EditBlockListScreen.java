@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -54,7 +54,7 @@ public final class EditBlockListScreen extends Screen
 		listGui = new ListGui(client, this, blockList.getBlockNames());
 		
 		blockNameField = new TextFieldWidget(client.textRenderer,
-				width / 2 - 152, height - 56, 150, 20, Text.literal(""));
+			width / 2 - 152, height - 56, 150, 20, Text.literal(""));
 		addSelectableChild(blockNameField);
 		blockNameField.setMaxLength(256);
 		
@@ -116,11 +116,11 @@ public final class EditBlockListScreen extends Screen
 	
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY,
-								 double horizontalAmount, double verticalAmount)
+		double horizontalAmount, double verticalAmount)
 	{
 		listGui.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 		return super.mouseScrolled(mouseX, mouseY, horizontalAmount,
-				verticalAmount);
+			verticalAmount);
 	}
 	
 	@Override
@@ -175,10 +175,10 @@ public final class EditBlockListScreen extends Screen
 		matrixStack.translate(0, 0, 300);
 		
 		blockNameField.render(context, mouseX, mouseY, partialTicks);
-
+		
 		for(Drawable drawable : drawables)
 			drawable.render(context, mouseX, mouseY, partialTicks);
-
+		
 		matrixStack.push();
 		matrixStack.translate(-64 + width / 2 - 152, 0, 0);
 		
@@ -204,7 +204,7 @@ public final class EditBlockListScreen extends Screen
 		RenderUtils.drawItem(context,
 			blockToAdd == null ? ItemStack.EMPTY : new ItemStack(blockToAdd),
 			width / 2 - 164, height - 52, false);
-
+		
 		matrixStack.pop();
 	}
 	

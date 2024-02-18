@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -37,11 +37,12 @@ import net.wurstclient.settings.SliderSetting;
 import net.wurstclient.settings.SliderSetting.ValueDisplay;
 import net.wurstclient.settings.filterlists.EntityFilterList;
 import net.wurstclient.settings.filters.*;
+import net.wurstclient.util.BlockUtils;
 import net.wurstclient.util.EntityUtils;
 import net.wurstclient.util.RegionPos;
 import net.wurstclient.util.RenderUtils;
+import net.wurstclient.util.Rotation;
 import net.wurstclient.util.RotationUtils;
-import net.wurstclient.util.RotationUtils.Rotation;
 
 public final class KillauraLegitHack extends Hack
 	implements UpdateListener, RenderListener
@@ -78,14 +79,25 @@ public final class KillauraLegitHack extends Hack
 		new EntityFilterList(FilterPlayersSetting.genericCombat(false),
 			FilterSleepingSetting.genericCombat(true),
 			FilterFlyingSetting.genericCombat(0.5),
-			FilterMonstersSetting.genericCombat(false),
-			FilterPigmenSetting.genericCombat(false),
-			FilterEndermenSetting.genericCombat(false),
-			FilterAnimalsSetting.genericCombat(false),
+			FilterHostileSetting.genericCombat(false),
+			FilterNeutralSetting
+				.genericCombat(AttackDetectingEntityFilter.Mode.OFF),
+			FilterPassiveSetting.genericCombat(false),
+			FilterPassiveWaterSetting.genericCombat(false),
 			FilterBabiesSetting.genericCombat(false),
+			FilterBatsSetting.genericCombat(false),
+			FilterSlimesSetting.genericCombat(false),
 			FilterPetsSetting.genericCombat(false),
-			FilterTradersSetting.genericCombat(false),
+			FilterVillagersSetting.genericCombat(false),
+			FilterZombieVillagersSetting.genericCombat(false),
 			FilterGolemsSetting.genericCombat(false),
+			FilterPiglinsSetting
+				.genericCombat(AttackDetectingEntityFilter.Mode.OFF),
+			FilterZombiePiglinsSetting
+				.genericCombat(AttackDetectingEntityFilter.Mode.OFF),
+			FilterEndermenSetting
+				.genericCombat(AttackDetectingEntityFilter.Mode.OFF),
+			FilterShulkersSetting.genericCombat(false),
 			FilterAllaysSetting.genericCombat(false),
 			FilterInvisibleSetting.genericCombat(true),
 			FilterNamedSetting.genericCombat(false),
@@ -165,7 +177,14 @@ public final class KillauraLegitHack extends Hack
 		if(target == null)
 			return;
 		
-		WURST.getHax().autoSwordHack.setSlot();
+		WURST.getHax().autoSwordHack.setSlot(target);
+		
+		// check line of sight
+		if(!BlockUtils.hasLineOfSight(target.getBoundingBox().getCenter()))
+		{
+			target = null;
+			return;
+		}
 		
 		// face entity
 		if(!faceEntityClient(target))
@@ -187,8 +206,8 @@ public final class KillauraLegitHack extends Hack
 		// turn towards center of boundingBox
 		Rotation next = RotationUtils.slowlyTurnTowards(needed,
 			rotationSpeed.getValueI() / 20F);
-		nextYaw = next.getYaw();
-		nextPitch = next.getPitch();
+		nextYaw = next.yaw();
+		nextPitch = next.pitch();
 		
 		// check if facing center
 		if(RotationUtils.isAlreadyFacing(needed))
@@ -219,7 +238,7 @@ public final class KillauraLegitHack extends Hack
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
 		
@@ -229,9 +248,9 @@ public final class KillauraLegitHack extends Hack
 			p = (le.getMaxHealth() - le.getHealth()) / le.getMaxHealth();
 		float red = p * 2F;
 		float green = 2 - red;
-
+		
 		Vec3d lerpedPos = EntityUtils.getLerpedPos(target, partialTicks)
-				.subtract(region.toVec3d());
+			.subtract(region.toVec3d());
 		matrixStack.translate(lerpedPos.x, lerpedPos.y, lerpedPos.z);
 		
 		matrixStack.translate(0, 0.05, 0);

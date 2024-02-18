@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -40,6 +40,7 @@ import net.wurstclient.hack.HackList;
 import net.wurstclient.hud.IngameHUD;
 import net.wurstclient.keybinds.KeybindList;
 import net.wurstclient.keybinds.KeybindProcessor;
+import net.wurstclient.mixinterface.ILanguageManager;
 import net.wurstclient.mixinterface.IMinecraftClient;
 import net.wurstclient.navigator.Navigator;
 import net.wurstclient.other_feature.OtfList;
@@ -56,8 +57,8 @@ public enum WurstClient
 	public static MinecraftClient MC;
 	public static IMinecraftClient IMC;
 	
-	public static final String VERSION = "7.37";
-	public static final String MC_VERSION = "1.20.2";
+	public static final String VERSION = "7.41";
+	public static final String MC_VERSION = "1.20.4";
 	
 	private WurstAnalytics analytics;
 	private EventManager eventManager;
@@ -83,72 +84,71 @@ public enum WurstClient
 	
 	private KeyBinding zoomKey;
 	
-	public void initialize() {
+	public void initialize()
+	{
 		System.out.println("Starting Wurst Client...");
-
+		
 		MC = MinecraftClient.getInstance();
-		IMC = (IMinecraftClient) MC;
+		IMC = (IMinecraftClient)MC;
 		wurstFolder = createWurstFolder();
-
+		
 		String trackingID = "UA-52838431-5";
 		String hostname = "client.wurstclient.net";
 		Path analyticsFile = wurstFolder.resolve("analytics.json");
 		analytics = new WurstAnalytics(trackingID, hostname, analyticsFile);
-
+		
 		eventManager = new EventManager(this);
-
+		
 		Path enabledHacksFile = wurstFolder.resolve("enabled-hacks.json");
 		hax = new HackList(enabledHacksFile);
-
+		
 		cmds = new CmdList();
-
+		
 		otfs = new OtfList();
-
+		
 		Path settingsFile = wurstFolder.resolve("settings.json");
 		settingsProfileFolder = wurstFolder.resolve("settings");
 		this.settingsFile = new SettingsFile(settingsFile, hax, cmds, otfs);
 		this.settingsFile.load();
 		hax.tooManyHaxHack.loadBlockedHacksFile();
-
+		
 		Path keybindsFile = wurstFolder.resolve("keybinds.json");
 		keybinds = new KeybindList(keybindsFile);
-
+		
 		Path guiFile = wurstFolder.resolve("windows.json");
 		gui = new ClickGui(guiFile);
-
+		
 		Path preferencesFile = wurstFolder.resolve("preferences.json");
 		navigator = new Navigator(preferencesFile, hax, cmds, otfs);
-
+		
 		Path friendsFile = wurstFolder.resolve("friends.json");
 		friends = new FriendsList(friendsFile);
 		friends.load();
-
+		
 		cmdProcessor = new CmdProcessor(cmds);
 		eventManager.add(ChatOutputListener.class, cmdProcessor);
-
+		
 		KeybindProcessor keybindProcessor =
-				new KeybindProcessor(hax, keybinds, cmdProcessor);
+			new KeybindProcessor(hax, keybinds, cmdProcessor);
 		eventManager.add(KeyPressListener.class, keybindProcessor);
-
+		
 		hud = new IngameHUD();
 		eventManager.add(GUIRenderListener.class, hud);
-
+		
 		rotationFaker = new RotationFaker();
 		eventManager.add(PreMotionListener.class, rotationFaker);
 		eventManager.add(PostMotionListener.class, rotationFaker);
-
+		
 		updater = new WurstUpdater();
 		eventManager.add(UpdateListener.class, updater);
-
+		
 		problematicPackDetector = new ProblematicResourcePackDetector();
 		problematicPackDetector.start();
-
+		
 		Path altsFile = wurstFolder.resolve("alts.encrypted_json");
-
 		Path encFolder = Encryption.chooseEncryptionFolder();
-
 		altManager = new AltManager(altsFile, encFolder);
-
+		
 		zoomKey = new KeyBinding("key.wurst.zoom", InputUtil.Type.KEYSYM,
 			GLFW.GLFW_KEY_V, KeyBinding.MISC_CATEGORY);
 		KeyBindingHelper.registerKeyBinding(zoomKey);
@@ -178,7 +178,7 @@ public enum WurstClient
 	public String translate(String key)
 	{
 		if(otfs.translationsOtf.getForceEnglish().isChecked())
-			return IMC.getLanguageManager().getEnglish().get(key);
+			return ILanguageManager.getEnglish().get(key);
 			
 		// This extra check is necessary because I18n.translate() doesn't
 		// always return the key when the translation is missing. If the key

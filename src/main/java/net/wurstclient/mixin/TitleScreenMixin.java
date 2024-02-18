@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -28,18 +28,18 @@ public abstract class TitleScreenMixin extends Screen
 {
 	private ClickableWidget realmsButton = null;
 	private ButtonWidget altsButton;
-
+	
 	private TitleScreenMixin(WurstClient wurst, Text title)
 	{
 		super(title);
 	}
-
+	
 	@Inject(at = @At("RETURN"), method = "init()V")
 	private void onInitWidgetsNormal(CallbackInfo ci)
 	{
 		if(!WurstClient.INSTANCE.isEnabled())
 			return;
-
+		
 		for(ClickableWidget button : Screens.getButtons(this))
 		{
 			if(!button.getMessage().getString()
@@ -63,7 +63,7 @@ public abstract class TitleScreenMixin extends Screen
 					WurstClient.INSTANCE.getAltManager())))
 			.dimensions(width / 2 + 2, realmsButton.getY(), 98, 20).build());
 	}
-
+	
 	@Inject(at = @At("RETURN"), method = "tick()V")
 	private void onTick(CallbackInfo ci)
 	{

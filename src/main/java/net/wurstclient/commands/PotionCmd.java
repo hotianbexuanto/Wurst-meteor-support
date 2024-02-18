@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -79,7 +79,7 @@ public final class PotionCmd extends Command
 		for(int i = 0; i < (args.length - 1) / 3; i++)
 		{
 			NbtCompound effect = new NbtCompound();
-
+			
 			effect.putInt("id", parseEffectId(args[1 + i * 3]));
 			effect.putInt("amplifier", parseInt(args[2 + i * 3]) - 1);
 			effect.putInt("duration", parseInt(args[3 + i * 3]) * 20);
@@ -102,7 +102,7 @@ public final class PotionCmd extends Command
 		for(StatusEffectInstance effect : effects)
 		{
 			NbtCompound tag = new NbtCompound();
-
+			
 			int id = Registries.STATUS_EFFECT.getRawId(effect.getEffectType());
 			tag.putInt("id", id);
 			tag.putInt("amplifier", effect.getAmplifier());
@@ -128,8 +128,8 @@ public final class PotionCmd extends Command
 		for(StatusEffectInstance oldEffect : oldEffects)
 		{
 			int oldId =
-					Registries.STATUS_EFFECT.getRawId(oldEffect.getEffectType());
-
+				Registries.STATUS_EFFECT.getRawId(oldEffect.getEffectType());
+			
 			if(oldId == id)
 				continue;
 			
@@ -157,7 +157,7 @@ public final class PotionCmd extends Command
 			{
 				Identifier identifier = new Identifier(input);
 				StatusEffect effect = Registries.STATUS_EFFECT.get(identifier);
-
+				
 				id = Registries.STATUS_EFFECT.getRawId(effect);
 				
 			}catch(InvalidIdentifierException e)

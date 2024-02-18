@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -100,7 +100,7 @@ public final class InstantBunkerHack extends Hack
 			// initialize building process
 			blockIndex = 0;
 			building = true;
-			IMC.setItemUseCooldown(4);
+			MC.itemUseCooldown = 4;
 		}
 		
 		startTimer = 2;
@@ -240,7 +240,7 @@ public final class InstantBunkerHack extends Hack
 			.sendPacket(new HandSwingC2SPacket(Hand.MAIN_HAND));
 		
 		// reset timer
-		IMC.setItemUseCooldown(4);
+		MC.itemUseCooldown = 4;
 	}
 	
 	@Override
@@ -259,10 +259,10 @@ public final class InstantBunkerHack extends Hack
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		
 		matrixStack.push();
-
+		
 		RenderUtils.applyRegionalRenderOffset(matrixStack);
 		BlockPos regionOffset =
-				RenderUtils.getCameraRegion().negate().toBlockPos();
+			RenderUtils.getCameraRegion().negate().toBlockPos();
 		
 		// green box
 		{

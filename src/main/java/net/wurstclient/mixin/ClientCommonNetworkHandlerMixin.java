@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -20,17 +20,17 @@ import net.wurstclient.events.PacketOutputListener.PacketOutputEvent;
 
 @Mixin(ClientCommonNetworkHandler.class)
 public abstract class ClientCommonNetworkHandlerMixin
-        implements ClientCommonPacketListener
+	implements ClientCommonPacketListener
 {
-    @Inject(at = @At("HEAD"),
-            method = "sendPacket(Lnet/minecraft/network/packet/Packet;)V",
-            cancellable = true)
-    private void onSendPacket(Packet<?> packet, CallbackInfo ci)
-    {
-        PacketOutputEvent event = new PacketOutputEvent(packet);
-        EventManager.fire(event);
-
-        if(event.isCancelled())
-            ci.cancel();
-    }
+	@Inject(at = @At("HEAD"),
+		method = "sendPacket(Lnet/minecraft/network/packet/Packet;)V",
+		cancellable = true)
+	private void onSendPacket(Packet<?> packet, CallbackInfo ci)
+	{
+		PacketOutputEvent event = new PacketOutputEvent(packet);
+		EventManager.fire(event);
+		
+		if(event.isCancelled())
+			ci.cancel();
+	}
 }

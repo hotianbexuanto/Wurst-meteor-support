@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -48,7 +48,7 @@ public final class EditBlockScreen extends Screen
 		
 		TextRenderer tr = client.textRenderer;
 		String valueString = setting.getBlockName();
-
+		
 		blockField = new TextFieldWidget(tr, x1, y1, 178, 20, Text.literal(""));
 		blockField.setText(valueString);
 		blockField.setSelectionStart(0);
@@ -97,16 +97,16 @@ public final class EditBlockScreen extends Screen
 	{
 		MatrixStack matrixStack = context.getMatrices();
 		TextRenderer tr = client.textRenderer;
-
+		
 		renderBackground(context, mouseX, mouseY, partialTicks);
 		context.drawCenteredTextWithShadow(tr, setting.getName(), width / 2, 20,
 			0xFFFFFF);
 		
 		blockField.render(context, mouseX, mouseY, partialTicks);
-
+		
 		for(Drawable drawable : drawables)
 			drawable.render(context, mouseX, mouseY, partialTicks);
-
+		
 		matrixStack.push();
 		matrixStack.translate(-64 + width / 2 - 100, 115, 0);
 		

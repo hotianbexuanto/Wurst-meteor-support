@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -20,13 +20,13 @@ import net.wurstclient.WurstClient;
 
 @Mixin(Screen.class)
 public abstract class ScreenMixin extends AbstractParentElement
-		implements Drawable
+	implements Drawable
 {
 	@Inject(at = @At("HEAD"),
 		method = "renderBackground(Lnet/minecraft/client/gui/DrawContext;IIF)V",
 		cancellable = true)
 	public void onRenderBackground(DrawContext context, int mouseX, int mouseY,
-								   float partialTicks, CallbackInfo ci)
+		float partialTicks, CallbackInfo ci)
 	{
 		if(WurstClient.INSTANCE.getHax().noBackgroundHack
 			.shouldCancelBackground((Screen)(Object)this))

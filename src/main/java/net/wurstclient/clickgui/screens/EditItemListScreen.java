@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -56,7 +56,7 @@ public final class EditItemListScreen extends Screen
 		listGui = new ListGui(client, this, itemList.getItemNames());
 		
 		itemNameField = new TextFieldWidget(client.textRenderer,
-				width / 2 - 152, height - 56, 150, 20, Text.literal(""));
+			width / 2 - 152, height - 56, 150, 20, Text.literal(""));
 		addSelectableChild(itemNameField);
 		itemNameField.setMaxLength(256);
 		
@@ -118,11 +118,11 @@ public final class EditItemListScreen extends Screen
 	
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY,
-								 double horizontalAmount, double verticalAmount)
+		double horizontalAmount, double verticalAmount)
 	{
 		listGui.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
 		return super.mouseScrolled(mouseX, mouseY, horizontalAmount,
-				verticalAmount);
+			verticalAmount);
 	}
 	
 	@Override
@@ -177,10 +177,10 @@ public final class EditItemListScreen extends Screen
 		matrixStack.translate(0, 0, 300);
 		
 		itemNameField.render(context, mouseX, mouseY, partialTicks);
-
+		
 		for(Drawable drawable : drawables)
 			drawable.render(context, mouseX, mouseY, partialTicks);
-
+		
 		matrixStack.push();
 		matrixStack.translate(-64 + width / 2 - 152, 0, 0);
 		
@@ -211,7 +211,7 @@ public final class EditItemListScreen extends Screen
 		RenderUtils.drawItem(context,
 			itemToAdd == null ? ItemStack.EMPTY : new ItemStack(itemToAdd),
 			width / 2 - 164, height - 52, false);
-
+		
 		matrixStack.pop();
 	}
 	

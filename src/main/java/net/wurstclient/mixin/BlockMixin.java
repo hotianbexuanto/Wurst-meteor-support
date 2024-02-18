@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -26,28 +26,21 @@ import net.wurstclient.hack.HackList;
 @Mixin(Block.class)
 public abstract class BlockMixin implements ItemConvertible
 {
+	/**
+	 * This mixin allows X-Ray to show ores that would normally be obstructed by
+	 * other blocks.
+	 */
 	@Inject(at = @At("HEAD"),
-			method = "shouldDrawSide(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;)Z",
-			cancellable = true)
+		method = "shouldDrawSide(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;)Z",
+		cancellable = true)
 	private static void onShouldDrawSide(BlockState state, BlockView world,
-										 BlockPos pos, Direction direction, BlockPos blockPos,
-										 CallbackInfoReturnable<Boolean> cir)
+		BlockPos pos, Direction direction, BlockPos blockPos,
+		CallbackInfoReturnable<Boolean> cir)
 	{
 		ShouldDrawSideEvent event = new ShouldDrawSideEvent(state, pos);
 		EventManager.fire(event);
-
+		
 		if(event.isRendered() != null)
 			cir.setReturnValue(event.isRendered());
-	}
-
-	@Inject(at = @At("HEAD"),
-			method = "getVelocityMultiplier()F",
-			cancellable = true)
-	private void onGetVelocityMultiplier(CallbackInfoReturnable<Float> cir)
-	{
-		HackList hax = WurstClient.INSTANCE.getHax();
-
-		if(cir.getReturnValueF() < 1)
-			cir.setReturnValue(1F);
 	}
 }

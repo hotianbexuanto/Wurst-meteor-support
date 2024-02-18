@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -43,18 +43,18 @@ public abstract class Setting
 	{
 		return ChatUtils.wrapText(getDescription(), width);
 	}
-
+	
 	public final String getDescriptionKey()
 	{
 		return description;
 	}
-
+	
 	public abstract Component getComponent();
 	
 	public abstract void fromJson(JsonElement json);
 	
 	public abstract JsonElement toJson();
-
+	
 	/**
 	 * Exports this setting's data to a {@link JsonObject} for use in the
 	 * Wurst Wiki. Must always specify the following properties:
@@ -65,8 +65,7 @@ public abstract class Setting
 	 * </ul>
 	 */
 	public abstract JsonObject exportWikiData();
-
-
+	
 	public void update()
 	{
 		

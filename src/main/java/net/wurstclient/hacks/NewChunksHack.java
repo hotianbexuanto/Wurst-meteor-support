@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -87,10 +87,10 @@ public final class NewChunksHack extends Hack
 		opacity, newChunksColor, oldChunksColor);
 	private final NewChunksReasonsRenderer reasonsRenderer =
 		new NewChunksReasonsRenderer(drawDistance);
-
+	
 	private RegionPos lastRegion;
 	private DimensionType lastDimension;
-
+	
 	public NewChunksHack()
 	{
 		super("NewChunks");
@@ -114,7 +114,7 @@ public final class NewChunksHack extends Hack
 		EVENTS.add(RenderListener.class, this);
 		reset();
 	}
-
+	
 	private void reset()
 	{
 		oldChunks.clear();
@@ -248,7 +248,7 @@ public final class NewChunksHack extends Hack
 	{
 		if(MC.world.getDimension() != lastDimension)
 			reset();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		if(!region.equals(lastRegion))
 		{

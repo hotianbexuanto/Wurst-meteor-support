@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -21,12 +21,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
 import net.wurstclient.Category;
 import net.wurstclient.SearchTags;
 import net.wurstclient.events.UpdateListener;
@@ -56,13 +54,13 @@ public final class CrystalAuraHack extends Hack implements UpdateListener
 		"When enabled, CrystalAura will automatically place crystals near valid entities.\n"
 			+ "When disabled, CrystalAura will only detonate manually placed crystals.",
 		true);
-
+	
 	private final FacingSetting faceBlocks =
-			FacingSetting.withPacketSpam("Face crystals",
-					"Whether or not CrystalAura should face the correct direction when"
-							+ " placing and left-clicking end crystals.\n\n"
-							+ "Slower but can help with anti-cheat plugins.",
-					Facing.OFF);
+		FacingSetting.withPacketSpam("Face crystals",
+			"Whether or not CrystalAura should face the correct direction when"
+				+ " placing and left-clicking end crystals.\n\n"
+				+ "Slower but can help with anti-cheat plugins.",
+			Facing.OFF);
 	
 	private final CheckboxSetting checkLOS = new CheckboxSetting(
 		"Check line of sight",
@@ -124,12 +122,12 @@ public final class CrystalAuraHack extends Hack implements UpdateListener
 			detonate(crystals);
 			return;
 		}
-
+		
 		if(!autoPlace.isChecked())
 			return;
-
+		
 		if(InventoryUtils.indexOf(Items.END_CRYSTAL,
-				takeItemsFrom.getSelected().maxInvSlot) == -1)
+			takeItemsFrom.getSelected().maxInvSlot) == -1)
 			return;
 		
 		ArrayList<Entity> targets = getNearbyTargets();
@@ -200,15 +198,12 @@ public final class CrystalAuraHack extends Hack implements UpdateListener
 			if(distanceSqPosVec > eyesPos.squaredDistanceTo(posVec.add(dirVec)))
 				continue;
 			
-			if(checkLOS.isChecked() && MC.world
-				.raycast(new RaycastContext(eyesPos, hitVec,
-					RaycastContext.ShapeType.COLLIDER,
-					RaycastContext.FluidHandling.NONE, MC.player))
-				.getType() != HitResult.Type.MISS)
+			if(checkLOS.isChecked()
+				&& !BlockUtils.hasLineOfSight(eyesPos, hitVec))
 				continue;
-
+			
 			InventoryUtils.selectItem(Items.END_CRYSTAL,
-					takeItemsFrom.getSelected().maxInvSlot);
+				takeItemsFrom.getSelected().maxInvSlot);
 			if(!MC.player.isHolding(Items.END_CRYSTAL))
 				return false;
 			
@@ -234,7 +229,7 @@ public final class CrystalAuraHack extends Hack implements UpdateListener
 			.reversed();
 		
 		return StreamSupport.stream(MC.world.getEntities().spliterator(), true)
-			.filter(e -> e instanceof EndCrystalEntity)
+			.filter(EndCrystalEntity.class::isInstance)
 			.filter(e -> !e.isRemoved())
 			.filter(e -> player.squaredDistanceTo(e) <= rangeSq)
 			.sorted(furthestFromPlayer)
@@ -256,7 +251,8 @@ public final class CrystalAuraHack extends Hack implements UpdateListener
 					&& ((LivingEntity)e).getHealth() > 0)
 				.filter(e -> e != MC.player)
 				.filter(e -> !(e instanceof FakePlayerEntity))
-				.filter(e -> !WURST.getFriends().contains(e.getEntityName()))
+				.filter(
+					e -> !WURST.getFriends().contains(e.getName().getString()))
 				.filter(e -> MC.player.squaredDistanceTo(e) <= rangeSq);
 		
 		stream = entityFilters.applyTo(stream);

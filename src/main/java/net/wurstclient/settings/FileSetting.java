@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -163,7 +163,7 @@ public final class FileSetting extends Setting
 	{
 		return new JsonPrimitive(selectedFile);
 	}
-
+	
 	@Override
 	public JsonObject exportWikiData()
 	{
@@ -171,14 +171,14 @@ public final class FileSetting extends Setting
 		json.addProperty("name", getName());
 		json.addProperty("descriptionKey", getDescriptionKey());
 		json.addProperty("type", "File");
-
+		
 		Path mcFolder = WurstClient.INSTANCE.getWurstFolder().getParent();
 		if(folder.startsWith(mcFolder))
 			json.addProperty("folder", mcFolder.relativize(folder).toString());
-
+		
 		return json;
 	}
-
+	
 	@Override
 	public Set<PossibleKeybind> getPossibleKeybinds(String featureName)
 	{

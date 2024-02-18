@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -31,6 +31,7 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.wurstclient.Category;
+import net.wurstclient.SearchTags;
 import net.wurstclient.events.PacketInputListener;
 import net.wurstclient.events.RenderListener;
 import net.wurstclient.events.UpdateListener;
@@ -47,16 +48,17 @@ import net.wurstclient.util.RegionPos;
 import net.wurstclient.util.RenderUtils;
 import net.wurstclient.util.RotationUtils;
 
+@SearchTags({"BlockESP", "block esp"})
 public final class SearchHack extends Hack
-		implements UpdateListener, RenderListener
+	implements UpdateListener, RenderListener
 {
 	private final BlockSetting block = new BlockSetting("Block",
 		"The type of block to search for.", "minecraft:diamond_ore", false);
 	private Block lastBlock;
-
+	
 	private final ChunkAreaSetting area = new ChunkAreaSetting("Area",
 		"The area around the player to search in.\n"
-				+ "Higher values require a faster computer.");
+			+ "Higher values require a faster computer.");
 	
 	private final SliderSetting limit = new SliderSetting("Limit",
 		"The maximum number of blocks to display.\n"
@@ -64,15 +66,16 @@ public final class SearchHack extends Hack
 		4, 3, 6, 1, ValueDisplay.LOGARITHMIC);
 	private int prevLimit;
 	private boolean notify;
-
+	
 	private final ChunkSearcherCoordinator coordinator =
-			new ChunkSearcherCoordinator(area);
-
+		new ChunkSearcherCoordinator(area);
+	
 	private ForkJoinPool forkJoinPool;
 	private ForkJoinTask<HashSet<BlockPos>> getMatchingBlocksTask;
 	private ForkJoinTask<ArrayList<int[]>> compileVerticesTask;
 	
 	private VertexBuffer vertexBuffer;
+	private RegionPos bufferRegion;
 	private boolean bufferUpToDate;
 	
 	public SearchHack()
@@ -98,7 +101,7 @@ public final class SearchHack extends Hack
 		coordinator.setTargetBlock(lastBlock);
 		prevLimit = limit.getValueI();
 		notify = true;
-
+		
 		forkJoinPool = new ForkJoinPool();
 		
 		bufferUpToDate = false;
@@ -114,23 +117,22 @@ public final class SearchHack extends Hack
 		EVENTS.remove(UpdateListener.class, this);
 		EVENTS.remove(PacketInputListener.class, coordinator);
 		EVENTS.remove(RenderListener.class, this);
-
+		
 		stopBuildingBuffer();
 		coordinator.reset();
 		forkJoinPool.shutdownNow();
 		
 		if(vertexBuffer != null)
-		{
 			vertexBuffer.close();
-			vertexBuffer = null;
-		}
+		vertexBuffer = null;
+		bufferRegion = null;
 	}
 	
 	@Override
 	public void onUpdate()
 	{
 		boolean searchersChanged = false;
-
+		
 		// clear ChunkSearchers if block has changed
 		Block currentBlock = block.getBlock();
 		if(currentBlock != lastBlock)
@@ -139,16 +141,16 @@ public final class SearchHack extends Hack
 			coordinator.setTargetBlock(lastBlock);
 			searchersChanged = true;
 		}
-
+		
 		if(coordinator.update())
 			searchersChanged = true;
-
+		
 		if(searchersChanged)
 			stopBuildingBuffer();
-
+		
 		if(!coordinator.isDone())
 			return;
-
+		
 		// check if limit has changed
 		if(limit.getValueI() != prevLimit)
 		{
@@ -156,9 +158,9 @@ public final class SearchHack extends Hack
 			prevLimit = limit.getValueI();
 			notify = true;
 		}
-
+		
 		// build the buffer
-
+		
 		if(getMatchingBlocksTask == null)
 			startGetMatchingBlocksTask();
 		
@@ -178,6 +180,9 @@ public final class SearchHack extends Hack
 	@Override
 	public void onRender(MatrixStack matrixStack, float partialTicks)
 	{
+		if(vertexBuffer == null || bufferRegion == null)
+			return;
+		
 		// GL settings
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -185,22 +190,19 @@ public final class SearchHack extends Hack
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-		RenderUtils.applyRegionalRenderOffset(matrixStack);
+		RenderUtils.applyRegionalRenderOffset(matrixStack, bufferRegion);
 		
 		float[] rainbow = RenderUtils.getRainbowColor();
 		RenderSystem.setShaderColor(rainbow[0], rainbow[1], rainbow[2], 0.5F);
 		
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
-		if(vertexBuffer != null)
-		{
-			Matrix4f viewMatrix = matrixStack.peek().getPositionMatrix();
-			Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
-			ShaderProgram shader = RenderSystem.getShader();
-			vertexBuffer.bind();
-			vertexBuffer.draw(viewMatrix, projMatrix, shader);
-			VertexBuffer.unbind();
-		}
+		Matrix4f viewMatrix = matrixStack.peek().getPositionMatrix();
+		Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
+		ShaderProgram shader = RenderSystem.getShader();
+		vertexBuffer.bind();
+		vertexBuffer.draw(viewMatrix, projMatrix, shader);
+		VertexBuffer.unbind();
 		
 		matrixStack.pop();
 		
@@ -215,32 +217,30 @@ public final class SearchHack extends Hack
 		if(getMatchingBlocksTask != null)
 			getMatchingBlocksTask.cancel(true);
 		getMatchingBlocksTask = null;
-
 		
 		if(compileVerticesTask != null)
 			compileVerticesTask.cancel(true);
 		compileVerticesTask = null;
-
 		
 		bufferUpToDate = false;
 	}
-
+	
 	private void startGetMatchingBlocksTask()
 	{
 		BlockPos eyesPos = BlockPos.ofFloored(RotationUtils.getEyesPos());
 		Comparator<BlockPos> comparator =
-				Comparator.comparingInt(pos -> eyesPos.getManhattanDistance(pos));
-
+			Comparator.comparingInt(pos -> eyesPos.getManhattanDistance(pos));
+		
 		getMatchingBlocksTask = forkJoinPool.submit(() -> coordinator
-				.getMatches().parallel().map(ChunkSearcher.Result::pos)
-				.sorted(comparator).limit(limit.getValueLog())
-				.collect(Collectors.toCollection(HashSet::new)));
+			.getMatches().parallel().map(ChunkSearcher.Result::pos)
+			.sorted(comparator).limit(limit.getValueLog())
+			.collect(Collectors.toCollection(HashSet::new)));
 	}
-
+	
 	private void startCompileVerticesTask()
 	{
 		HashSet<BlockPos> matchingBlocks = getMatchingBlocksTask.join();
-
+		
 		if(matchingBlocks.size() < limit.getValueLog())
 			notify = true;
 		else if(notify)
@@ -250,10 +250,9 @@ public final class SearchHack extends Hack
 				+ limit.getValueString() + "\u00a7r results.");
 			notify = false;
 		}
-
-		RegionPos region = RenderUtils.getCameraRegion();
+		
 		compileVerticesTask = forkJoinPool
-				.submit(() -> BlockVertexCompiler.compile(matchingBlocks, region));
+			.submit(() -> BlockVertexCompiler.compile(matchingBlocks));
 	}
 	
 	private void setBufferFromTask()
@@ -262,20 +261,23 @@ public final class SearchHack extends Hack
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS,
 			VertexFormats.POSITION);
-
+		
+		RegionPos region = RenderUtils.getCameraRegion();
 		for(int[] vertex : compileVerticesTask.join())
-			bufferBuilder.vertex(vertex[0], vertex[1], vertex[2]).next();
+			bufferBuilder.vertex(vertex[0] - region.x(), vertex[1],
+				vertex[2] - region.z()).next();
 		
 		BuiltBuffer buffer = bufferBuilder.end();
-
+		
 		if(vertexBuffer != null)
 			vertexBuffer.close();
-
+		
 		vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 		vertexBuffer.bind();
 		vertexBuffer.upload(buffer);
 		VertexBuffer.unbind();
 		
 		bufferUpToDate = true;
+		bufferRegion = region;
 	}
 }

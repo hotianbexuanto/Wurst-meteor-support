@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -53,25 +53,25 @@ public enum RenderUtils
 		int scissorHeight = (int)(height * factor);
 		GL11.glScissor(scissorX, scissorY, scissorWidth, scissorHeight);
 	}
-
+	
 	public static void applyRegionalRenderOffset(MatrixStack matrixStack)
 	{
 		applyRegionalRenderOffset(matrixStack, getCameraRegion());
 	}
-
+	
 	public static void applyRegionalRenderOffset(MatrixStack matrixStack,
-												 Chunk chunk)
+		Chunk chunk)
 	{
 		applyRegionalRenderOffset(matrixStack, RegionPos.of(chunk.getPos()));
 	}
 	
 	public static void applyRegionalRenderOffset(MatrixStack matrixStack,
-												 RegionPos region)
+		RegionPos region)
 	{
 		Vec3d offset = region.toVec3d().subtract(getCameraPos());
 		matrixStack.translate(offset.x, offset.y, offset.z);
 	}
-
+	
 	public static void applyRenderOffset(MatrixStack matrixStack)
 	{
 		Vec3d camPos = getCameraPos();
@@ -106,12 +106,12 @@ public enum RenderUtils
 		
 		return camera.getBlockPos();
 	}
-
+	
 	public static RegionPos getCameraRegion()
 	{
 		return RegionPos.of(getCameraBlockPos());
 	}
-
+	
 	public static float[] getRainbowColor()
 	{
 		float x = System.currentTimeMillis() % 2000 / 1000F;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -22,21 +22,24 @@ import net.wurstclient.events.ShouldDrawSideListener.ShouldDrawSideEvent;
 
 @Pseudo
 @Mixin(targets = {
-		"me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache",
-		"me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache"},
-		remap = false)
+	// current target
+	"me.jellysquid.mods.sodium.client.render.chunk.compile.pipeline.BlockOcclusionCache",
+	// < Sodium 0.5.0
+	"me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache"},
+	remap = false)
 public class SodiumBlockOcclusionCacheMixin
 {
-	@Inject(at = @At("HEAD"),
-			method = "shouldDrawSide",
-			cancellable = true,
-			remap = false)
+	/**
+	 * This mixin hides and shows regular full blocks when using X-Ray with
+	 * Sodium installed.
+	 */
+	@Inject(at = @At("HEAD"), method = "shouldDrawSide", cancellable = true)
 	public void shouldDrawSide(BlockState state, BlockView world, BlockPos pos,
-							   Direction side, CallbackInfoReturnable<Boolean> cir)
+		Direction side, CallbackInfoReturnable<Boolean> cir)
 	{
 		ShouldDrawSideEvent event = new ShouldDrawSideEvent(state, pos);
 		EventManager.fire(event);
-
+		
 		if(event.isRendered() != null)
 			cir.setReturnValue(event.isRendered());
 	}

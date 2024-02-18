@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -108,8 +108,8 @@ public final class TrollPotionHack extends Hack
 			for(int i = 1; i <= 23; i++)
 			{
 				String id = Registries.STATUS_EFFECT.getEntry(i).get().getKey()
-						.get().getValue().toString();
-
+					.get().getValue().toString();
+				
 				NbtCompound effect = new NbtCompound();
 				effect.putInt("amplifier", Integer.MAX_VALUE);
 				effect.putInt("duration", Integer.MAX_VALUE);

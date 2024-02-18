@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -16,12 +16,12 @@ import net.wurstclient.WurstClient;
 public enum LoginManager
 {
 	;
-
+	
 	public static void changeCrackedName(String newName)
 	{
 		Session session =
-				new Session(newName, Uuids.getOfflinePlayerUuid(newName), "",
-						Optional.empty(), Optional.empty(), Session.AccountType.MOJANG);
+			new Session(newName, Uuids.getOfflinePlayerUuid(newName), "",
+				Optional.empty(), Optional.empty(), Session.AccountType.MOJANG);
 		
 		WurstClient.IMC.setSession(session);
 	}

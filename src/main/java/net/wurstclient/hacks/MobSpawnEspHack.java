@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -56,14 +56,14 @@ public final class MobSpawnEspHack extends Hack
 	implements UpdateListener, PacketInputListener, RenderListener
 {
 	private final ChunkAreaSetting drawDistance =
-			new ChunkAreaSetting("Draw distance", "", ChunkArea.A9);
+		new ChunkAreaSetting("Draw distance", "", ChunkArea.A9);
 	
 	private final SliderSetting loadingSpeed = new SliderSetting(
 		"Loading speed", 1, 1, 5, 1, ValueDisplay.INTEGER.withSuffix("x"));
 	
 	private final CheckboxSetting depthTest =
 		new CheckboxSetting("Depth test", true);
-
+	
 	private final HashMap<ChunkPos, ChunkScanner> scanners = new HashMap<>();
 	private ExecutorService pool;
 	
@@ -106,24 +106,25 @@ public final class MobSpawnEspHack extends Hack
 	public void onUpdate()
 	{
 		DimensionType dimension = MC.world.getDimension();
-
+		
 		// remove old scanners that are out of range
 		for(ChunkScanner scanner : new ArrayList<>(scanners.values()))
 		{
 			if(drawDistance.isInRange(scanner.chunk.getPos())
-					&& dimension == scanner.dimension)
+				&& dimension == scanner.dimension)
 				continue;
-
+			
 			scanner.reset();
 			scanners.remove(scanner.chunk.getPos());
 		}
-
+		
+		// create & start scanners for new chunks
 		for(Chunk chunk : drawDistance.getChunksInRange())
 		{
 			ChunkPos chunkPos = chunk.getPos();
 			if(scanners.containsKey(chunkPos))
 				continue;
-
+			
 			ChunkScanner scanner = new ChunkScanner(chunk, dimension);
 			scanners.put(chunkPos, scanner);
 			scanner.future = pool.submit(() -> scanner.scan());
@@ -132,7 +133,7 @@ public final class MobSpawnEspHack extends Hack
 		// generate vertex buffers
 		ChunkPos center = MC.player.getChunkPos();
 		Comparator<ChunkScanner> c = Comparator.comparingInt(
-				s -> ChunkUtils.getManhattanDistance(center, s.chunk.getPos()));
+			s -> ChunkUtils.getManhattanDistance(center, s.chunk.getPos()));
 		List<ChunkScanner> sortedScanners = scanners.values().stream()
 			.filter(s -> s.doneScanning).filter(s -> !s.doneCompiling).sorted(c)
 			.limit(loadingSpeed.getValueI()).collect(Collectors.toList());
@@ -159,16 +160,16 @@ public final class MobSpawnEspHack extends Hack
 		ClientWorld world = MC.world;
 		if(MC.player == null || world == null)
 			return;
-
+		
 		ChunkPos center = ChunkUtils.getAffectedChunk(event.getPacket());
 		if(center == null)
 			return;
-
+		
 		ArrayList<ChunkPos> chunks = new ArrayList<>();
 		for(int x = center.x - 1; x <= center.x + 1; x++)
 			for(int z = center.z - 1; z <= center.z + 1; z++)
 				chunks.add(new ChunkPos(x, z));
-
+			
 		for(ChunkPos chunkPos : chunks)
 		{
 			ChunkScanner scanner = scanners.get(chunkPos);
@@ -187,11 +188,11 @@ public final class MobSpawnEspHack extends Hack
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glEnable(GL11.GL_CULL_FACE);
-
+		
 		boolean depthTest = this.depthTest.isChecked();
 		if(!depthTest)
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
-
+		
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		
@@ -212,11 +213,10 @@ public final class MobSpawnEspHack extends Hack
 			
 			matrixStack.pop();
 		}
-
-
+		
 		if(!depthTest)
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
-
+		
 		// GL resets
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		GL11.glDisable(GL11.GL_BLEND);
@@ -233,7 +233,7 @@ public final class MobSpawnEspHack extends Hack
 		
 		private boolean doneScanning;
 		private boolean doneCompiling;
-
+		
 		public ChunkScanner(Chunk chunk, DimensionType dimension)
 		{
 			this.chunk = chunk;
@@ -305,8 +305,8 @@ public final class MobSpawnEspHack extends Hack
 				VertexFormats.POSITION_COLOR);
 			
 			new ArrayList<>(red).stream().filter(Objects::nonNull)
-					.map(pos -> new BlockPos(pos.getX() - region.x(), pos.getY(),
-							pos.getZ() - region.z()))
+				.map(pos -> new BlockPos(pos.getX() - region.x(), pos.getY(),
+					pos.getZ() - region.z()))
 				.forEach(pos -> {
 					bufferBuilder
 						.vertex(pos.getX(), pos.getY() + 0.01, pos.getZ())
@@ -320,9 +320,9 @@ public final class MobSpawnEspHack extends Hack
 						.vertex(pos.getX(), pos.getY() + 0.01, pos.getZ() + 1)
 						.color(1, 0, 0, 0.5F).next();
 				});
-
+			
 			new ArrayList<>(yellow).stream().filter(Objects::nonNull)
-					.map(pos -> new BlockPos(pos.getX() - region.x(), pos.getY(),
+				.map(pos -> new BlockPos(pos.getX() - region.x(), pos.getY(),
 					pos.getZ() - region.z()))
 				.forEach(pos -> {
 					bufferBuilder

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -88,27 +88,28 @@ public final class AutoLibrarianHack extends Hack
 	
 	private final SliderSetting range =
 		new SliderSetting("Range", 5, 1, 6, 0.05, ValueDisplay.DECIMAL);
-
+	
 	private final FacingSetting facing = FacingSetting
-			.withoutPacketSpam("How to face the villager and job site.\n\n"
-					+ "\u00a7lOff\u00a7r - Don't face the villager at all. Will be"
-					+ " detected by anti-cheat plugins.\n\n"
-					+ "\u00a7lServer-side\u00a7r - Face the villager on the"
-					+ " server-side, while still letting you move the camera freely on"
-					+ " the client-side.\n\n"
-					+ "\u00a7lClient-side\u00a7r - Face the villager by moving your"
-					+ " camera on the client-side. This is the most legit option, but"
-					+ " can be disorienting to look at.");
-
+		.withoutPacketSpam("How to face the villager and job site.\n\n"
+			+ "\u00a7lOff\u00a7r - Don't face the villager at all. Will be"
+			+ " detected by anti-cheat plugins.\n\n"
+			+ "\u00a7lServer-side\u00a7r - Face the villager on the"
+			+ " server-side, while still letting you move the camera freely on"
+			+ " the client-side.\n\n"
+			+ "\u00a7lClient-side\u00a7r - Face the villager by moving your"
+			+ " camera on the client-side. This is the most legit option, but"
+			+ " can be disorienting to look at.");
+	
 	private final SwingHandSetting swingHand =
-			new SwingHandSetting("How to swing your hand when interacting with the"
-					+ " villager and job site.\n\n"
-					+ "\u00a7lOff\u00a7r - Don't swing your hand at all. Will be detected"
-					+ " by anti-cheat plugins.\n\n"
-					+ "\u00a7lServer-side\u00a7r - Swing your hand on the server-side,"
-					+ " without playing the animation on the client-side.\n\n"
-					+ "\u00a7lClient-side\u00a7r - Swing your hand on the client-side."
-					+ " This is the most legit option.");
+		new SwingHandSetting("How to swing your hand when interacting with the"
+			+ " villager and job site.\n\n"
+			+ "\u00a7lOff\u00a7r - Don't swing your hand at all. Will be detected"
+			+ " by anti-cheat plugins.\n\n"
+			+ "\u00a7lServer-side\u00a7r - Swing your hand on the server-side,"
+			+ " without playing the animation on the client-side.\n\n"
+			+ "\u00a7lClient-side\u00a7r - Swing your hand on the client-side."
+			+ " This is the most legit option.");
+	
 	private final SliderSetting repairMode = new SliderSetting("Repair mode",
 		"Prevents AutoLibrarian from using your axe when its durability reaches"
 			+ " the given threshold, so you can repair it before it breaks.\n"
@@ -153,7 +154,7 @@ public final class AutoLibrarianHack extends Hack
 		
 		if(breakingJobSite)
 		{
-			IMC.getInteractionManager().setBreakingBlock(true);
+			MC.interactionManager.breakingBlock = true;
 			MC.interactionManager.cancelBlockBreaking();
 			breakingJobSite = false;
 		}
@@ -366,7 +367,7 @@ public final class AutoLibrarianHack extends Hack
 	
 	private void openTradeScreen()
 	{
-		if(IMC.getItemUseCooldown() > 0)
+		if(MC.itemUseCooldown > 0)
 			return;
 		
 		ClientPlayerInteractionManager im = MC.interactionManager;
@@ -403,13 +404,13 @@ public final class AutoLibrarianHack extends Hack
 			swingHand.getSelected().swing(hand);
 		
 		// set cooldown
-		IMC.setItemUseCooldown(4);
+		MC.itemUseCooldown = 4;
 	}
 	
 	private void closeTradeScreen()
 	{
 		MC.player.closeHandledScreen();
-		IMC.setItemUseCooldown(4);
+		MC.itemUseCooldown = 4;
 	}
 	
 	private BookOffer findEnchantedBookOffer(TradeOfferList tradeOffers)
@@ -451,7 +452,7 @@ public final class AutoLibrarianHack extends Hack
 		Stream<VillagerEntity> stream =
 			StreamSupport.stream(MC.world.getEntities().spliterator(), true)
 				.filter(e -> !e.isRemoved())
-				.filter(e -> e instanceof VillagerEntity)
+				.filter(VillagerEntity.class::isInstance)
 				.map(e -> (VillagerEntity)e).filter(e -> e.getHealth() > 0)
 				.filter(e -> player.squaredDistanceTo(e) <= rangeSq)
 				.filter(e -> e.getVillagerData()
@@ -521,7 +522,7 @@ public final class AutoLibrarianHack extends Hack
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
 		Vec3d regionOffset = region.negate().toVec3d();
@@ -530,11 +531,11 @@ public final class AutoLibrarianHack extends Hack
 		
 		if(villager != null)
 			RenderUtils.drawOutlinedBox(
-					villager.getBoundingBox().offset(regionOffset), matrixStack);
+				villager.getBoundingBox().offset(regionOffset), matrixStack);
 		
 		if(jobSite != null)
 			RenderUtils.drawOutlinedBox(new Box(jobSite).offset(regionOffset),
-					matrixStack);
+				matrixStack);
 		
 		RenderSystem.setShaderColor(1, 0, 0, 0.75F);
 		

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -18,17 +18,17 @@ public final class SwingHandSetting
 	extends EnumSetting<SwingHandSetting.SwingHand>
 {
 	private static final MinecraftClient MC = WurstClient.MC;
-
+	
 	public SwingHandSetting(String description)
 	{
 		super("Swing hand", description, SwingHand.values(), SwingHand.SERVER);
 	}
-
+	
 	public SwingHandSetting(String description, SwingHand selected)
 	{
 		super("Swing hand", description, SwingHand.values(), selected);
 	}
-
+	
 	public SwingHandSetting(String name, String description, SwingHand selected)
 	{
 		super(name, description, SwingHand.values(), selected);

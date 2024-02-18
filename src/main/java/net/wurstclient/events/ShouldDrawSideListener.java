@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -8,6 +8,7 @@
 package net.wurstclient.events;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
@@ -24,10 +25,10 @@ public interface ShouldDrawSideListener extends Listener
 		private final BlockState state;
 		private final BlockPos pos;
 		private Boolean rendered;
-
+		
 		public ShouldDrawSideEvent(BlockState state, BlockPos pos)
 		{
-			this.state = state;
+			this.state = Objects.requireNonNull(state);
 			this.pos = pos;
 		}
 		
@@ -35,11 +36,12 @@ public interface ShouldDrawSideListener extends Listener
 		{
 			return state;
 		}
-
-		public BlockPos getPos() {
+		
+		public BlockPos getPos()
+		{
 			return pos;
 		}
-
+		
 		public Boolean isRendered()
 		{
 			return rendered;

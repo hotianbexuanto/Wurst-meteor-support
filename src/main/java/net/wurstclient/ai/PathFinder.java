@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -562,7 +562,7 @@ public class PathFinder
 		GL11.glDepthMask(false);
 		
 		matrixStack.push();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
 		
@@ -578,7 +578,7 @@ public class PathFinder
 			{
 				if(renderedThings >= 5000)
 					break;
-
+				
 				PathRenderer.renderNode(matrixStack, element, region);
 				renderedThings++;
 			}
@@ -595,7 +595,7 @@ public class PathFinder
 					RenderSystem.setShaderColor(1, 0, 0, 0.75F);
 				
 				PathRenderer.renderArrow(matrixStack, entry.getValue(),
-						entry.getKey(), region);
+					entry.getKey(), region);
 				renderedThings++;
 			}
 		}
@@ -607,7 +607,7 @@ public class PathFinder
 			RenderSystem.setShaderColor(0, 1, 0, 0.75F);
 		for(int i = 0; i < path.size() - 1; i++)
 			PathRenderer.renderArrow(matrixStack, path.get(i), path.get(i + 1),
-					region);
+				region);
 		
 		matrixStack.pop();
 		

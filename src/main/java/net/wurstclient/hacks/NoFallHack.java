@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -38,10 +38,10 @@ public final class NoFallHack extends Hack implements UpdateListener
 		ClientPlayerEntity player = MC.player;
 		if(player == null)
 			return getName();
-
+		
 		if(player.isFallFlying() && !allowElytra.isChecked())
 			return getName() + " (paused)";
-
+		
 		if(player.isCreative())
 			return getName() + " (paused)";
 		
@@ -67,16 +67,16 @@ public final class NoFallHack extends Hack implements UpdateListener
 		ClientPlayerEntity player = MC.player;
 		if(player.isCreative())
 			return;
-
+		
 		// pause when flying with elytra, unless allowed
 		boolean fallFlying = player.isFallFlying();
 		if(fallFlying && !allowElytra.isChecked())
 			return;
-
+			
 		// ignore small falls that can't cause damage,
 		// unless CreativeFlight is enabled in survival mode
 		boolean creativeFlying = WURST.getHax().creativeFlightHack.isEnabled()
-				&& player.getAbilities().flying;
+			&& player.getAbilities().flying;
 		if(!creativeFlying && player.fallDistance <= (fallFlying ? 1 : 2))
 			return;
 		

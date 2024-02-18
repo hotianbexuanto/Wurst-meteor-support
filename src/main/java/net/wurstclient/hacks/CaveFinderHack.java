@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -52,12 +52,11 @@ import net.wurstclient.util.RotationUtils;
 
 @SearchTags({"cave finder"})
 public final class CaveFinderHack extends Hack
-		implements UpdateListener, RenderListener
+	implements UpdateListener, RenderListener
 {
 	private final ChunkAreaSetting area = new ChunkAreaSetting("Area",
 		"The area around the player to search in.\n"
-				+ "Higher values require a faster computer.");
-
+			+ "Higher values require a faster computer.");
 	
 	private final SliderSetting limit = new SliderSetting("Limit",
 		"The maximum number of blocks to display.\n"
@@ -73,11 +72,11 @@ public final class CaveFinderHack extends Hack
 	
 	private int prevLimit;
 	private boolean notify;
-
+	
 	private final ChunkSearcherCoordinator coordinator =
-			new ChunkSearcherCoordinator(
-					(pos, state) -> state.getBlock() == Blocks.CAVE_AIR, area);
-
+		new ChunkSearcherCoordinator(
+			(pos, state) -> state.getBlock() == Blocks.CAVE_AIR, area);
+	
 	private ForkJoinPool forkJoinPool;
 	private ForkJoinTask<HashSet<BlockPos>> getMatchingBlocksTask;
 	private ForkJoinTask<ArrayList<int[]>> compileVerticesTask;
@@ -101,7 +100,7 @@ public final class CaveFinderHack extends Hack
 	{
 		prevLimit = limit.getValueI();
 		notify = true;
-
+		
 		forkJoinPool = new ForkJoinPool();
 		
 		bufferUpToDate = false;
@@ -117,7 +116,7 @@ public final class CaveFinderHack extends Hack
 		EVENTS.remove(UpdateListener.class, this);
 		EVENTS.remove(PacketInputListener.class, coordinator);
 		EVENTS.remove(RenderListener.class, this);
-
+		
 		stopBuildingBuffer();
 		coordinator.reset();
 		forkJoinPool.shutdownNow();
@@ -132,13 +131,13 @@ public final class CaveFinderHack extends Hack
 	public void onUpdate()
 	{
 		boolean searchersChanged = coordinator.update();
-
+		
 		if(searchersChanged)
 			stopBuildingBuffer();
-
+		
 		if(!coordinator.isDone())
 			return;
-
+		
 		// check if limit has changed
 		if(limit.getValueI() != prevLimit)
 		{
@@ -146,9 +145,9 @@ public final class CaveFinderHack extends Hack
 			prevLimit = limit.getValueI();
 			notify = true;
 		}
-
+		
 		// build the buffer
-
+		
 		if(getMatchingBlocksTask == null)
 			startGetMatchingBlocksTask();
 		
@@ -170,7 +169,7 @@ public final class CaveFinderHack extends Hack
 	{
 		if(vertexBuffer == null || bufferRegion == null)
 			return;
-
+		
 		// GL settings
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -190,14 +189,14 @@ public final class CaveFinderHack extends Hack
 		float[] colorF = color.getColorF();
 		RenderSystem.setShaderColor(colorF[0], colorF[1], colorF[2], alpha);
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
-
+		
 		Matrix4f viewMatrix = matrixStack.peek().getPositionMatrix();
 		Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
 		ShaderProgram shader = RenderSystem.getShader();
 		vertexBuffer.bind();
 		vertexBuffer.draw(viewMatrix, projMatrix, shader);
 		VertexBuffer.unbind();
-
+		
 		matrixStack.pop();
 		
 		// GL resets
@@ -205,7 +204,7 @@ public final class CaveFinderHack extends Hack
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-
+	
 	private void stopBuildingBuffer()
 	{
 		if(getMatchingBlocksTask != null)
@@ -222,23 +221,23 @@ public final class CaveFinderHack extends Hack
 		
 		bufferUpToDate = false;
 	}
-
+	
 	private void startGetMatchingBlocksTask()
 	{
 		BlockPos eyesPos = BlockPos.ofFloored(RotationUtils.getEyesPos());
 		Comparator<BlockPos> comparator =
-				Comparator.comparingInt(pos -> eyesPos.getManhattanDistance(pos));
-
+			Comparator.comparingInt(pos -> eyesPos.getManhattanDistance(pos));
+		
 		getMatchingBlocksTask = forkJoinPool.submit(() -> coordinator
-				.getMatches().parallel().map(ChunkSearcher.Result::pos)
-				.sorted(comparator).limit(limit.getValueLog())
-				.collect(Collectors.toCollection(HashSet::new)));
+			.getMatches().parallel().map(ChunkSearcher.Result::pos)
+			.sorted(comparator).limit(limit.getValueLog())
+			.collect(Collectors.toCollection(HashSet::new)));
 	}
-
+	
 	private void startCompileVerticesTask()
 	{
 		HashSet<BlockPos> matchingBlocks = getMatchingBlocksTask.join();
-
+		
 		if(matchingBlocks.size() < limit.getValueLog())
 			notify = true;
 		else if(notify)
@@ -248,9 +247,9 @@ public final class CaveFinderHack extends Hack
 				+ limit.getValueString() + "\u00a7r results.");
 			notify = false;
 		}
-
+		
 		compileVerticesTask = forkJoinPool
-				.submit(() -> BlockVertexCompiler.compile(matchingBlocks));
+			.submit(() -> BlockVertexCompiler.compile(matchingBlocks));
 	}
 	
 	private void setBufferFromTask()
@@ -259,17 +258,17 @@ public final class CaveFinderHack extends Hack
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		bufferBuilder.begin(VertexFormat.DrawMode.QUADS,
 			VertexFormats.POSITION);
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		for(int[] vertex : compileVerticesTask.join())
 			bufferBuilder.vertex(vertex[0] - region.x(), vertex[1],
-					vertex[2] - region.z()).next();
-
+				vertex[2] - region.z()).next();
+		
 		BuiltBuffer buffer = bufferBuilder.end();
-
+		
 		if(vertexBuffer != null)
 			vertexBuffer.close();
-
+		
 		vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 		vertexBuffer.bind();
 		vertexBuffer.upload(buffer);

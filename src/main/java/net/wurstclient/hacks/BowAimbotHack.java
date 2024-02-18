@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -210,13 +210,13 @@ public final class BowAimbotHack extends Hack
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
 		
 		// set position
 		matrixStack.translate(target.getX() - region.x(), target.getY(),
-				target.getZ() - region.z());
+			target.getZ() - region.z());
 		
 		// set size
 		float boxWidth = target.getWidth() + 0.1F;

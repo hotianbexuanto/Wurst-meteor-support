@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -191,7 +191,7 @@ public final class FeedAuraHack extends Hack
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
 		
@@ -201,9 +201,9 @@ public final class FeedAuraHack extends Hack
 		p = (le.getMaxHealth() - le.getHealth()) / le.getMaxHealth();
 		float green = p * 2F;
 		float red = 2 - green;
-
+		
 		Vec3d lerpedPos = EntityUtils.getLerpedPos(renderTarget, partialTicks)
-				.subtract(region.toVec3d());
+			.subtract(region.toVec3d());
 		matrixStack.translate(lerpedPos.x, lerpedPos.y, lerpedPos.z);
 		
 		matrixStack.translate(0, 0.05, 0);

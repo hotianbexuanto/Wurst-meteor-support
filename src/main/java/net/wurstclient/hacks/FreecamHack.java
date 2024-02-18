@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -31,7 +31,6 @@ import net.wurstclient.SearchTags;
 import net.wurstclient.events.*;
 import net.wurstclient.hack.DontSaveState;
 import net.wurstclient.hack.Hack;
-import net.wurstclient.mixinterface.IClientPlayerEntity;
 import net.wurstclient.mixinterface.IKeyBinding;
 import net.wurstclient.settings.CheckboxSetting;
 import net.wurstclient.settings.ColorSetting;
@@ -44,10 +43,10 @@ import net.wurstclient.util.RotationUtils;
 
 @DontSaveState
 @SearchTags({"free camera", "spectator"})
-public final class FreecamHack extends Hack
-		implements UpdateListener, PacketOutputListener, PlayerMoveListener, AirStrafingSpeedListener,
-		IsPlayerInWaterListener, CameraTransformViewBobbingListener,
-	    IsNormalCubeListener, SetOpaqueCubeListener, RenderListener
+public final class FreecamHack extends Hack implements UpdateListener,
+	PacketOutputListener, IsPlayerInWaterListener, AirStrafingSpeedListener,
+	PlayerMoveListener, CameraTransformViewBobbingListener,
+	IsNormalCubeListener, SetOpaqueCubeListener, RenderListener
 {
 	private final SliderSetting speed =
 		new SliderSetting("Speed", 1, 0.05, 10, 0.05, ValueDisplay.DECIMAL);
@@ -145,15 +144,11 @@ public final class FreecamHack extends Hack
 	}
 	
 	@Override
-	public void onPlayerMove(IClientPlayerEntity player)
-	{
-		player.setNoClip(true);
-	}
-	@Override
 	public void onIsPlayerInWater(IsPlayerInWaterEvent event)
 	{
 		event.setInWater(false);
 	}
+
 	@Override
 	public void onCameraTransformViewBobbing(
 		CameraTransformViewBobbingEvent event)
@@ -186,7 +181,7 @@ public final class FreecamHack extends Hack
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
 		
@@ -196,7 +191,7 @@ public final class FreecamHack extends Hack
 		// box
 		matrixStack.push();
 		matrixStack.translate(fakePlayer.getX() - region.x(), fakePlayer.getY(),
-				fakePlayer.getZ() - region.z());
+			fakePlayer.getZ() - region.z());
 		matrixStack.scale(fakePlayer.getWidth() + 0.1F,
 			fakePlayer.getHeight() + 0.1F, fakePlayer.getWidth() + 0.1F);
 		Box bb = new Box(-0.5, 0, -0.5, 0.5, 1, 0.5);
@@ -205,8 +200,8 @@ public final class FreecamHack extends Hack
 		
 		// line
 		Vec3d regionVec = region.toVec3d();
-		Vec3d start = RotationUtils.getClientLookVec()
-				.add(RenderUtils.getCameraPos()).subtract(regionVec);
+		Vec3d start = RotationUtils.getClientLookVec(partialTicks)
+			.add(RenderUtils.getCameraPos()).subtract(regionVec);
 		Vec3d end = fakePlayer.getBoundingBox().getCenter().subtract(regionVec);
 		
 		Matrix4f matrix = matrixStack.peek().getPositionMatrix();
@@ -230,4 +225,7 @@ public final class FreecamHack extends Hack
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
+
+	@Override
+	public void onPlayerMove() {}
 }

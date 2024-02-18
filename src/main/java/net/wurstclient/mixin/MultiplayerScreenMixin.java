@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -32,12 +32,12 @@ public class MultiplayerScreenMixin extends Screen implements IMultiplayerScreen
 	protected MultiplayerServerListWidget serverListWidget;
 	
 	private ButtonWidget lastServerButton;
-
+	
 	private MultiplayerScreenMixin(WurstClient wurst, Text title)
 	{
 		super(title);
 	}
-
+	
 	@Inject(at = @At("TAIL"), method = "init()V")
 	private void onInit(CallbackInfo ci)
 	{
@@ -63,7 +63,7 @@ public class MultiplayerScreenMixin extends Screen implements IMultiplayerScreen
 					new CleanUpScreen((MultiplayerScreen)(Object)this)))
 			.dimensions(width / 2 + 154 + 4, height - 30, 100, 20).build());
 	}
-
+	
 	@Inject(at = @At("TAIL"), method = "tick()V")
 	private void onTick(CallbackInfo ci)
 	{
@@ -72,26 +72,26 @@ public class MultiplayerScreenMixin extends Screen implements IMultiplayerScreen
 		
 		lastServerButton.active = LastServerRememberer.getLastServer() != null;
 	}
-
+	
 	@Inject(at = @At("HEAD"),
-			method = "connect(Lnet/minecraft/client/network/ServerInfo;)V")
+		method = "connect(Lnet/minecraft/client/network/ServerInfo;)V")
 	private void onConnect(ServerInfo entry, CallbackInfo ci)
 	{
 		LastServerRememberer.setLastServer(entry);
 	}
-
+	
 	@Override
 	public MultiplayerServerListWidget getServerListSelector()
 	{
 		return serverListWidget;
 	}
-
+	
 	@Override
 	public void connectToServer(ServerInfo server)
 	{
 		connect(server);
 	}
-
+	
 	@Shadow
 	private void connect(ServerInfo entry)
 	{

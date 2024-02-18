@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -100,8 +100,8 @@ public final class BaseFinderHack extends Hack
 	
 	private int messageTimer = 0;
 	private int counter;
-
-    private RegionPos lastRegion;
+	
+	private RegionPos lastRegion;
 	
 	public BaseFinderHack()
 	{
@@ -160,7 +160,7 @@ public final class BaseFinderHack extends Hack
 		RegionPos region = RenderUtils.getCameraRegion();
 		if(!region.equals(lastRegion))
 			onUpdate();
-
+		
 		// GL settings
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -197,7 +197,7 @@ public final class BaseFinderHack extends Hack
 	{
 		int modulo = MC.player.age % 64;
 		RegionPos region = RenderUtils.getCameraRegion();
-
+		
 		if(modulo == 0 || !region.equals(lastRegion))
 		{
 			if(vertexBuffer != null)
@@ -212,14 +212,14 @@ public final class BaseFinderHack extends Hack
 			
 			for(int[] vertex : vertices)
 				bufferBuilder.vertex(vertex[0] - region.x(), vertex[1],
-						vertex[2] - region.z()).next();
-
+					vertex[2] - region.z()).next();
+			
 			BuiltBuffer buffer = bufferBuilder.end();
 			
 			vertexBuffer.bind();
 			vertexBuffer.upload(buffer);
 			VertexBuffer.unbind();
-
+			
 			lastRegion = region;
 		}
 		

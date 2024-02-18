@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -161,7 +161,7 @@ public final class EditColorScreen extends Screen
 		float partialTicks)
 	{
 		TextRenderer tr = client.textRenderer;
-
+		
 		renderBackground(context, mouseX, mouseY, partialTicks);
 		context.drawCenteredTextWithShadow(client.textRenderer,
 			colorSetting.getName(), width / 2, 16, 0xF0F0F0);
@@ -208,7 +208,7 @@ public final class EditColorScreen extends Screen
 		// Color box
 		context.fill(boxX, boxY, boxX + boxWidth, boxY + boxHeight,
 			color.getRGB());
-
+		
 		for(Drawable drawable : drawables)
 			drawable.render(context, mouseX, mouseY, partialTicks);
 	}

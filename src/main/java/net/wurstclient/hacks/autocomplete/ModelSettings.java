@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -38,11 +38,13 @@ public final class ModelSettings
 	public enum OpenAiModel
 	{
 		GPT_3_5_TURBO("gpt-3.5-turbo", true),
+		GPT_3_5_TURBO_1106("gpt-3.5-turbo-1106", true),
 		GPT_3_5_TURBO_0613("gpt-3.5-turbo-0613", true),
 		GPT_3_5_TURBO_0301("gpt-3.5-turbo-0301", true),
 		GPT_3_5_TURBO_16K("gpt-3.5-turbo-16k", true),
 		GPT_3_5_TURBO_16K_0613("gpt-3.5-turbo-16k-0613", true),
 		GPT_4("gpt-4", true),
+		GPT_4_1106_PREVIEW("gpt-4-1106-preview", true),
 		GPT_4_0613("gpt-4-0613", true),
 		GPT_4_0314("gpt-4-0314", true),
 		GPT_4_32K("gpt-4-32k", true),
@@ -188,29 +190,29 @@ public final class ModelSettings
 				+ " no idea about events like players joining, leaving, dying,"
 				+ " etc.",
 			false);
-
+	
 	public final TextFieldSetting openaiChatEndpoint = new TextFieldSetting(
-			"OpenAI chat endpoint", "Endpoint for OpenAI's chat completion API.",
-			"https://api.openai.com/v1/chat/completions");
-
+		"OpenAI chat endpoint", "Endpoint for OpenAI's chat completion API.",
+		"https://api.openai.com/v1/chat/completions");
+	
 	public final TextFieldSetting openaiLegacyEndpoint =
-			new TextFieldSetting("OpenAI legacy endpoint",
-					"Endpoint for OpenAI's legacy completion API.",
-					"https://api.openai.com/v1/completions");
-
+		new TextFieldSetting("OpenAI legacy endpoint",
+			"Endpoint for OpenAI's legacy completion API.",
+			"https://api.openai.com/v1/completions");
+	
 	public final TextFieldSetting oobaboogaEndpoint =
-			new TextFieldSetting("Oobabooga endpoint",
-					"Endpoint for your Oobabooga web UI instance.\n"
-							+ "Remember to start the Oobabooga server with the"
-							+ " \u00a7e--extensions api\u00a7r flag.",
-					"http://127.0.0.1:5000/api/v1/generate");
-
+		new TextFieldSetting("Oobabooga endpoint",
+			"Endpoint for your Oobabooga web UI instance.\n"
+				+ "Remember to start the Oobabooga server with the"
+				+ " \u00a7e--extensions api\u00a7r flag.",
+			"http://127.0.0.1:5000/api/v1/generate");
+	
 	private final List<Setting> settings =
 		Collections.unmodifiableList(Arrays.asList(openAiModel, maxTokens,
 			temperature, topP, presencePenalty, frequencyPenalty,
 			repetitionPenalty, encoderRepetitionPenalty, stopSequence,
-				contextLength, filterServerMessages, openaiChatEndpoint,
-				openaiLegacyEndpoint, oobaboogaEndpoint));
+			contextLength, filterServerMessages, openaiChatEndpoint,
+			openaiLegacyEndpoint, oobaboogaEndpoint));
 	
 	public void forEach(Consumer<Setting> action)
 	{

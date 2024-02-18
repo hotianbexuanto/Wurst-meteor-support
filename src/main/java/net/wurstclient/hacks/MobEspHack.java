@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -25,20 +25,22 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.wurstclient.Category;
 import net.wurstclient.SearchTags;
 import net.wurstclient.events.CameraTransformViewBobbingListener;
-import net.wurstclient.util.EntityUtils;
 import net.wurstclient.events.RenderListener;
 import net.wurstclient.events.UpdateListener;
 import net.wurstclient.hack.Hack;
-import net.wurstclient.settings.EnumSetting;
+import net.wurstclient.settings.EspBoxSizeSetting;
 import net.wurstclient.settings.EspStyleSetting;
-import net.wurstclient.settings.filters.FilterInvisibleSetting;
+import net.wurstclient.settings.filterlists.EntityFilterList;
+import net.wurstclient.settings.filters.*;
+import net.wurstclient.util.EntityUtils;
 import net.wurstclient.util.RegionPos;
 import net.wurstclient.util.RenderUtils;
 import net.wurstclient.util.RotationUtils;
@@ -49,15 +51,35 @@ public final class MobEspHack extends Hack implements UpdateListener,
 {
 	private final EspStyleSetting style = new EspStyleSetting();
 	
-	private final EnumSetting<BoxSize> boxSize = new EnumSetting<>("Box size",
+	private final EspBoxSizeSetting boxSize = new EspBoxSizeSetting(
 		"\u00a7lAccurate\u00a7r mode shows the exact hitbox of each mob.\n"
-			+ "\u00a7lFancy\u00a7r mode shows slightly larger boxes that look better.",
-		BoxSize.values(), BoxSize.FANCY);
+			+ "\u00a7lFancy\u00a7r mode shows slightly larger boxes that look better.");
 	
-	private final FilterInvisibleSetting filterInvisible =
-		new FilterInvisibleSetting("Won't show invisible mobs.", false);
+	private final EntityFilterList entityFilters =
+		new EntityFilterList(FilterHostileSetting.genericVision(false),
+			FilterNeutralSetting
+				.genericVision(AttackDetectingEntityFilter.Mode.OFF),
+			FilterPassiveSetting.genericVision(false),
+			FilterPassiveWaterSetting.genericVision(false),
+			FilterBatsSetting.genericVision(false),
+			FilterSlimesSetting.genericVision(false),
+			FilterPetsSetting.genericVision(false),
+			FilterVillagersSetting.genericVision(false),
+			FilterZombieVillagersSetting.genericVision(false),
+			FilterGolemsSetting.genericVision(false),
+			FilterPiglinsSetting
+				.genericVision(AttackDetectingEntityFilter.Mode.OFF),
+			FilterZombiePiglinsSetting
+				.genericVision(AttackDetectingEntityFilter.Mode.OFF),
+			FilterEndermenSetting
+				.genericVision(AttackDetectingEntityFilter.Mode.OFF),
+			FilterShulkersSetting.genericVision(false),
+			FilterAllaysSetting.genericVision(false),
+			FilterInvisibleSetting.genericVision(false),
+			FilterNamedSetting.genericVision(false),
+			FilterArmorStandsSetting.genericVision(true));
 	
-	private final ArrayList<MobEntity> mobs = new ArrayList<>();
+	private final ArrayList<LivingEntity> mobs = new ArrayList<>();
 	private VertexBuffer mobBox;
 	
 	public MobEspHack()
@@ -66,7 +88,7 @@ public final class MobEspHack extends Hack implements UpdateListener,
 		setCategory(Category.RENDER);
 		addSetting(style);
 		addSetting(boxSize);
-		addSetting(filterInvisible);
+		entityFilters.forEach(this::addSetting);
 	}
 	
 	@Override
@@ -97,13 +119,13 @@ public final class MobEspHack extends Hack implements UpdateListener,
 	{
 		mobs.clear();
 		
-		Stream<MobEntity> stream =
-			StreamSupport.stream(MC.world.getEntities().spliterator(), false)
-				.filter(e -> e instanceof MobEntity).map(e -> (MobEntity)e)
-				.filter(e -> !e.isRemoved() && e.getHealth() > 0);
+		Stream<LivingEntity> stream = StreamSupport
+			.stream(MC.world.getEntities().spliterator(), false)
+			.filter(LivingEntity.class::isInstance).map(e -> (LivingEntity)e)
+			.filter(e -> !(e instanceof PlayerEntity))
+			.filter(e -> !e.isRemoved() && e.getHealth() > 0);
 		
-		if(filterInvisible.isChecked())
-			stream = stream.filter(filterInvisible);
+		stream = entityFilters.applyTo(stream);
 		
 		mobs.addAll(stream.collect(Collectors.toList()));
 	}
@@ -112,7 +134,7 @@ public final class MobEspHack extends Hack implements UpdateListener,
 	public void onCameraTransformViewBobbing(
 		CameraTransformViewBobbingEvent event)
 	{
-		if(style.getSelected().hasLines())
+		if(style.hasLines())
 			event.cancel();
 	}
 	
@@ -125,14 +147,14 @@ public final class MobEspHack extends Hack implements UpdateListener,
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
 		matrixStack.push();
-
+		
 		RegionPos region = RenderUtils.getCameraRegion();
 		RenderUtils.applyRegionalRenderOffset(matrixStack, region);
-
-		if(style.getSelected().hasBoxes())
+		
+		if(style.hasBoxes())
 			renderBoxes(matrixStack, partialTicks, region);
-
-		if(style.getSelected().hasLines())
+		
+		if(style.hasLines())
 			renderTracers(matrixStack, partialTicks, region);
 		
 		matrixStack.pop();
@@ -142,19 +164,19 @@ public final class MobEspHack extends Hack implements UpdateListener,
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-
+	
 	private void renderBoxes(MatrixStack matrixStack, float partialTicks,
-							 RegionPos region)
+		RegionPos region)
 	{
-		float extraSize = boxSize.getSelected().extraSize;
+		float extraSize = boxSize.getExtraSize();
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		
-		for(MobEntity e : mobs)
+		for(LivingEntity e : mobs)
 		{
 			matrixStack.push();
-
+			
 			Vec3d lerpedPos = EntityUtils.getLerpedPos(e, partialTicks)
-					.subtract(region.toVec3d());
+				.subtract(region.toVec3d());
 			matrixStack.translate(lerpedPos.x, lerpedPos.y, lerpedPos.z);
 			
 			matrixStack.scale(e.getWidth() + extraSize,
@@ -163,19 +185,19 @@ public final class MobEspHack extends Hack implements UpdateListener,
 			float f = MC.player.distanceTo(e) / 20F;
 			RenderSystem.setShaderColor(2 - f, f, 0, 0.5F);
 			
+			Matrix4f viewMatrix = matrixStack.peek().getPositionMatrix();
+			Matrix4f projMatrix = RenderSystem.getProjectionMatrix();
 			ShaderProgram shader = RenderSystem.getShader();
-			Matrix4f matrix4f = RenderSystem.getProjectionMatrix();
 			mobBox.bind();
-			mobBox.draw(matrixStack.peek().getPositionMatrix(), matrix4f,
-				shader);
+			mobBox.draw(viewMatrix, projMatrix, shader);
 			VertexBuffer.unbind();
 			
 			matrixStack.pop();
 		}
 	}
-
+	
 	private void renderTracers(MatrixStack matrixStack, float partialTicks,
-							   RegionPos region)
+		RegionPos region)
 	{
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -186,15 +208,15 @@ public final class MobEspHack extends Hack implements UpdateListener,
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES,
 			VertexFormats.POSITION_COLOR);
-
-		Vec3d regionVec = region.toVec3d();
-		Vec3d start = RotationUtils.getClientLookVec()
-				.add(RenderUtils.getCameraPos()).subtract(regionVec);
 		
-		for(MobEntity e : mobs)
+		Vec3d regionVec = region.toVec3d();
+		Vec3d start = RotationUtils.getClientLookVec(partialTicks)
+			.add(RenderUtils.getCameraPos()).subtract(regionVec);
+		
+		for(LivingEntity e : mobs)
 		{
 			Vec3d end = EntityUtils.getLerpedBox(e, partialTicks).getCenter()
-					.subtract(regionVec);
+				.subtract(regionVec);
 			
 			float f = MC.player.distanceTo(e) / 20F;
 			float r = MathHelper.clamp(2 - f, 0, 1);
@@ -210,27 +232,5 @@ public final class MobEspHack extends Hack implements UpdateListener,
 		}
 		
 		tessellator.draw();
-		
-	}
-	
-	private enum BoxSize
-	{
-		ACCURATE("Accurate", 0),
-		FANCY("Fancy", 0.1F);
-		
-		private final String name;
-		private final float extraSize;
-		
-		private BoxSize(String name, float extraSize)
-		{
-			this.name = name;
-			this.extraSize = extraSize;
-		}
-		
-		@Override
-		public String toString()
-		{
-			return name;
-		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -341,12 +341,12 @@ public final class NavigatorFeatureScreen extends NavigatorScreen
 		int bgy3 = bgy2 - (noButtons ? 0 : 24);
 		int windowY1 = bgy1 + scroll + windowComponentY;
 		int windowY2 = windowY1 + window.getInnerHeight();
-
+		
 		setColorToBackground();
 		drawQuads(matrixStack, bgx1, bgy1, bgx2,
 			MathHelper.clamp(windowY1, bgy1, bgy3));
 		drawQuads(matrixStack, bgx1, MathHelper.clamp(windowY2, bgy1, bgy3),
-				bgx2, bgy2);
+			bgx2, bgy2);
 		drawBoxShadow(matrixStack, bgx1, bgy1, bgx2, bgy2);
 		
 		// scissor box
@@ -356,7 +356,7 @@ public final class NavigatorFeatureScreen extends NavigatorScreen
 		// settings
 		gui.setTooltip("");
 		window.validate();
-
+		
 		window.setY(windowY1 - 13);
 		matrixStack.push();
 		matrixStack.translate(bgx1, windowY1, 0);

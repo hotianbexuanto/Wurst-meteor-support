@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -85,7 +85,7 @@ public class SliderSetting extends Setting implements SliderLock
 	{
 		return MathHelper.ceil(getValue());
 	}
-
+	
 	/**
 	 * Returns the actual value of a logarithmic slider,<br>
 	 * calculated as <code>10 ^ {@link #getValueI()}</code>.
@@ -94,8 +94,7 @@ public class SliderSetting extends Setting implements SliderLock
 	{
 		return (int)Math.pow(10, getValueI());
 	}
-
-
+	
 	public final double getDefaultValue()
 	{
 		return defaultValue;
@@ -267,7 +266,7 @@ public class SliderSetting extends Setting implements SliderLock
 	{
 		return new JsonPrimitive(Math.round(value * 1e6) / 1e6);
 	}
-
+	
 	@Override
 	public JsonObject exportWikiData()
 	{
@@ -275,15 +274,15 @@ public class SliderSetting extends Setting implements SliderLock
 		json.addProperty("name", getName());
 		json.addProperty("descriptionKey", getDescriptionKey());
 		json.addProperty("type", "Slider");
-
+		
 		json.addProperty("defaultValue", defaultValue);
 		json.addProperty("minimum", minimum);
 		json.addProperty("maximum", maximum);
 		json.addProperty("increment", increment);
-
+		
 		return json;
 	}
-
+	
 	@Override
 	public final LinkedHashSet<PossibleKeybind> getPossibleKeybinds(
 		String featureName)

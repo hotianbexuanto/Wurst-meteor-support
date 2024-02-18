@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2023 Wurst-Imperium and contributors.
+ * Copyright (c) 2014-2024 Wurst-Imperium and contributors.
  *
  * This source code is subject to the terms of the GNU General Public
  * License, version 3. If a copy of the GPL was not distributed with this
@@ -16,7 +16,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.LiteralTextContent;
+import net.minecraft.text.PlainTextContent.Literal;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import net.wurstclient.WurstClient;
@@ -103,7 +103,7 @@ public final class ForcedChatReportsScreen extends Screen
 	
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY,
-					   float partialTicks)
+		float partialTicks)
 	{
 		renderBackground(context, mouseX, mouseY, partialTicks);
 		
@@ -114,7 +114,7 @@ public final class ForcedChatReportsScreen extends Screen
 		context.drawCenteredTextWithShadow(textRenderer, title, centerX, titleY,
 			0xAAAAAA);
 		reasonFormatted.drawCenterWithShadow(context, centerX, reasonY);
-
+		
 		for(Drawable drawable : drawables)
 			drawable.render(context, mouseX, mouseY, partialTicks);
 	}
@@ -134,7 +134,7 @@ public final class ForcedChatReportsScreen extends Screen
 			&& TRANSLATABLE_DISCONNECT_REASONS.contains(tr.getKey()))
 			return true;
 		
-		if(disconnectReason.getContent() instanceof LiteralTextContent lt
+		if(disconnectReason.getContent() instanceof Literal lt
 			&& LITERAL_DISCONNECT_REASONS.contains(lt.string()))
 			return true;
 		

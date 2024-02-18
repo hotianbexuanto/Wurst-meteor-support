@@ -11,6 +11,6 @@ Download from Releases
 # 7.41  1.20.4
 
 ## Originator
-https://github.com/white-devil42/Wurst7-with-meteor-support Deleted
+~~https://github.com/white-devil42/Wurst7-with-meteor-support~~ Deleted
 
 https://github.com/whitedevil-tmp/Wurst-With-Meteor-Support Substitute Article

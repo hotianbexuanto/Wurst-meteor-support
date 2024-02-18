@@ -33,7 +33,6 @@ import net.minecraft.util.math.Vec3d;
 import net.wurstclient.WurstClient;
 import net.wurstclient.event.EventManager;
 import net.wurstclient.events.AirStrafingSpeedListener.AirStrafingSpeedEvent;
-import net.wurstclient.events.IsPlayerInLavaListener.IsPlayerInLavaEvent;
 import net.wurstclient.events.IsPlayerInWaterListener.IsPlayerInWaterEvent;
 import net.wurstclient.events.KnockbackListener.KnockbackEvent;
 import net.wurstclient.events.PlayerMoveListener.PlayerMoveEvent;
@@ -230,7 +229,7 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 		
 		return event.isInWater();
 	}
-
+	
 	@Override
 	public boolean isTouchingWaterBypass()
 	{

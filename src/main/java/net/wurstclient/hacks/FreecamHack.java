@@ -148,7 +148,7 @@ public final class FreecamHack extends Hack implements UpdateListener,
 	{
 		event.setInWater(false);
 	}
-
+	
 	@Override
 	public void onCameraTransformViewBobbing(
 		CameraTransformViewBobbingEvent event)
@@ -225,7 +225,8 @@ public final class FreecamHack extends Hack implements UpdateListener,
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-
+	
 	@Override
-	public void onPlayerMove() {}
+	public void onPlayerMove()
+	{}
 }

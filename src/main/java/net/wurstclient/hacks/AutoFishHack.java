@@ -20,7 +20,6 @@ import net.wurstclient.events.RenderListener;
 import net.wurstclient.events.UpdateListener;
 import net.wurstclient.hack.Hack;
 import net.wurstclient.hacks.autofish.AutoFishDebugDraw;
-import net.wurstclient.hacks.autofish.AutoFishRodSelector;
 import net.wurstclient.hacks.autofish.FishingSpotManager;
 import net.wurstclient.hacks.autofish.ShallowWaterWarningCheckbox;
 import net.wurstclient.settings.SliderSetting;
@@ -58,13 +57,13 @@ public final class AutoFishHack extends Hack
 	private final FishingSpotManager fishingSpots = new FishingSpotManager();
 	private final AutoFishDebugDraw debugDraw =
 		new AutoFishDebugDraw(validRange, fishingSpots);
-	private final AutoFishRodSelector rodSelector =
-		new AutoFishRodSelector(this);
-
+	private int bestRodValue;
+	private int bestRodSlot;
 	private int castRodTimer;
 	private int reelInTimer;
+	private int scheduledWindowClick;
 	private boolean biteDetected;
-
+	
 	public AutoFishHack()
 	{
 		super("AutoFish");
@@ -74,7 +73,6 @@ public final class AutoFishHack extends Hack
 		addSetting(retryDelay);
 		addSetting(patience);
 		debugDraw.getSettings().forEach(this::addSetting);
-		rodSelector.getSettings().forEach(this::addSetting);
 		addSetting(shallowWaterWarning);
 		fishingSpots.getSettings().forEach(this::addSetting);
 	}
@@ -82,7 +80,7 @@ public final class AutoFishHack extends Hack
 	@Override
 	public String getRenderName()
 	{
-		if(rodSelector.isOutOfRods())
+		if(bestRodSlot == -1)
 			return getName() + " [out of rods]";
 		
 		return getName();
@@ -94,7 +92,7 @@ public final class AutoFishHack extends Hack
 		castRodTimer = 0;
 		reelInTimer = 0;
 		biteDetected = false;
-		rodSelector.reset();
+		scheduledWindowClick = -1;
 		debugDraw.reset();
 		fishingSpots.reset();
 		shallowWaterWarning.reset();
@@ -125,7 +123,7 @@ public final class AutoFishHack extends Hack
 			reelInTimer--;
 		
 		// update inventory
-		if(!rodSelector.update())
+		if(scheduledWindowClick != -1)
 			return;
 		
 		// if not fishing, cast rod

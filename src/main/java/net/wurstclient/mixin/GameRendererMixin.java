@@ -11,7 +11,6 @@ import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -19,7 +18,6 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
 import net.wurstclient.WurstClient;
 import net.wurstclient.event.EventManager;
 import net.wurstclient.events.CameraTransformViewBobbingListener.CameraTransformViewBobbingEvent;
@@ -113,7 +111,7 @@ public abstract class GameRendererMixin implements AutoCloseable
 		HitResultRayTraceEvent event = new HitResultRayTraceEvent(tickDelta);
 		EventManager.fire(event);
 	}
-
+	
 	@Inject(at = @At("HEAD"),
 		method = "getNightVisionStrength(Lnet/minecraft/entity/LivingEntity;F)F",
 		cancellable = true)

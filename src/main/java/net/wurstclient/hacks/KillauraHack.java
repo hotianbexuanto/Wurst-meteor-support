@@ -37,7 +37,6 @@ import net.wurstclient.settings.PauseAttackOnContainersSetting;
 import net.wurstclient.settings.SliderSetting;
 import net.wurstclient.settings.SliderSetting.ValueDisplay;
 import net.wurstclient.settings.filterlists.EntityFilterList;
-import net.wurstclient.util.BlockUtils;
 import net.wurstclient.util.EntityUtils;
 import net.wurstclient.util.RegionPos;
 import net.wurstclient.util.RenderUtils;
@@ -73,7 +72,7 @@ public final class KillauraHack extends Hack
 	
 	private final PauseAttackOnContainersSetting pauseOnContainers =
 		new PauseAttackOnContainersSetting(true);
-
+	
 	private final EntityFilterList entityFilters =
 		EntityFilterList.genericCombat();
 	
@@ -91,7 +90,7 @@ public final class KillauraHack extends Hack
 		addSetting(fov);
 		addSetting(damageIndicator);
 		addSetting(pauseOnContainers);
-
+		
 		entityFilters.forEach(this::addSetting);
 	}
 	
@@ -152,9 +151,9 @@ public final class KillauraHack extends Hack
 			return;
 		
 		WURST.getHax().autoSwordHack.setSlot(target);
-
+		
 		WURST.getRotationFaker()
-				.faceVectorPacket(target.getBoundingBox().getCenter());
+			.faceVectorPacket(target.getBoundingBox().getCenter());
 	}
 	
 	@Override

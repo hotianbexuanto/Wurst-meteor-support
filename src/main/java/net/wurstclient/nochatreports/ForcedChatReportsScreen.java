@@ -16,7 +16,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.PlainTextContent.Literal;
+import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
 import net.wurstclient.WurstClient;
@@ -47,12 +47,13 @@ public final class ForcedChatReportsScreen extends Screen
 	
 	public ForcedChatReportsScreen(Screen prevScreen)
 	{
-		super(Text.literal(ChatUtils.WURST_PREFIX).append(
-			Text.translatable("gui.wurst.nochatreports.unsafe_server.title")));
+		super(Text.literal(ChatUtils.WURST_PREFIX)
+			.append(Text.literal(WurstClient.INSTANCE
+				.translate("gui.wurst.nochatreports.unsafe_server.title"))));
 		this.prevScreen = prevScreen;
 		
-		reason =
-			Text.translatable("gui.wurst.nochatreports.unsafe_server.message");
+		reason = Text.literal(WurstClient.INSTANCE
+			.translate("gui.wurst.nochatreports.unsafe_server.message"));
 		
 		NoChatReportsOtf ncr = WurstClient.INSTANCE.getOtfs().noChatReportsOtf;
 		sigButtonMsg = () -> WurstClient.INSTANCE
@@ -134,7 +135,7 @@ public final class ForcedChatReportsScreen extends Screen
 			&& TRANSLATABLE_DISCONNECT_REASONS.contains(tr.getKey()))
 			return true;
 		
-		if(disconnectReason.getContent() instanceof Literal lt
+		if(disconnectReason.getContent() instanceof LiteralTextContent lt
 			&& LITERAL_DISCONNECT_REASONS.contains(lt.string()))
 			return true;
 		

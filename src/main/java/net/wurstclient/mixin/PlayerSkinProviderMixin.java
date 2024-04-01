@@ -7,9 +7,7 @@
  */
 package net.wurstclient.mixin;
 
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.UUID;
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,36 +16,42 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import com.mojang.authlib.minecraft.MinecraftProfileTextures;
 
 import net.minecraft.client.texture.PlayerSkinProvider;
+import net.minecraft.client.texture.PlayerSkinProvider.Textures;
 import net.minecraft.client.util.SkinTextures;
+import net.wurstclient.util.json.JsonUtils;
+import net.wurstclient.util.json.WsonObject;
 
 @Mixin(PlayerSkinProvider.class)
 public abstract class PlayerSkinProviderMixin
 {
-	private static JsonObject capes;
+	private static HashMap<String, String> capes;
 	private MinecraftProfileTexture currentCape;
 	
 	@Inject(at = @At("HEAD"),
-		method = "fetchSkinTextures(Ljava/util/UUID;Lcom/mojang/authlib/minecraft/MinecraftProfileTextures;)Ljava/util/concurrent/CompletableFuture;")
-	private void onFetchSkinTextures(UUID uuid,
-		MinecraftProfileTextures textures,
+		method = "fetchSkinTextures(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/client/texture/PlayerSkinProvider$Textures;)Ljava/util/concurrent/CompletableFuture;")
+	private void onFetchSkinTextures(GameProfile profile, Textures textures,
 		CallbackInfoReturnable<CompletableFuture<SkinTextures>> cir)
 	{
-		String uuidString = uuid.toString();
+		String name = profile.getName();
+		String uuid = profile.getId().toString();
 		
 		try
 		{
 			if(capes == null)
 				setupWurstCapes();
 			
-			if(capes.has(uuidString))
+			if(capes.containsKey(name))
 			{
-				String capeURL = capes.get(uuidString).getAsString();
+				String capeURL = capes.get(name);
+				currentCape = new MinecraftProfileTexture(capeURL, null);
+				
+			}else if(capes.containsKey(uuid))
+			{
+				String capeURL = capes.get(uuid);
 				currentCape = new MinecraftProfileTexture(capeURL, null);
 				
 			}else
@@ -55,15 +59,15 @@ public abstract class PlayerSkinProviderMixin
 			
 		}catch(Exception e)
 		{
-			System.err
-				.println("[Wurst] Failed to load cape for UUID " + uuidString);
+			System.err.println("[Wurst] Failed to load cape for '" + name
+				+ "' (" + uuid + ")");
 			
 			e.printStackTrace();
 		}
 	}
 	
 	@ModifyVariable(at = @At("STORE"),
-		method = "fetchSkinTextures(Ljava/util/UUID;Lcom/mojang/authlib/minecraft/MinecraftProfileTextures;)Ljava/util/concurrent/CompletableFuture;",
+		method = "fetchSkinTextures(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/client/texture/PlayerSkinProvider$Textures;)Ljava/util/concurrent/CompletableFuture;",
 		ordinal = 1,
 		name = "minecraftProfileTexture2")
 	private MinecraftProfileTexture modifyCapeTexture(
@@ -81,12 +85,11 @@ public abstract class PlayerSkinProviderMixin
 	{
 		try
 		{
-			// TODO: download capes to file
-			URL url = new URL("https://www.wurstclient.net/api/v1/capes.json");
+			// download cape list from wurstclient.net
+			WsonObject rawCapes = JsonUtils.parseURLToObject(
+				"https://www.wurstclient.net/api/v1/capes.json");
 			
-			capes =
-				JsonParser.parseReader(new InputStreamReader(url.openStream()))
-					.getAsJsonObject();
+			capes = rawCapes.getAllStrings();
 			
 		}catch(Exception e)
 		{

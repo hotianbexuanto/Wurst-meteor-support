@@ -151,7 +151,6 @@ public final class KillauraHack extends Hack
 			return;
 		
 		WURST.getHax().autoSwordHack.setSlot(target);
-		
 		WURST.getRotationFaker()
 			.faceVectorPacket(target.getBoundingBox().getCenter());
 	}

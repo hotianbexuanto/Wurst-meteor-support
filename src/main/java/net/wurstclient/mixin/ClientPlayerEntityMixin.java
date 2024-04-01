@@ -231,6 +231,13 @@ public class ClientPlayerEntityMixin extends AbstractClientPlayerEntity
 	}
 	
 	@Override
+	public boolean isSpectator()
+	{
+		return super.isSpectator()
+			|| WurstClient.INSTANCE.getHax().freecamHack.isEnabled();
+	}
+	
+	@Override
 	public boolean isTouchingWaterBypass()
 	{
 		return super.isTouchingWater();

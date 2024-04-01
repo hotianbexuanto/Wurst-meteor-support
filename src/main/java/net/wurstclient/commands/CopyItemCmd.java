@@ -47,7 +47,7 @@ public final class CopyItemCmd extends Command
 	{
 		for(AbstractClientPlayerEntity player : MC.world.getPlayers())
 		{
-			if(!player.getName().getString().equalsIgnoreCase(name))
+			if(!player.getEntityName().equalsIgnoreCase(name))
 				continue;
 			
 			return player;

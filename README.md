@@ -3,9 +3,9 @@
 
 ## Downloads
 
-Build it yourself
-or
-Download from Releases
+Do your own build
+Or,
+Download from Release, Actions
 
 ## Internal version
 # 7.41  1.20.4
@@ -16,16 +16,14 @@ Download from Releases
 https://github.com/whitedevil-tmp/Wurst-With-Meteor-Support Substitute Article
 
 
-## TODO:
-EN: In the future, we would like to create something that can automatically retrieve the latest version and apply patches.
+<!-- ## TODO:
+In the future, we would like to create something that can automatically retrieve the latest version and apply patches.
 
-JP: 今後は自動的に最新バージョンを取得してパッチを充てられるようなものを作りたい 
-
-
+-->
 ## What patcher.py?
-Code>Download Zip from [Wurst7 Original Repository](https://github.com/Wurst-Imperium/Wurst7)
 
-After dragging and dropping the zip file, simply replace the contents
+Drag and drop the zip file downloaded from the [master branch of the original repository](https://github.com/Wurst-Imperium/Wurst7/archive/refs/heads/master.zip) and the patch will be automatically applied to the contents of the file.
 
+This theoretically supports Meteor in all Wurst versions!
 
 <img src="https://i.imgur.com/kfCKj82.png" style="display: block; margin: auto;" />

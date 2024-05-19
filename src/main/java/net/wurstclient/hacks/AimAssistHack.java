@@ -48,6 +48,11 @@ public final class AimAssistHack extends Hack
 	private final CheckboxSetting checkLOS = new CheckboxSetting(
 		"Check line of sight", "Won't aim at entities behind blocks.", true);
 	
+	private final CheckboxSetting aimWhileBlocking = new CheckboxSetting(
+		"Aim while blocking", "Keeps aiming at entities while you're blocking"
+			+ " with a shield or using items.",
+		false);
+	
 	private final EntityFilterList entityFilters =
 		new EntityFilterList(FilterPlayersSetting.genericCombat(false),
 			FilterSleepingSetting.genericCombat(false),
@@ -73,6 +78,7 @@ public final class AimAssistHack extends Hack
 			FilterShulkersSetting.genericCombat(false),
 			FilterInvisibleSetting.genericCombat(true),
 			FilterNamedSetting.genericCombat(false),
+			
 			FilterArmorStandsSetting.genericCombat(true),
 			FilterCrystalsSetting.genericCombat(true));
 	
@@ -89,6 +95,7 @@ public final class AimAssistHack extends Hack
 		addSetting(rotationSpeed);
 		addSetting(fov);
 		addSetting(checkLOS);
+		addSetting(aimWhileBlocking);
 		
 		entityFilters.forEach(this::addSetting);
 	}
@@ -122,8 +129,13 @@ public final class AimAssistHack extends Hack
 	@Override
 	public void onUpdate()
 	{
+		target = null;
+		
 		// don't aim when a container/inventory screen is open
 		if(MC.currentScreen instanceof HandledScreen)
+			return;
+		
+		if(!aimWhileBlocking.isChecked() && MC.player.isUsingItem())
 			return;
 		
 		Stream<Entity> stream = EntityUtils.getAttackableEntities();

@@ -15,7 +15,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -36,7 +35,10 @@ import net.wurstclient.settings.EnumSetting;
 import net.wurstclient.settings.PauseAttackOnContainersSetting;
 import net.wurstclient.settings.SliderSetting;
 import net.wurstclient.settings.SliderSetting.ValueDisplay;
+import net.wurstclient.settings.SwingHandSetting;
+import net.wurstclient.settings.SwingHandSetting.SwingHand;
 import net.wurstclient.settings.filterlists.EntityFilterList;
+import net.wurstclient.util.BlockUtils;
 import net.wurstclient.util.EntityUtils;
 import net.wurstclient.util.RegionPos;
 import net.wurstclient.util.RenderUtils;
@@ -65,6 +67,10 @@ public final class KillauraHack extends Hack
 	private final SliderSetting fov =
 		new SliderSetting("FOV", 360, 30, 360, 10, ValueDisplay.DEGREES);
 	
+	private final SwingHandSetting swingHand = new SwingHandSetting(
+		"How Killaura should swing your hand when attacking.",
+		SwingHand.CLIENT);
+	
 	private final CheckboxSetting damageIndicator = new CheckboxSetting(
 		"Damage indicator",
 		"Renders a colored box within the target, inversely proportional to its remaining health.",
@@ -72,6 +78,12 @@ public final class KillauraHack extends Hack
 	
 	private final PauseAttackOnContainersSetting pauseOnContainers =
 		new PauseAttackOnContainersSetting(true);
+	
+	private final CheckboxSetting checkLOS =
+		new CheckboxSetting("Check line of sight",
+			"Ensures that you don't reach through blocks when attacking.\n\n"
+				+ "Slower but can help with anti-cheat plugins.",
+			false);
 	
 	private final EntityFilterList entityFilters =
 		EntityFilterList.genericCombat();
@@ -88,8 +100,10 @@ public final class KillauraHack extends Hack
 		addSetting(speed);
 		addSetting(priority);
 		addSetting(fov);
+		addSetting(swingHand);
 		addSetting(damageIndicator);
 		addSetting(pauseOnContainers);
+		addSetting(checkLOS);
 		
 		entityFilters.forEach(this::addSetting);
 	}
@@ -152,8 +166,14 @@ public final class KillauraHack extends Hack
 		
 		WURST.getHax().autoSwordHack.setSlot(target);
 		
-		WURST.getRotationFaker()
-			.faceVectorPacket(target.getBoundingBox().getCenter());
+		Vec3d hitVec = target.getBoundingBox().getCenter();
+		if(checkLOS.isChecked() && !BlockUtils.hasLineOfSight(hitVec))
+		{
+			target = null;
+			return;
+		}
+		
+		WURST.getRotationFaker().faceVectorPacket(hitVec);
 	}
 	
 	@Override
@@ -163,9 +183,8 @@ public final class KillauraHack extends Hack
 			return;
 		
 		WURST.getHax().criticalsHack.doCritical();
-		ClientPlayerEntity player = MC.player;
-		MC.interactionManager.attackEntity(player, target);
-		player.swingHand(Hand.MAIN_HAND);
+		MC.interactionManager.attackEntity(MC.player, target);
+		swingHand.swing(Hand.MAIN_HAND);
 		
 		target = null;
 		speed.resetTimer();

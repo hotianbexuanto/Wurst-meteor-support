@@ -86,6 +86,7 @@ public class EntityFilterList
 			FilterAllaysSetting.genericCombat(false),
 			FilterInvisibleSetting.genericCombat(false),
 			FilterNamedSetting.genericCombat(false),
+			
 			FilterArmorStandsSetting.genericCombat(false),
 			FilterCrystalsSetting.genericCombat(false));
 	}

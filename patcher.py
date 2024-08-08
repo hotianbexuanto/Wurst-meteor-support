@@ -1,7 +1,9 @@
-import zipfile, re
-import os, sys, subprocess
-
-# lol gpt code
+import zipfile
+import os
+import sys
+import requests
+import shutil
+import tempfile
 
 def modify_file(file_path, search_text, replace_text):
     with open(file_path, 'r') as file:
@@ -16,8 +18,44 @@ def extract_zip(zip_file_path, extract_to):
     with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
         zip_ref.extractall(extract_to)
 
+def download_and_extract_zip(url, extract_to):
+    try:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            zip_file_path = os.path.join(temp_dir, "Wurst7-master.zip")
+            
+            # ダウンロードの処理
+            print(f"Downloading from {url} to {zip_file_path}...")
+            response = requests.get(url, stream=True)
+            if response.status_code == 200:
+                with open(zip_file_path, 'wb') as f:
+                    shutil.copyfileobj(response.raw, f)
+                print(f"Extracting {zip_file_path} to {extract_to}...")
+                extract_zip(zip_file_path, extract_to)
+                print("Extraction completed!")
+            else:
+                print(f"Failed to download file: {response.status_code}")
+                sys.exit(1)
+                
+    except Exception as e:
+        print(f"An error occurred during download and extraction: {e}")
+        sys.exit(1)
+
 def main():
-    extract_to = os.getcwd() + "/Wurst7-master/Wurst7-master/"
+    extract_to = os.path.join(os.getcwd(), "Wurst7-master")
+    url = "https://github.com/Wurst-Imperium/Wurst7/archive/refs/heads/master.zip"
+    
+    download_and_extract_zip(url, extract_to)
+
+    # 解凍されたファイルの構造を確認
+    print("Directory structure after extraction:")
+    for root, dirs, files in os.walk(extract_to):
+        level = root.replace(extract_to, '').count(os.sep)
+        indent = ' ' * 4 * (level)
+        print('{}{}/'.format(indent, os.path.basename(root)))
+        subindent = ' ' * 4 * (level + 1)
+        for f in files:
+            print('{}{}'.format(subindent, f))
+
     search_replace_list = [
         # fabric.mod.json
         ('src/main/resources/fabric.mod.json', '"id": "wurst"', '"id": "wurst-meteor"'),
@@ -47,31 +85,26 @@ def main():
         ('src/main/java/net/wurstclient/hacks/FreecamHack.java', 'IsPlayerInLavaListener, CameraTransformViewBobbingListener,', 'PlayerMoveListener, CameraTransformViewBobbingListener,'),
         ('src/main/java/net/wurstclient/hacks/FreecamHack.java', 'EVENTS.add(IsPlayerInLavaListener.class, this);', 'EVENTS.add(PlayerMoveListener.class, this);'),
         ('src/main/java/net/wurstclient/hacks/FreecamHack.java', 'EVENTS.remove(IsPlayerInLavaListener.class, this);', 'EVENTS.remove(PlayerMoveListener.class, this);'),
-        ('src/main/java/net/wurstclient/hacks/FreecamHack.java', '@Override\n	public void onIsPlayerInLava(IsPlayerInLavaEvent event)\n	{\n		event.setInLava(false);\n	}', ''),             # Remove onIsPlayerInLava
-        ('src/main/java/net/wurstclient/hacks/FreecamHack.java', 'GL11.glDisable(GL11.GL_BLEND);\n	}\n}', 'GL11.glDisable(GL11.GL_BLEND);\n	}\n	@Override\n	public void onPlayerMove() {}\n}'),  # Add  P.S. Not work BRO   PLEASE SELF FIX
+        ('src/main/java/net/wurstclient/hacks/FreecamHack.java', '@Override\n\tpublic void onIsPlayerInLava(IsPlayerInLavaEvent event)\n\t{\n\t\tevent.setInLava(false);\n\t}', ''),             # Remove onIsPlayerInLava
+        ('src/main/java/net/wurstclient/hacks/FreecamHack.java', 'GL11.glDisable(GL11.GL_BLEND);\n\t}\n}', 'GL11.glDisable(GL11.GL_BLEND);\n\t}\n\t@Override\n\tpublic void onPlayerMove() {}\n}'),  # Add  P.S. Not work BRO   PLEASE SELF FIX
     ]
     
     # Modify files
     for file_path, search_text, replace_text in search_replace_list:
-        file_path = os.path.join(extract_to, file_path)
-        modify_file(file_path, search_text, replace_text)
+        file_path = os.path.join(extract_to, "Wurst7-master", file_path)
+        if os.path.isfile(file_path):
+            modify_file(file_path, search_text, replace_text)
+        else:
+            print(f"File not found: {file_path}")
     
     print("Modification completed successfully!")
     print("Build it yourself!")
     print("Build Tutorial:\n1: Open the folder with gradlew.bat\n2: Open cmd type 'gradlew.bat :spotlessApply' and 'gradlew.bat build'")
-    input("Enter to Exit")
-    
+    input("Press Enter to exit")
+
 if __name__ == "__main__":
-    paths = sys.argv[1:]
-    if paths == []:
-        input("Did you drag and drop zip file?  Example: Wurst-7.zip\n")
-        sys.exit(1)
     try:
         main()
-        for path in paths:
-            print("Unzippping {}...".format(path))
-            with zipfile.ZipFile(path,'r') as inputFile:
-                inputFile.extractall("Wurst7-master")
-                print("Unzipped!")
-    except:
-        pass
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        sys.exit(1)

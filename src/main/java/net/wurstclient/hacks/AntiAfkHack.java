@@ -8,7 +8,6 @@
 package net.wurstclient.hacks;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -16,6 +15,7 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.wurstclient.Category;
 import net.wurstclient.SearchTags;
 import net.wurstclient.ai.PathFinder;
@@ -26,7 +26,6 @@ import net.wurstclient.events.RenderListener;
 import net.wurstclient.events.UpdateListener;
 import net.wurstclient.hack.DontSaveState;
 import net.wurstclient.hack.Hack;
-import net.wurstclient.mixinterface.IKeyBinding;
 import net.wurstclient.settings.CheckboxSetting;
 import net.wurstclient.settings.SliderSetting;
 import net.wurstclient.settings.SliderSetting.ValueDisplay;
@@ -37,33 +36,31 @@ public final class AntiAfkHack extends Hack
 	implements UpdateListener, RenderListener
 {
 	private final CheckboxSetting useAi = new CheckboxSetting("Use AI",
-		"Uses a pathfinding AI to move around naturally and avoid hazards.\n"
-			+ "Can sometimes get stuck.",
-		true);
+		"description.wurst.setting.antiafk.use_ai", true);
 	
 	private final SliderSetting aiRange = new SliderSetting("AI range",
-		"The area in which AntiAFK can move when Use AI is turned on.", 16, 1,
-		64, 1, ValueDisplay.AREA_FROM_RADIUS);
+		"description.wurst.setting.antiafk.ai_range", 16, 1, 64, 1,
+		ValueDisplay.AREA_FROM_RADIUS);
 	
 	private final SliderSetting nonAiRange = new SliderSetting("Non-AI range",
-		"The area in which AntiAFK can move when Use AI is turned off.\n\n"
-			+ "\u00a7c\u00a7lWARNING:\u00a7r This area must be completely"
-			+ " unobstructed and free of hazards.",
-		1, 1, 64, 1, ValueDisplay.AREA_FROM_RADIUS);
+		"description.wurst.setting.antiafk.non-ai_range", 1, 1, 64, 1,
+		ValueDisplay.AREA_FROM_RADIUS);
 	
-	private final SliderSetting waitTime =
-		new SliderSetting("Wait time", "Time between movements in seconds.",
-			2.5, 0, 60, 0.05, ValueDisplay.DECIMAL.withSuffix("s"));
+	private final SliderSetting waitTime = new SliderSetting("Wait time",
+		"description.wurst.setting.antiafk.wait_time", 2.5, 0, 60, 0.05,
+		ValueDisplay.DECIMAL.withSuffix("s"));
 	
-	private final SliderSetting waitTimeRand =
-		new SliderSetting("Wait time randomization",
-			"How much time can be randomly added or subtracted from the wait"
-				+ " time, in seconds.",
-			0.5, 0, 60, 0.05,
-			ValueDisplay.DECIMAL.withPrefix("\u00b1").withSuffix("s"));
+	private final SliderSetting waitTimeRand = new SliderSetting(
+		"Wait time randomization",
+		"description.wurst.setting.antiafk.wait_time_randomization", 0.5, 0, 60,
+		0.05, ValueDisplay.DECIMAL.withPrefix("\u00b1").withSuffix("s"));
+	
+	private final CheckboxSetting showWaitTime =
+		new CheckboxSetting("Show wait time",
+			"description.wurst.setting.antiafk.show_wait_time", true);
 	
 	private int timer;
-	private Random random = new Random();
+	private Random random = Random.createLocal();
 	private BlockPos start;
 	private BlockPos nextBlock;
 	
@@ -81,6 +78,16 @@ public final class AntiAfkHack extends Hack
 		addSetting(nonAiRange);
 		addSetting(waitTime);
 		addSetting(waitTimeRand);
+		addSetting(showWaitTime);
+	}
+	
+	@Override
+	public String getRenderName()
+	{
+		if(showWaitTime.isChecked() && timer > 0)
+			return getName() + " [" + timer * 50 + "ms]";
+		
+		return getName();
 	}
 	
 	@Override
@@ -103,22 +110,9 @@ public final class AntiAfkHack extends Hack
 	{
 		EVENTS.remove(UpdateListener.class, this);
 		EVENTS.remove(RenderListener.class, this);
-		
-		IKeyBinding.get(MC.options.forwardKey).resetPressedState();
-		IKeyBinding.get(MC.options.jumpKey).resetPressedState();
-		
+		PathProcessor.releaseControls();
 		pathFinder = null;
 		processor = null;
-		PathProcessor.releaseControls();
-	}
-	
-	private void setTimer()
-	{
-		int baseTime = (int)(waitTime.getValue() * 20);
-		int randTime = (int)(waitTimeRand.getValue() * 20);
-		int randOffset = random.nextInt(randTime * 2 + 1) - randTime;
-		randOffset = Math.max(randOffset, -baseTime);
-		timer = baseTime + randOffset;
 	}
 	
 	@Override
@@ -135,12 +129,18 @@ public final class AntiAfkHack extends Hack
 		
 		if(useAi.isChecked())
 		{
+			// prevent drowning
+			if(MC.player.isSubmergedInWater()
+				&& !WURST.getHax().jesusHack.isEnabled())
+			{
+				MC.options.jumpKey.setPressed(true);
+				return;
+			}
+			
 			// update timer
 			if(timer > 0)
 			{
 				timer--;
-				if(!WURST.getHax().jesusHack.isEnabled())
-					MC.options.jumpKey.setPressed(MC.player.isTouchingWater());
 				return;
 			}
 			
@@ -162,7 +162,8 @@ public final class AntiAfkHack extends Hack
 			
 			// check path
 			if(processor != null
-				&& !pathFinder.isPathStillValid(processor.getIndex()))
+				&& !pathFinder.isPathStillValid(processor.getIndex())
+				|| processor.getTicksOffPath() > 20)
 			{
 				pathFinder = new RandomPathFinder(pathFinder);
 				return;
@@ -172,13 +173,11 @@ public final class AntiAfkHack extends Hack
 			if(!processor.isDone())
 				processor.process();
 			else
+			{
+				// reset and wait for timer
+				PathProcessor.releaseControls();
 				pathFinder = new RandomPathFinder(
 					randomize(start, aiRange.getValueI(), true));
-			
-			// wait 2 - 3 seconds (40 - 60 ticks)
-			if(processor.isDone())
-			{
-				PathProcessor.releaseControls();
 				setTimer();
 			}
 		}else
@@ -219,6 +218,15 @@ public final class AntiAfkHack extends Hack
 		RenderSystem.setShader(GameRenderer::getPositionProgram);
 		pathFinder.renderPath(matrixStack, pathCmd.isDebugMode(),
 			pathCmd.isDepthTest());
+	}
+	
+	private void setTimer()
+	{
+		int baseTime = (int)(waitTime.getValue() * 20);
+		double randTime = waitTimeRand.getValue() * 20;
+		int randOffset = (int)(random.nextGaussian() * randTime);
+		randOffset = Math.max(randOffset, -baseTime);
+		timer = baseTime + randOffset;
 	}
 	
 	private BlockPos randomize(BlockPos pos, int range, boolean includeY)

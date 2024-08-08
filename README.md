@@ -22,7 +22,7 @@ In the future, we would like to create something that can automatically retrieve
 -->
 ## What patcher.py?
 
-Drag and drop the zip file downloaded from the [master branch of the original repository](https://github.com/Wurst-Imperium/Wurst7/archive/refs/heads/master.zip) and the patch will be automatically applied to the contents of the file.
+It's easy. Double-click to execute. That's it.
 
 This theoretically supports Meteor in all Wurst versions!
 

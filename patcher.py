@@ -70,8 +70,8 @@ def main():
         # CameraMixin
         ('src/main/java/net/wurstclient/mixin/CameraMixin.java', 'import org.spongepowered.asm.mixin.injection.ModifyVariable;', ''),
         ('src/main/java/net/wurstclient/mixin/CameraMixin.java', 'import net.wurstclient.hacks.CameraDistanceHack;', ''),
-        ('src/main/java/net/wurstclient/mixin/CameraMixin.java', '\n\t@ModifyVariable(at = @At("HEAD"),\n\t\tmethod = "clipToSpace(D)D",\n\t\targsOnly = true)\n\tprivate double changeClipToSpaceDistance(double desiredCameraDistance)\n\t{\n\t\tCameraDistanceHack cameraDistance =\n\t\t\tWurstClient.INSTANCE.getHax().cameraDistanceHack;\n\t\tif(cameraDistance.isEnabled())\n\t\t\treturn cameraDistance.getDistance();\n\t\t\n\t\treturn desiredCameraDistance;\n\t}\n\t', ''),
-
+        ('src/main/java/net/wurstclient/mixin/CameraMixin.java', '\n\t@ModifyVariable(at = @At("HEAD"),\n\t\tmethod = "clipToSpace(F)F",\n\t\targsOnly = true)\n\tprivate float changeClipToSpaceDistance(float desiredCameraDistance)\n\t{\n\t\tCameraDistanceHack cameraDistance =\n\t\t\tWurstClient.INSTANCE.getHax().cameraDistanceHack;\n\t\tif(cameraDistance.isEnabled())\n\t\t\treturn cameraDistance.getDistance();\n\t\t\n\t\treturn desiredCameraDistance;\n\t}\n\t', ''),
+        
         # BlockMixin
         ('src/main/java/net/wurstclient/mixin/BlockMixin.java', '\n\t\n\t@Inject(at = @At("HEAD"),\n\t\tmethod = "getVelocityMultiplier()F",\n\t\tcancellable = true)\n\tprivate void onGetVelocityMultiplier(CallbackInfoReturnable<Float> cir)\n\t{\n\t\tHackList hax = WurstClient.INSTANCE.getHax();\n\t\tif(hax == null || !hax.noSlowdownHack.isEnabled())\n\t\t\treturn;\n\t\t\n\t\tif(cir.getReturnValueF() < 1)\n\t\t\tcir.setReturnValue(1F);\n\t}', ''),
         

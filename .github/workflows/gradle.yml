@@ -30,14 +30,16 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
       - name: Fix code style violations
-        run: ./gradlew spotlessApply
+        run: ./gradlew spotlessApply --info
       - name: Commit format changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'style: 自动修复代码格式'
           file_pattern: '*.java'
       - name: build
-        run: ./gradlew build
+        run: |
+          export GRADLE_OPTS="-Xmx4g -Dorg.gradle.daemon=false"
+          ./gradlew build --stacktrace --info
       - name: capture build artifacts
         if: ${{ runner.os == 'Linux' && matrix.java == '21' }} # Only upload artifacts built from latest java on one OS
         uses: actions/upload-artifact@v4

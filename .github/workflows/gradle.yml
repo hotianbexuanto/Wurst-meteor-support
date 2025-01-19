@@ -17,6 +17,9 @@ jobs:
         # and run on both Linux and Windows
         os: [ubuntu-20.04, windows-2022]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+      packages: read
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -50,14 +53,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-home-cache-cleanup: true
-          cache-read-only: false
-          gradle-home-cache-includes: |
-            caches
-            notifications
-            jdks
-            wrapper
+          cache-disabled: true
       - name: Configure Maven settings
+        if: runner.os != 'Windows'
         run: |
           mkdir -p ~/.m2
           cat > ~/.m2/settings.xml << EOF
@@ -73,6 +71,7 @@ jobs:
           </settings>
           EOF
       - name: Configure Gradle properties
+        if: runner.os != 'Windows'
         run: |
           mkdir -p ~/.gradle
           echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
@@ -86,14 +85,12 @@ jobs:
         run: ./gradlew dependencies --refresh-dependencies --no-daemon
       - name: Fix code style violations
         run: |
-          ./gradlew spotlessApply --offline \
-            --build-cache \
+          ./gradlew spotlessApply \
             --no-daemon \
             --stacktrace \
             --console=plain \
             --no-configuration-cache \
-            -Dorg.gradle.jvmargs="-Xmx4g -XX:+HeapDumpOnOutOfMemoryError" \
-            -Dorg.gradle.parallel=true
+            -Dorg.gradle.jvmargs="-Xmx4g -XX:+HeapDumpOnOutOfMemoryError"
       - name: Commit format changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

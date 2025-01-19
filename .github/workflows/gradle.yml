@@ -112,6 +112,9 @@ jobs:
           systemProp.org.gradle.internal.repository.initial.backoff=500
           systemProp.https.protocols=TLSv1.2,TLSv1.3
           "@ | Out-File -FilePath "$env:USERPROFILE\.gradle\gradle.properties" -Encoding UTF8
+      - name: Make Gradle wrapper executable
+        if: runner.os != 'Windows'
+        run: chmod +x ./gradlew
       - name: Download dependencies
         run: ./gradlew dependencies --refresh-dependencies --no-daemon
       - name: Fix code style violations

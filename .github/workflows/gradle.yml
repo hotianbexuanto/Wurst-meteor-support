@@ -54,11 +54,26 @@ jobs:
             notifications
             jdks
             wrapper
+      - name: Configure Gradle properties
+        run: |
+          mkdir -p ~/.gradle
+          echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
+          echo "org.gradle.caching=true" >> ~/.gradle/gradle.properties
+          echo "systemProp.org.gradle.internal.http.connectionTimeout=180000" >> ~/.gradle/gradle.properties
+          echo "systemProp.org.gradle.internal.http.socketTimeout=180000" >> ~/.gradle/gradle.properties
+          echo "systemProp.org.gradle.internal.repository.max.retries=10" >> ~/.gradle/gradle.properties
+          echo "systemProp.org.gradle.internal.repository.initial.backoff=500" >> ~/.gradle/gradle.properties
       - name: make gradle wrapper executable
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
       - name: Fix code style violations
-        run: ./gradlew spotlessApply --info --refresh-dependencies
+        run: |
+          ./gradlew spotlessApply --info --refresh-dependencies \
+            --build-cache \
+            --no-daemon \
+            --stacktrace \
+            -Dorg.gradle.jvmargs="-Xmx4g -XX:+HeapDumpOnOutOfMemoryError" \
+            -Dorg.gradle.parallel=true
       - name: Commit format changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

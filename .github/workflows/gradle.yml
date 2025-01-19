@@ -116,15 +116,31 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod +x ./gradlew
       - name: Download dependencies
-        run: ./gradlew dependencies --refresh-dependencies --no-daemon
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: |
+            if [ "$RUNNER_OS" == "Windows" ]; then
+              ./gradlew dependencies --refresh-dependencies --no-daemon --stacktrace --info
+            else
+              ./gradlew dependencies --refresh-dependencies --no-daemon --stacktrace --info \
+                -Dhttp.socketTimeout=180000 \
+                -Dhttp.connectionTimeout=180000 \
+                -Dorg.gradle.internal.http.socketTimeout=180000 \
+                -Dorg.gradle.internal.http.connectionTimeout=180000
+            fi
       - name: Fix code style violations
-        run: |
-          ./gradlew spotlessApply \
-            --no-daemon \
-            --stacktrace \
-            --console=plain \
-            --no-configuration-cache \
-            -Dorg.gradle.jvmargs="-Xmx4g -XX:+HeapDumpOnOutOfMemoryError"
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: |
+            if [ "$RUNNER_OS" == "Windows" ]; then
+              ./gradlew spotlessApply --no-daemon --stacktrace --console=plain --no-configuration-cache "-Dorg.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError"
+            else
+              ./gradlew spotlessApply --no-daemon --stacktrace --console=plain --no-configuration-cache "-Dorg.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError"
+            fi
       - name: Commit format changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

@@ -8,23 +8,18 @@ on: [pull_request, push]
 
 jobs:
   build:
-    strategy:
-      matrix:
-        # Use these Java versions
-        java: [
-          21,    # Current Java LTS & minimum supported by Minecraft
-        ]
-        # and run on both Linux and Windows
-        os: [ubuntu-20.04, windows-2022]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: read
+    
     steps:
-      - name: checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: validate gradle wrapper
+      
+      - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
+      
       - name: Create LICENSE file if missing
         run: |
           if [ ! -f LICENSE ]; then
@@ -43,118 +38,60 @@ jobs:
             echo "The above copyright notice and this permission notice shall be included in all" >> LICENSE
             echo "copies or substantial portions of the Software." >> LICENSE
           fi
-      - name: setup jdk ${{ matrix.java }}
+      
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ matrix.java }}
+          java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
-          check-latest: true
+      
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          cache-disabled: true
-      - name: Configure Maven settings
-        if: runner.os != 'Windows'
-        run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml << EOF
-          <settings>
-            <mirrors>
-              <mirror>
-                <id>aliyun</id>
-                <mirrorOf>central</mirrorOf>
-                <name>Aliyun Maven Mirror</name>
-                <url>https://maven.aliyun.com/repository/public</url>
-              </mirror>
-            </mirrors>
-          </settings>
-          EOF
-      - name: Configure Maven settings (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.m2"
-          @"
-          <settings>
-            <mirrors>
-              <mirror>
-                <id>aliyun</id>
-                <mirrorOf>central</mirrorOf>
-                <name>Aliyun Maven Mirror</name>
-                <url>https://maven.aliyun.com/repository/public</url>
-              </mirror>
-            </mirrors>
-          </settings>
-          "@ | Out-File -FilePath "$env:USERPROFILE\.m2\settings.xml" -Encoding UTF8
-      - name: Configure Gradle properties
-        if: runner.os != 'Windows'
+          gradle-home-cache-cleanup: true
+      
+      - name: Configure Build Environment
         run: |
           mkdir -p ~/.gradle
-          echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
-          echo "org.gradle.caching=true" >> ~/.gradle/gradle.properties
-          echo "systemProp.org.gradle.internal.http.connectionTimeout=180000" >> ~/.gradle/gradle.properties
-          echo "systemProp.org.gradle.internal.http.socketTimeout=180000" >> ~/.gradle/gradle.properties
-          echo "systemProp.org.gradle.internal.repository.max.retries=10" >> ~/.gradle/gradle.properties
-          echo "systemProp.org.gradle.internal.repository.initial.backoff=500" >> ~/.gradle/gradle.properties
-          echo "systemProp.https.protocols=TLSv1.2,TLSv1.3" >> ~/.gradle/gradle.properties
-      - name: Configure Gradle properties (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.gradle"
-          @"
+          cat > ~/.gradle/gradle.properties << EOF
           org.gradle.parallel=true
           org.gradle.caching=true
+          org.gradle.daemon=false
+          org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError
           systemProp.org.gradle.internal.http.connectionTimeout=180000
           systemProp.org.gradle.internal.http.socketTimeout=180000
           systemProp.org.gradle.internal.repository.max.retries=10
-          systemProp.org.gradle.internal.repository.initial.backoff=500
+          systemProp.org.gradle.internal.repository.initial.backoff=1000
           systemProp.https.protocols=TLSv1.2,TLSv1.3
-          "@ | Out-File -FilePath "$env:USERPROFILE\.gradle\gradle.properties" -Encoding UTF8
+          EOF
+      
       - name: Make Gradle wrapper executable
-        if: runner.os != 'Windows'
         run: chmod +x ./gradlew
-      - name: Download dependencies
+      
+      - name: Fix code style
         uses: nick-invision/retry@v2
         with:
-          timeout_minutes: 10
+          timeout_minutes: 15
           max_attempts: 3
-          command: |
-            if [ "$RUNNER_OS" == "Windows" ]; then
-              ./gradlew dependencies --refresh-dependencies --no-daemon --stacktrace --info
-            else
-              ./gradlew dependencies --refresh-dependencies --no-daemon --stacktrace --info \
-                -Dhttp.socketTimeout=180000 \
-                -Dhttp.connectionTimeout=180000 \
-                -Dorg.gradle.internal.http.socketTimeout=180000 \
-                -Dorg.gradle.internal.http.connectionTimeout=180000
-            fi
-      - name: Fix code style violations
-        uses: nick-invision/retry@v2
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          command: |
-            if [ "$RUNNER_OS" == "Windows" ]; then
-              ./gradlew spotlessApply --no-daemon --stacktrace --console=plain --no-configuration-cache "-Dorg.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError"
-            else
-              ./gradlew spotlessApply --no-daemon --stacktrace --console=plain --no-configuration-cache "-Dorg.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError"
-            fi
+          retry_wait_seconds: 30
+          command: ./gradlew spotlessApply --no-daemon --stacktrace --info
+      
       - name: Commit format changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'style: 自动修复代码格式'
           file_pattern: '*.java'
-      - name: build
-        run: |
-          export GRADLE_OPTS="-Xmx4g -Dorg.gradle.daemon=false"
-          ./gradlew build --stacktrace --info --refresh-dependencies --continue
-        env:
-          MAVEN_OPTS: -Dmaven.wagon.http.retryHandler.count=3
-          GRADLE_OPTS: "-Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
-      - name: capture build artifacts
-        if: ${{ runner.os == 'Linux' && matrix.java == '21' }} # Only upload artifacts built from latest java on one OS
+      
+      - name: Build project
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: ./gradlew build --no-daemon --stacktrace --info
+      
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts

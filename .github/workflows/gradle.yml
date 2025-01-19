@@ -57,10 +57,21 @@ jobs:
             notifications
             jdks
             wrapper
-      - name: Clean Gradle Cache
+      - name: Configure Maven settings
         run: |
-          rm -rf ~/.gradle/caches/
-          rm -rf ~/.gradle/wrapper/
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml << EOF
+          <settings>
+            <mirrors>
+              <mirror>
+                <id>aliyun</id>
+                <mirrorOf>central</mirrorOf>
+                <name>Aliyun Maven Mirror</name>
+                <url>https://maven.aliyun.com/repository/public</url>
+              </mirror>
+            </mirrors>
+          </settings>
+          EOF
       - name: Configure Gradle properties
         run: |
           mkdir -p ~/.gradle
@@ -70,32 +81,12 @@ jobs:
           echo "systemProp.org.gradle.internal.http.socketTimeout=180000" >> ~/.gradle/gradle.properties
           echo "systemProp.org.gradle.internal.repository.max.retries=10" >> ~/.gradle/gradle.properties
           echo "systemProp.org.gradle.internal.repository.initial.backoff=500" >> ~/.gradle/gradle.properties
-          # 添加额外的 Maven 仓库
-          echo "systemProp.maven.repo.local=${HOME}/.m2/repository" >> ~/.gradle/gradle.properties
-          echo "systemProp.maven.repo.remote.central=https://repo1.maven.org/maven2/" >> ~/.gradle/gradle.properties
-          echo "systemProp.maven.repo.remote.fabric=https://maven.fabricmc.net/" >> ~/.gradle/gradle.properties
-          echo "systemProp.maven.repo.remote.gradle=https://plugins.gradle.org/m2/" >> ~/.gradle/gradle.properties
-      - name: Configure init script
-        run: |
-          mkdir -p ~/.gradle/init.d
-          cat > ~/.gradle/init.d/repositories.gradle << EOF
-          allprojects {
-              repositories {
-                  mavenCentral()
-                  maven { url "https://repo1.maven.org/maven2/" }
-                  maven { url "https://maven.fabricmc.net/" }
-                  maven { url "https://plugins.gradle.org/m2/" }
-                  maven { url "https://libraries.minecraft.net/" }
-                  maven { url "https://jitpack.io" }
-              }
-          }
-          EOF
-      - name: make gradle wrapper executable
-        if: ${{ runner.os != 'Windows' }}
-        run: chmod +x ./gradlew
+          echo "systemProp.https.protocols=TLSv1.2,TLSv1.3" >> ~/.gradle/gradle.properties
+      - name: Download dependencies
+        run: ./gradlew dependencies --refresh-dependencies --no-daemon
       - name: Fix code style violations
         run: |
-          ./gradlew spotlessApply --info --refresh-dependencies \
+          ./gradlew spotlessApply --offline \
             --build-cache \
             --no-daemon \
             --stacktrace \

@@ -70,6 +70,23 @@ jobs:
             </mirrors>
           </settings>
           EOF
+      - name: Configure Maven settings (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.m2"
+          @"
+          <settings>
+            <mirrors>
+              <mirror>
+                <id>aliyun</id>
+                <mirrorOf>central</mirrorOf>
+                <name>Aliyun Maven Mirror</name>
+                <url>https://maven.aliyun.com/repository/public</url>
+              </mirror>
+            </mirrors>
+          </settings>
+          "@ | Out-File -FilePath "$env:USERPROFILE\.m2\settings.xml" -Encoding UTF8
       - name: Configure Gradle properties
         if: runner.os != 'Windows'
         run: |
@@ -81,6 +98,20 @@ jobs:
           echo "systemProp.org.gradle.internal.repository.max.retries=10" >> ~/.gradle/gradle.properties
           echo "systemProp.org.gradle.internal.repository.initial.backoff=500" >> ~/.gradle/gradle.properties
           echo "systemProp.https.protocols=TLSv1.2,TLSv1.3" >> ~/.gradle/gradle.properties
+      - name: Configure Gradle properties (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.gradle"
+          @"
+          org.gradle.parallel=true
+          org.gradle.caching=true
+          systemProp.org.gradle.internal.http.connectionTimeout=180000
+          systemProp.org.gradle.internal.http.socketTimeout=180000
+          systemProp.org.gradle.internal.repository.max.retries=10
+          systemProp.org.gradle.internal.repository.initial.backoff=500
+          systemProp.https.protocols=TLSv1.2,TLSv1.3
+          "@ | Out-File -FilePath "$env:USERPROFILE\.gradle\gradle.properties" -Encoding UTF8
       - name: Download dependencies
         run: ./gradlew dependencies --refresh-dependencies --no-daemon
       - name: Fix code style violations

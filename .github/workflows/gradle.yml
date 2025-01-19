@@ -26,11 +26,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-cleanup: true
       - name: make gradle wrapper executable
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
       - name: Fix code style violations
-        run: ./gradlew spotlessApply --info
+        run: ./gradlew spotlessApply --info --refresh-dependencies
       - name: Commit format changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -39,7 +43,10 @@ jobs:
       - name: build
         run: |
           export GRADLE_OPTS="-Xmx4g -Dorg.gradle.daemon=false"
-          ./gradlew build --stacktrace --info
+          ./gradlew build --stacktrace --info --refresh-dependencies --continue
+        env:
+          MAVEN_OPTS: -Dmaven.wagon.http.retryHandler.count=3
+          GRADLE_OPTS: "-Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
       - name: capture build artifacts
         if: ${{ runner.os == 'Linux' && matrix.java == '21' }} # Only upload artifacts built from latest java on one OS
         uses: actions/upload-artifact@v4

@@ -11,8 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import net.wurstclient.util.Rotation;
 
-public record PositionAndRotation(Vec3d pos, Rotation rotation)
-{
+public record PositionAndRotation(Vec3d pos, Rotation rotation) {
 	public PositionAndRotation(Entity entity)
 	{
 		this(entity.getPos(),

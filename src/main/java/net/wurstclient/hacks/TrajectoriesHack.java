@@ -160,8 +160,8 @@ public final class TrajectoriesHack extends Hack implements RenderListener
 		matrixStack.pop();
 	}
 	
-	private record Trajectory(ArrayList<Vec3d> path, HitResult.Type type)
-	{}
+	private record Trajectory(ArrayList<Vec3d> path, HitResult.Type type) {
+	}
 	
 	private Trajectory getTrajectory(float partialTicks)
 	{

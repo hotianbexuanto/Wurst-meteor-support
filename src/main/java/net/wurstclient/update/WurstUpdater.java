@@ -7,16 +7,12 @@
  */
 package net.wurstclient.update;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.wurstclient.WurstClient;
 import net.wurstclient.events.UpdateListener;
 import net.wurstclient.util.ChatUtils;
 import net.wurstclient.util.json.JsonException;
-import net.wurstclient.util.json.JsonUtils;
 import net.wurstclient.util.json.WsonArray;
 import net.wurstclient.util.json.WsonObject;
 

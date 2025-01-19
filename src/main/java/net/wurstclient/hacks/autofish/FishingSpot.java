@@ -11,8 +11,7 @@ import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.util.math.Vec3d;
 
 public record FishingSpot(PositionAndRotation input, Vec3d bobberPos,
-	boolean openWater)
-{
+	boolean openWater) {
 	public FishingSpot(PositionAndRotation input, FishingBobberEntity bobber)
 	{
 		this(input, bobber.getPos(), bobber.isInOpenWater());

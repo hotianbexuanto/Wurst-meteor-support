@@ -15,9 +15,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.wurstclient.mixinterface.ILanguageManager;
 
-public record BookOffer(String id, int level, int price)
-	implements Comparable<BookOffer>
-{
+public record BookOffer(String id, int level,
+	int price) implements Comparable<BookOffer> {
 	public static BookOffer create(Enchantment enchantment)
 	{
 		Identifier id = Registries.ENCHANTMENT.getId(enchantment);

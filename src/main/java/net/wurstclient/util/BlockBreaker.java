@@ -132,8 +132,7 @@ public enum BlockBreaker
 	}
 	
 	public static record BlockBreakingParams(BlockPos pos, Direction side,
-		Vec3d hitVec, double distanceSq, boolean lineOfSight)
-	{
+		Vec3d hitVec, double distanceSq, boolean lineOfSight) {
 		public BlockHitResult toHitResult()
 		{
 			return new BlockHitResult(hitVec, side, pos, false);

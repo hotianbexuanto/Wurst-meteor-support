@@ -160,8 +160,7 @@ public enum BlockPlacer
 	}
 	
 	public static record BlockPlacingParams(BlockPos neighbor, Direction side,
-		Vec3d hitVec, double distanceSq, boolean lineOfSight)
-	{
+		Vec3d hitVec, double distanceSq, boolean lineOfSight) {
 		public BlockHitResult toHitResult()
 		{
 			return new BlockHitResult(hitVec, side, neighbor, false);

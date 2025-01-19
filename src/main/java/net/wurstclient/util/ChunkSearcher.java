@@ -119,6 +119,6 @@ public final class ChunkSearcher
 		return future != null && future.isDone();
 	}
 	
-	public record Result(BlockPos pos, BlockState state)
-	{}
+	public record Result(BlockPos pos, BlockState state) {
+	}
 }

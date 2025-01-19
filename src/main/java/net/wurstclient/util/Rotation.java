@@ -15,8 +15,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.wurstclient.WurstClient;
 
-public record Rotation(float yaw, float pitch)
-{
+public record Rotation(float yaw, float pitch) {
 	private static final MinecraftClient MC = WurstClient.MC;
 	
 	public void applyToClientPlayer()

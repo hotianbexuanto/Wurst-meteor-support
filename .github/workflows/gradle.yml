@@ -4,12 +4,7 @@
 # against bad commits.
 
 name: build
-on: 
-  pull_request:
-  push:
-    branches: [ main ]
-    tags:
-      - 'v*'  # 匹配所有以v开头的标签
+on: [pull_request, push]
 
 jobs:
   build:
@@ -25,8 +20,6 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 获取完整的历史记录用于生成发布说明
       - name: validate gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: setup jdk ${{ matrix.java }}
@@ -41,7 +34,7 @@ jobs:
       - name: build
         run: ./gradlew build
       - name: capture build artifacts
-        if: ${{ runner.os == 'Linux' && matrix.java == '21' }} # 修正Java版本判断
+        if: ${{ runner.os == 'Linux' && matrix.java == '21' }} # Only upload artifacts built from latest java on one OS
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
@@ -58,8 +51,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: Release ${{ steps.get_version.outputs.VERSION }}
-          files: |
-            build/libs/*.jar
+          files: build/libs/*
           draft: false
           prerelease: false
           generate_release_notes: true

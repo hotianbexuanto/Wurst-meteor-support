@@ -29,6 +29,8 @@ public final class WurstUpdater implements UpdateListener
 	@Override
 	public void onUpdate()
 	{
+		// 禁用更新检查
+		/*
 		if(thread == null)
 		{
 			thread = new Thread(this::checkForUpdates, "WurstUpdater");
@@ -41,6 +43,7 @@ public final class WurstUpdater implements UpdateListener
 		
 		if(component != null)
 			ChatUtils.component(component);
+		*/
 		
 		WurstClient.INSTANCE.getEventManager().remove(UpdateListener.class,
 			this);
@@ -48,6 +51,8 @@ public final class WurstUpdater implements UpdateListener
 	
 	public void checkForUpdates()
 	{
+		// 禁用更新检查
+		/*
 		Version currentVersion = new Version(WurstClient.VERSION);
 		Version latestVersion = null;
 		
@@ -114,6 +119,7 @@ public final class WurstUpdater implements UpdateListener
 			+ utmMedium + "&utm_content=" + utmContent;
 		
 		showLink(text, url);
+		*/
 	}
 	
 	private void showLink(String text, String url)

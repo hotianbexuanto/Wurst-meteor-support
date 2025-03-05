@@ -31,19 +31,16 @@ public final class WurstUpdater implements UpdateListener
 	{
 		if(thread == null)
 		{
-			thread = new Thread(this::checkForUpdates, "WurstUpdater");
+			thread = new Thread(() -> checkForUpdates(), "WurstUpdater");
 			thread.start();
 			return;
 		}
 		
-		if(thread.isAlive())
-			return;
-		
-		if(component != null)
+		if(!thread.isAlive() && component != null)
+		{
 			ChatUtils.component(component);
-		
-		WurstClient.INSTANCE.getEventManager().remove(UpdateListener.class,
-			this);
+			WurstClient.INSTANCE.getEventManager().remove(UpdateListener.class, this);
+		}
 	}
 	
 	public void checkForUpdates()

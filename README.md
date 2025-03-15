@@ -32,4 +32,4 @@ This theoretically supports Meteor in all Wurst versions!
 
 ## Contact?
 
-Contact by Discord: nyanyakko005 or :email: Email [admin@minohaed.com](<mailto:admin@shikanoko.net>)
+Contact by Discord: nyanyakko005
